@@ -10,6 +10,12 @@
 		<link rel="stylesheet" href="assets/agile/css/flat/flat.color.css">
 		<link rel="stylesheet" href="assets/agile/css/flat/iconline.css">
 		<link rel="stylesheet" href="assets/app/css/app.css">
+		<style>
+			#main_article .padded { text-align: center;}
+			#main_article .padded a{
+				width: 45%;margin:6px 0px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="section_container">
@@ -21,18 +27,17 @@
 				    </div>
 				</header>
 				<article data-role="article" id="main_article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
-					<div class="scroller"> 
-						<div class="scroller" style="padding: 10px;line-height:50px;">
-				            <a href="#" class="button bg-turquoise full-width" id="btn_alert">alert</a>
-				            <a href="#" class="button bg-sun-flower full-width" id="btn_confirm">confirm</a>
-				            <a href="#" class="button bg-wet-asphalt full-width" id="btn_loading">loading</a>
-				            <a href="#" class="button bg-sliver full-width" id="btn_center">center</a>
-				            <a href="#" class="button bg-carrot full-width" id="btn_actionsheet">actionsheet</a>
-				            <a href="#" class="button bg-nephritis full-width" id="btn_t_top">top</a>
-				            <a href="#" class="button bg-belize-hole full-width" id="btn_t_bottom">bottom</a>
-				            <a href="#" class="button bg-concrete full-width" id="btn_t_left">left</a>
-				            <a href="#" class="button bg-turquoise full-width" id="btn_t_right">right</a>
-				        </div>
+					<div class="scroller padded"> 						
+				    	<a href="#" class="button bg-turquoise" id="btn_alert">alert</a>
+						<a href="#" class="button bg-sun-flower" id="btn_confirm">confirm</a>
+						<a href="#" class="button bg-wet-asphalt" id="btn_loading">loading</a>
+						<a href="#" class="button bg-sliver" id="btn_center">center</a>
+						<a href="#" class="button bg-carrot" id="btn_actionsheet">actionsheet</a>
+						<a href="#" class="button bg-pumpkin" id="btn_popover">popover</a>
+						<a href="#" class="button bg-nephritis" id="btn_t_top">top</a>
+						<a href="#" class="button bg-belize-hole" id="btn_t_bottom">bottom</a>
+						<a href="#" class="button bg-concrete" id="btn_t_left">left</a>
+						<a href="#" class="button bg-turquoise" id="btn_t_right">right</a>
 					</div>  
 				</article>
 				<script type="text/html" id="login_template">
@@ -70,7 +75,7 @@
 			    		A.showToast('你选择了“确定”');
 			    	},
 			    	function(){
-			    		A.showToast('你选择了“取消”');
+			    		A.alarmToast('你选择了“取消”');
 			    	});
 			    return false;
 			});
@@ -121,18 +126,31 @@
 			});
 			$('#btn_actionsheet').tap(function(){
 			    A.showActionsheet([{
-			                text : '告诉QQ好友',
-			                handler : function(){
-			                    A.showToast('告诉QQ好友！');
-			                }
-			            },{
-			                text : '告诉MSN好友',
-			                handler : function(){
-			                    A.showToast('告诉MSN好友！');
-			                }
-			            }
-			            ]);
+					text : '这是第一个菜单',
+			        handler : function(){
+			        	A.showToast('这是第一个菜单！');
+			        }
+				},{
+					text : '这是第二个菜单',
+			        handler : function(){
+			        	A.showToast('这是第二个菜单！');
+			        }
+				}]);
 				return false;
+			});
+			
+			$('#btn_popover').tap(function(){
+				A.popover([{
+					text : '这是第一个菜单',
+			        handler : function(){
+			        	A.showToast('这是第一个菜单！');
+			        }
+				},{
+					text : '这是第二个菜单',
+			        handler : function(){
+			        	A.showToast('这是第二个菜单！');
+			        }
+				}], this);
 			});
 		})();
 		

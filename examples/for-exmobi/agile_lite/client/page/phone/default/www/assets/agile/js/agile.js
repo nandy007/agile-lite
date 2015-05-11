@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.0 beta
+*	Version	:	1.0.1 beta
 *	Author	:	nandy007
 *   License MIT
 */
@@ -294,8 +294,7 @@ var A = (function($){
 	};
 
 	A.register('Controller', controller);
-
-
+	
 })(jQuery);
 
 //组件
@@ -535,7 +534,6 @@ var A = (function($){
 	component.add = function(c){
 		$.extend(_components, c);
 	};
-	
 	
 	/**
      * 获取全部组件
@@ -815,8 +813,6 @@ var A = (function($){
 
     	return !((location.protocol.replace(':','')+location.host)==(urlOpts.getProtocol()+urlOpts.getHost()+':'+urlOpts.getPort()));
     };
-
-    
 
     util.checkBoolean = function(){
     	var result = false;
@@ -1367,7 +1363,8 @@ var A = (function($){
             bottom : ['slideUpIn','slideDownOut'],
             center : ['bounceIn','bounceOut'],
             left : ['slideRightIn','slideLeftOut'],
-            right : ['slideLeftIn','slideRightOut']
+            right : ['slideLeftIn','slideRightOut'],
+            'default' : ['fadeIn','fadeOut']
         },
         TEMPLATE = {
             alert : '<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div id="popup_btn_container"><a data-toggle="closePopup" class="agile-icon agile-popup-alert-ok">${ok}</a></div>',
@@ -1386,10 +1383,10 @@ var A = (function($){
         _subscribeEvents();
     };
 
-    var show = function(opts){
+    var _show = function(opts){
     	var options = {
     		html : '',//位于pop中的内容
-    		pos : 'center',//pop显示的位置和样式,top|bottom|center|left|right|custom
+    		pos : 'default',//pop显示的位置和样式,default|top|bottom|center|left|right|custom
     		css : {},//自定义的样式
     		isBlock : false,//是否禁止关闭，false为不禁止，true为禁止
     		onShow : undefined, //@event 在popup内容加载完毕，动画开始前触发
@@ -1414,8 +1411,7 @@ var A = (function($){
         var popHeight = _popup.height();
         //显示获取容器高度，调整至垂直居中
         if(options.pos == 'center') _popup.css('margin-top','-'+popHeight/2+'px');
-        if(transition) A.anim.run(_popup,transition[0]);
-        
+
         //执行onShow事件，可以动态添加内容
         options.onShow && options.onShow.call(_popup);
         $(document).trigger('popupshow', [_popup]);
@@ -1427,6 +1423,7 @@ var A = (function($){
         	options.onClose();
         	options.onClose = undefined;
         });
+        if(transition) A.anim.run(_popup,transition[0]);
         
         A.pop.hasPop = true;
 
@@ -1436,7 +1433,7 @@ var A = (function($){
      * 关闭弹出框
      * @param noTransition 立即关闭，无动画
      */
-    var hide = function(noTransition){
+    var _hide = function(noTransition){
         _mask.hide();
         if(transition && !noTransition){
             A.anim.run(_popup,transition[1],function(){
@@ -1451,7 +1448,7 @@ var A = (function($){
     };
     var _subscribeEvents = function(){
     	var closePopup = function(){
-    		hide();
+    		_hide();
     		$(document).trigger('popupclose');
     	};
 
@@ -1466,9 +1463,9 @@ var A = (function($){
      * @param title 标题
      * @param content 内容
      */
-    var alert = function(title,content,btnName){
+    var _alert = function(title,content,btnName){
         var markup = A.util.provider(TEMPLATE.alert, {title : title, content:content, ok:btnName || '确定'});
-        show({
+        _show({
             html : markup,
             pos : 'center',
             isBlock : true,
@@ -1479,52 +1476,37 @@ var A = (function($){
      * confirm 组件
      * @param title 标题
      * @param content 内容
-     * @param okCall 确定按钮handler
-     * @param cancelCall 取消按钮handler
+     * @param okFunc 确定按钮handler
+     * @param cancelFunc 取消按钮handler
      */
-    var confirm = function(title,content,okCall,cancelCall){
+    var _confirm = function(title,content,okFunc,cancelFunc){
         var markup = A.util.provider(TEMPLATE.confirm, {title : title, content:content, cancel:'取消', ok:'确定'});
-        show({
+        _show({
             html : markup,
             pos : 'center',
             isBlock : true,
         });
         $('#popup_btn_container .agile-popup-alert-ok').tap(function(){
-            hide();
-            okCall.call(this);
+            _hide();
+            okFunc.call(this);
             return false;
         });
         $('#popup_btn_container .agile-popup-alert-cancel').tap(function(){
-            hide();
-            cancelCall.call(this);
+            _hide();
+            cancelFunc.call(this);
             return false;
         });
     };
 
-    /**
-     * 带箭头的弹出框
-     * @param html 弹出框内容
-     * @param pos 位置
-     * @param css 样式
-     * @param onShow onShow事件
-     */
-    var popover = function(html,pos,css,onShow){
-        show({
-            html : html,
-            pos : pos,
-            css : css,
-            onShow : onShow
-        });
-    };
 
     /**
      * loading组件
      * @param text 文本，默认为“加载中...”
      * @param closeCallback 函数，当loading被人为关闭的时候的触发事件
      */
-    var loading = function(text,closeCallback){
+    var _loading = function(text,closeCallback){
         var markup = A.util.provider(TEMPLATE.loading, {title : text||'加载中'});
-        show({
+        _show({
             html : markup,
             pos : 'loading',
             isBlock : true,
@@ -1537,7 +1519,7 @@ var A = (function($){
      * @param buttons 按钮集合
      * [{color:'red',text:'btn',handler:function(){}},{color:'red',text:'btn',handler:function(){}}]
      */
-    var actionsheet = function(buttons,showCancel){
+    var _actionsheet = function(buttons,showCancel){
         var markup = '<div class="actionsheet"><div class="actionsheet_group">';
         var defaultCalssName = "button block agile-popup-actionsheet-normal";
         var defaultCancelCalssName = "button block agile-popup-actionsheet-cancel";
@@ -1549,7 +1531,7 @@ var A = (function($){
         if(showCancel) markup += '<button class="'+(typeof showCancel=='string'?showCancel:defaultCancelCalssName)+'">取消</button>';
         markup += '</div>';
         
-        show({
+        _show({
             html : markup,
             pos : 'bottom',
             css : {'background':'transparent'},
@@ -1559,7 +1541,90 @@ var A = (function($){
                         if(buttons[i] && buttons[i].handler){
                             buttons[i].handler.call(button);
                         }
-                        hide();
+                        _hide();
+                        return false;
+                    });
+                });
+            }
+        });
+    };
+    
+    /**
+     * 带箭头的弹出框
+     * @param html 弹出的内容可以是html文本也可以输button数组
+     * @param el 弹出位置相对的元素对象
+     * @param onShow [可选] 显示之前执行
+     */
+    var _popover = function(html,el,onShow){
+    	var markup = [];
+    	markup.push('<div class="popover-angle"></div>');
+    	if(typeof html=='object'){
+    		markup.push('<ul class="popover-items">');
+    		for(var i=0;i<html.length;i++){
+    			markup.push('<li>'+html[i].text+'</li>');
+    		}
+    		markup.push('</ul>');
+    	}else{
+    		markup.push(html);
+    	}
+
+        _show({
+            html : markup.join(''),
+            onShow : function(){     
+            	
+            	var $del = $(document);
+            	var dHeight = $del.height();
+            	var dWidth = $del.width();
+
+            	var $rel = $(el);
+            	var rHeight = $rel.height();
+            	var rWidth = $rel.width();
+    			var rTop = $rel.offset().top;
+    			var rLeft = $rel.offset().left;
+    			var rCenter = rLeft+(rWidth/2);
+    			var $el = $(this).addClass('popover');
+    			var $angle = $($el.find('.popover-angle').get(0));
+    			var gapH = $angle.height()/2;
+    			var gapW = Math.ceil($angle.width()*Math.sqrt(2))-4;
+
+				var height = $el.height();
+            	var width = $el.width();
+				
+				var posX = rCenter==dWidth/2?'center':(rCenter>dWidth/2?'right':'left');
+    			var posY = dHeight-height-rHeight<0&&rTop>height?'up':'down';
+    			
+    			var elCss = {}, anCss = {};
+    			
+    			if(posY=='up'){
+    				elCss.top = rTop - (height + gapH);
+    				anCss.bottom = -gapH+4;
+    			}else{
+    				elCss.top = rTop + (rHeight + gapH);
+    				anCss.top = -gapH+4;
+    			}
+    			
+    			if(posX=='center'){
+    				elCss.left = '50%';
+    				elCss['margin-left'] = -width/2;
+    				anCss.left = (width-gapW)/2;
+    			}else if(posX=='right'){
+    				elCss.right = rCenter-width>0?dWidth-rLeft-rWidth:4;
+    			}else if(posX=='left'){
+					elCss.left = dWidth-rCenter-width>0?rLeft:4;
+    			}
+    			
+    			$el.css(elCss);
+    			
+    			var center = $el.offset().left+width/2;
+    			anCss.left = anCss.left||width/2+(rCenter-center)-gapW/2;	
+    			$angle.css(anCss);
+
+                $(this).find('.popover-items li').each(function(i,button){             	
+                    $(button).on('tap',function(){
+                        if(html[i] && html[i].handler){
+                            html[i].handler.call(button);
+                        }
+                        _hide();
                         return false;
                     });
                 });
@@ -1568,17 +1633,6 @@ var A = (function($){
     };
 
     _init();
-    
-    A.register('Popup', {
-        show : show,
-        close : hide,
-        alert : alert,
-        confirm : confirm,
-        popover : popover,
-        loading : loading,
-        actionsheet : actionsheet
-    });
-    
     	
 	var _ext = {};
 	
@@ -1591,51 +1645,41 @@ var A = (function($){
     		closeCallback = text;
     		text = '';
     	}
-        A.Popup.loading(text, closeCallback);
+        _loading(text, closeCallback);
     };
     /**
      * 关闭loading框
      */
     _ext.hideMask = function(){
-        A.Popup.close(true);
+        _hide(true);
     };
     
-    _ext.alert = function(title,content){
-        A.Popup.alert(title,content);
-    };
-    _ext.confirm = function(title,content,okCall,cancelCall){
-        A.Popup.confirm(title,content,okCall,cancelCall);
-    };
+    _ext.alert = _alert;
+    
+    _ext.confirm = _confirm;
     /**
      * 弹出窗口
      * @param options
      */
-    _ext.popup = function(options){
-        A.Popup.show(options);
-    };
+    _ext.popup = _show;
     /**
      * 关闭窗口
      */
-    _ext.closePopup = function(){
-        A.Popup.close();
-    };
+    _ext.closePopup = _hide;
     /**
      * 带箭头的弹出框
-     * @param html [可选]
-     * @param pos [可选]  位置
-     * @param arrowDirection [可选] 箭头方向
+     * @param html 弹出的内容可以是html文本也可以输button数组
+     * @param el 弹出位置相对的元素对象
      * @param onShow [可选] 显示之前执行
      */
-    _ext.popover = function(html,pos,arrowDirection,onShow){
-        A.Popup.popover(html,pos,arrowDirection,onShow);
-    };
+    _ext.popover = _popover;
     
     /**
      * actionsheet
      * @param buttons 按钮组
      */
     _ext.showActionsheet = function(buttons){
-        A.Popup.actionsheet(buttons, true);
+        _actionsheet(buttons, true);
     };
     
     
@@ -1647,14 +1691,7 @@ var A = (function($){
 })(jQuery);
 
 (function($){
-    var toast_type = 'toast',_toast,timer,
-        //定义模板
-        TEMPLATE = {
-            toast : '<a href="#">${value}</a>',
-            success : '<a href="#"><i class="agile-toast-success"></i>${value}</a>',
-            error : '<a href="#"><i class="agile-toast-error"></i>${value}</a></div>',
-            info : '<a href="#"><i class="agile-toast-info"></i>${value}</a>'
-        };
+    var _toast,timer;
 
     var _init = function(){
         //全局只有一个实例
@@ -1665,7 +1702,7 @@ var A = (function($){
     /**
      * 关闭消息提示
      */
-    var hide = function(){
+    var _hide = function(){
         A.anim.run(_toast,'scaleOut',function(){
             _toast.hide();
            _toast.empty();
@@ -1673,45 +1710,34 @@ var A = (function($){
     };
     /**
      * 显示消息提示
-     * @param type 类型  toast|success|error|info  空格 + class name 可以实现自定义样式
+     * @param type 类型  toast|alarm
      * @param text 文字内容
      * @param duration 持续时间 为0则不自动关闭,默认为3000ms
      */
-    var show = function(type,text,duration){
+    var _show = function(type,text,duration){
+    	duration = duration||3000;
         if(timer) clearTimeout(timer);
-        var classname = type.split(/\s/);
-        toast_type = classname[0];
-        _toast.attr('class',type).html(A.util.provider(TEMPLATE[toast_type], {value:text})).show();
+        _toast.attr('class',type).html('<a>'+text+'</a>').show();
         A.anim.run(_toast,'scaleIn');
         if(duration !== 0){//为0 不自动关闭
-            timer = setTimeout(hide,duration || A.options.toastDuration);
+            timer = setTimeout(_hide,duration || A.options.toastDuration);
         }
     };
 
     _init();
-    
-    A.register('Toast', {
-        show : show,
-        hide : hide
-    });
     
     
     var _ext = {};
     /**
      *  显示消息
      * @param text
-     * @param type toast|success|error|info
-     * @param duration 持续时间，为0则不自动关闭
+     * @param duration 持续时间
      */
-    _ext.showToast = function(text,type,duration){
-        type = type || 'toast';
-        A.Toast.show(type,text,duration);
-    };
-    /**
-     * 关闭消息提示
-     */
-    _ext.hideToast = function(){
-        A.Toast.hide();
+    _ext.showToast = function(text,duration){
+        _show('toast',text,duration);
+    };   
+    _ext.alarmToast = function(text,duration){
+        _show('alarm',text,duration);
     };
     
     for(var k in _ext){
