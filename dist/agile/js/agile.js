@@ -7,7 +7,7 @@
 var A = (function($){ 
 	var Agile = function(){
 		this.options = {
-			version : '1.0.0',
+			version : '1.0.1',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
 			backEvent : 'backmenu', //宿主容器的返回按钮
@@ -60,7 +60,6 @@ var A = (function($){
 	
 	return new Agile();
 })(jQuery);
-
 
 //控制器
 (function($){
@@ -582,8 +581,7 @@ var A = (function($){
 	A.register('Component', component);
 })(jQuery);
 
-
-
+//动画封装
 (function($){
 	
 	var anim = {};
@@ -711,7 +709,6 @@ var A = (function($){
     		return data[s1.trim()]||'';
     	});
     };
-    
     
 	var URLParser = function(url) {
 
