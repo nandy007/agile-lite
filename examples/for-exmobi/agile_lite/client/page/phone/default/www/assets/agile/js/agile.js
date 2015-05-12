@@ -1465,7 +1465,7 @@ var A = (function($){
         _show({
             html : markup,
             pos : 'center',
-            isBlock : true,
+            isBlock : true
         });
     };
 
@@ -1481,7 +1481,7 @@ var A = (function($){
         _show({
             html : markup,
             pos : 'center',
-            isBlock : true,
+            isBlock : true
         });
         $('#popup_btn_container .agile-popup-alert-ok').tap(function(){
             _hide();
@@ -1747,11 +1747,7 @@ var A = (function($){
  * 事件处理
  * */
 (function($){
-	var event = {};
-	
-	var event = {};
-	
-	var _events = {};
+	var event = {},_events = {};
 
 	 /**
      * 处理浏览器的后退事件
