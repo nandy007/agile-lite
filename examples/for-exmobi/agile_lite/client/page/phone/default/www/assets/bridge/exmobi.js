@@ -1,7 +1,6 @@
 var $native = (function(){
 	var _native = {};
-	
-	
+
 	var progressbar;
 	_native.showMask = function(cb){
 		progressbar = progressbar||new ProgressBar(); 
@@ -173,7 +172,7 @@ var $native = (function(){
 	
 	//打开文件选择
 	_native.openFileGroupSelector = function(callback){
-		A.Popup.actionsheet(
+		A.showActionsheet(
 			[
 				{
 					text : '拍照',

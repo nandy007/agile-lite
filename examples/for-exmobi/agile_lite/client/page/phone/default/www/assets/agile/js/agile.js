@@ -4,10 +4,12 @@
 *	Author	:	nandy007
 *   License MIT
 */
-var A = (function($){ 
+var A = (function($){
 	var Agile = function(){
+		this.$ = $;
 		this.options = {
 			version : '1.0.1',
+			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
 			backEvent : 'backmenu', //宿主容器的返回按钮
@@ -40,6 +42,14 @@ var A = (function($){
 		}
 	};
 	
+	var _doLaunch = function(){
+		for(var k in _launchMap){
+			_launchMap[k]();
+		}
+		A.options.complete = true;
+		$(document).trigger(A.options.agileReadyEvent);
+	};
+	
 	/**
      * 启动Agile
      * @param {Object} 要初始化的一些参数
@@ -48,18 +58,14 @@ var A = (function($){
 		if(A.options.complete==true) return;
 		$.extend(this.options, opts);
 		var _this = this;
-		$(document).on(this.options.readyEvent, function(){
-			for(var k in _launchMap){
-				_launchMap[k]();
-			}
-			_this.options.complete = true;
-			$(document).trigger(A.options.agileReadyEvent);
-		});
-		
+		if($(document)[this.options.readyEvent]){
+			$(document)[this.options.readyEvent](_doLaunch);
+		}else{
+			$(document).on(this.options.readyEvent, _doLaunch);
+		}
 	};
-	
 	return new Agile();
-})(jQuery);
+})(window.Zepto||jQuery);
 
 //控制器
 (function($){
@@ -273,7 +279,7 @@ var A = (function($){
 					_controllers[curr].handler(hash, $el);
 				};
 				//定义点击触发事件
-				$(document).on('tap', _controllers[k]['selector'], function(){
+				$(document).on(A.options.clickEvent, _controllers[k]['selector'], function(){
 					var k = $(this).data('toggle');
 					var hash = $(this).attr('href')||'#';
 					controller[k](hash, $(this));
@@ -294,7 +300,7 @@ var A = (function($){
 
 	A.register('Controller', controller);
 	
-})(jQuery);
+})(A.$);
 
 //组件
 (function($){
@@ -399,7 +405,7 @@ var A = (function($){
 				var $el = $(el);
 				
 				var _doInit = function($el){
-					$el.tap(function(e){
+					$el.on(A.options.clickEvent, function(e){
 						if(e.target.tagName.toLowerCase()=='input'){
 							return true;
 						}
@@ -441,7 +447,7 @@ var A = (function($){
 			            $el.append('<input type="hidden" name="'+name+'" value="'+($el.hasClass('active')?onValue:offValue)+'"/>');
 			        }
 			        $el.append('<div class="toggle-handle"></div>');
-			        $el.tap(function(){
+			        $el.on(A.options.clickEvent, function(){
 			            var $t = $(this),v = $t.hasClass('active')?offValue:onValue;
 			            $t.toggleClass('active').trigger('toggle',[v]);//定义toggle事件
 			            $t.find('input').val(v);
@@ -559,7 +565,7 @@ var A = (function($){
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
 
-				$(document).on(_components[k].event||'tap', _components[k]['selector'], function(){
+				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){
 					
 					var curr = _components[k].handler?k:'default';
 					
@@ -579,7 +585,7 @@ var A = (function($){
 	};
 	
 	A.register('Component', component);
-})(jQuery);
+})(A.$);
 
 //动画封装
 (function($){
@@ -614,9 +620,11 @@ var A = (function($){
 			cb&&cb();
 			return;
 		}
-
+		if(typeof cls=='object'){
+			$el.animate(cls,250,'linear',function(){ cb&&cb();});
+			return;
+		}
 		cls = (cls||'empty')+' anim';
-		
 		$el.addClass(cls).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',function(){			
 			$el.removeClass(cls);
 			cb&&cb();
@@ -653,7 +661,7 @@ var A = (function($){
 	
 	A.register('anim', anim);
 
-})(jQuery);
+})(A.$);
 
 //ajax封装
 (function($){
@@ -681,7 +689,7 @@ var A = (function($){
 	};
 	
 	A.register('ajax', ajax);
-})(jQuery);
+})(A.$);
 
 (function($){
 	var util = {};
@@ -918,7 +926,7 @@ var A = (function($){
 
     A.register('util', util);
 
-})(jQuery);
+})(A.$);
 
 (function($){
 	
@@ -950,7 +958,6 @@ var A = (function($){
 		$.extend(options, opts||{});
 
 		$scroll = new IScroll(selector, options);
-		
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
@@ -978,7 +985,7 @@ var A = (function($){
     A.register('Scroll', scroll);
 	
 	
-})(jQuery);
+})(A.$);
 
 (function($){
 	
@@ -1131,7 +1138,7 @@ var A = (function($){
     
     A.register('Refresh', refresh);
     
-})(jQuery);
+})(A.$);
 
 (function($){
 	
@@ -1235,7 +1242,7 @@ var A = (function($){
 	};
 	
 	A.register('Slider', slider);
-})(jQuery);
+})(A.$);
 
 
 (function($){
@@ -1245,7 +1252,7 @@ var A = (function($){
         $sectionContainer = $('#section_container');
         if($('#section_container_mask').length==0) $sectionMask = $('<div id="section_container_mask"></div>').appendTo('#section_container');
         //添加各种关闭事件
-        $sectionMask.on('tap',function(){
+        $sectionMask.on(A.options.clickEvent, function(){
         	hideAsideMenu();
         	return false;
         });
@@ -1296,12 +1303,12 @@ var A = (function($){
         cssName.aside[position] = width+'px';
         cssName.section['left'] = translateX;
         if(transition == 'overlay'){
-            $aside.animate(cssName.aside);
+            A.anim.run($aside, cssName.aside);
         }else if(transition == 'reveal'){
-            $sectionContainer.animate(cssName.section);
+            A.anim.run($sectionContainer, cssName.section);
         }else{//默认为push
-            $aside.animate(cssName.aside);
-            $sectionContainer.animate(cssName.section);
+            A.anim.run($aside, cssName.aside);
+            A.anim.run($sectionContainer, cssName.section);
         }
 
         $('#section_container_mask').show();
@@ -1332,14 +1339,13 @@ var A = (function($){
         cssName.section['left'] = 0;
         
         if(transition == 'overlay'){
-            $aside.animate(cssName.aside, _finishTransition);
+            A.anim.run($aside, cssName.aside, _finishTransition);
         }else if(transition == 'reveal'){
-            $sectionContainer.animate(cssName.section, _finishTransition);
+            A.anim.run($sectionContainer, cssName.section, _finishTransition);
         }else{//默认为push
-            $aside.animate(cssName.aside);
-            $sectionContainer.animate(cssName.section, _finishTransition);
+            A.anim.run($aside, cssName.aside);
+            A.anim.run($sectionContainer, cssName.section, _finishTransition);
         }
-
         $('#section_container_mask').hide();
     };  
     
@@ -1348,7 +1354,7 @@ var A = (function($){
         show : showAsideMenu,
         hide : hideAsideMenu
     });
-})(jQuery);
+})(A.$);
 
 /**
  * 弹出框组件
@@ -1449,11 +1455,11 @@ var A = (function($){
     		$(document).trigger('popupclose');
     	};
 
-        _mask.on('tap',function(){
+        _mask.on(A.options.clickEvent, function(){
             clickMask2close &&  closePopup();
             return false;
         });
-        _popup.on('tap','[data-toggle="closePopup"]',function(){closePopup();return false;});
+        _popup.on(A.options.clickEvent,'[data-toggle="closePopup"]',function(){closePopup();return false;});
     };
     /**
      * alert组件
@@ -1483,12 +1489,12 @@ var A = (function($){
             pos : 'center',
             isBlock : true
         });
-        $('#popup_btn_container .agile-popup-alert-ok').tap(function(){
+        $('#popup_btn_container .agile-popup-alert-ok').on(A.options.clickEvent, function(){
             _hide();
             okFunc.call(this);
             return false;
         });
-        $('#popup_btn_container .agile-popup-alert-cancel').tap(function(){
+        $('#popup_btn_container .agile-popup-alert-cancel').on(A.options.clickEvent, function(){
             _hide();
             cancelFunc.call(this);
             return false;
@@ -1534,7 +1540,7 @@ var A = (function($){
             css : {'background':'transparent'},
             onShow : function(){           	
                 $(this).find('button').each(function(i,button){              	
-                    $(button).on('tap',function(){
+                    $(button).on(A.options.clickEvent,function(){
                         if(buttons[i] && buttons[i].handler){
                             buttons[i].handler.call(button);
                         }
@@ -1617,7 +1623,7 @@ var A = (function($){
     			$angle.css(anCss);
 
                 $(this).find('.popover-items li').each(function(i,button){             	
-                    $(button).on('tap',function(){
+                    $(button).on(A.options.clickEvent,function(){
                         if(html[i] && html[i].handler){
                             html[i].handler.call(button);
                         }
@@ -1685,7 +1691,7 @@ var A = (function($){
     	A.register(k, _ext[k]);
     }
     
-})(jQuery);
+})(A.$);
 
 (function($){
     var _toast,timer;
@@ -1741,7 +1747,7 @@ var A = (function($){
     	A.register(k, _ext[k]);
     }
     
-})(jQuery);
+})(A.$);
 
 /*
  * 事件处理
@@ -1776,7 +1782,7 @@ var A = (function($){
 	};
 	
 	/**
-     * 处理返回时间
+     * 处理返回事件
      * @private
      */
 	_events.backEvent = function(){
@@ -1797,6 +1803,13 @@ var A = (function($){
 	    		window.history.go(-1);
 	    	}
 		});
+	};
+	
+	_events.zepto = function(){
+		if($!=window.Zepto) return;
+		$(document).on('click', 'a[data-toggle]', function(){return false; });
+		$(document).on('swipeLeft','[data-aside-right]', function(){$(this).trigger('swipeleft');});
+		$(document).on('swipeRight','[data-aside-left]',function(){$(this).trigger('swiperight');});
 	};
 	
 	/**
@@ -1842,7 +1855,7 @@ var A = (function($){
 	};
 	
 	A.register('event', event);
-})(jQuery);
+})(A.$);
 
 (function($){
 	
@@ -1949,8 +1962,7 @@ var A = (function($){
 	A.register('template', function(selecotr){
 		return new Template(selecotr);
 	});
-})(jQuery);
-
+})(A.$);
 
 /*
  * 扩展JSON:A.JSON.stringify和A.JSON.parse，用法你懂
@@ -1987,5 +1999,4 @@ var A = (function($){
 	};
 	
 	A.register('JSON', JSON);
-	
 })();

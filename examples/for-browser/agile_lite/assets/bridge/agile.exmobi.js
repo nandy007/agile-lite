@@ -66,7 +66,7 @@
 					var $label = $el.find('label');
 					var $input = $el.find('input');
 					var placeholder = $label.html();
-					$el.tap(function(e){
+					$el.on(A.options.clickEvent, function(e){
 						$native.openDateTimeSelector({
 							mode : $el.data('role'),
 							val : $input.val(),
@@ -103,7 +103,7 @@
 					var $label = $el.find('label');
 					var $input = $el.find('input');
 					var placeholder = $label.html();
-					$el.tap(function(e){					
+					$el.on(A.options.clickEvent, function(e){					
 						$native.openDecodeScan(function(str){
 							if(str&&($input.val()!=str)&&$el.data('change')){
 								eval($el.data('change'));
@@ -135,7 +135,7 @@
 					var $label = $el.find('label');
 					var $input = $el.find('input');
 					var placeholder = $label.html();
-					$el.tap(function(e){					
+					$el.on(A.options.clickEvent, function(e){					
 						$native.openFileGroupSelector(function(str){
 							str = str?str.join(';'):'';
 							if(str&&($input.val()!=str)&&$el.data('change')){
