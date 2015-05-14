@@ -75,7 +75,7 @@
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
 			$('#main_article').on('refreshInit', function(){
-				var refresh = A.Refresh('#main_article');
+				var refresh = A.Refresh(this);
 				refresh.on('pulldown', function(){
 					$('#content').prepend('<li><div class="text">下拉刷新的内容</div></li>');
 					refresh.refresh();

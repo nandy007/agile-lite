@@ -9,7 +9,7 @@ A.launch({
 		$util.server(opts);
 	}
 });
-$(document).on('tap', '#ratchet_form_article span', function(){
+$(document).on(A.options.clickEvent, '#ratchet_form_article span', function(){
 	A.alert('提示', $(this).attr('class').replace(/.* /,''));
 	return false;
 });

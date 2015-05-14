@@ -65,7 +65,7 @@
 		<!-- app -->
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
-			$('a.button').tap(function(){
+			$('a.button').on(A.options.clickEvent, function(){
 				A.alert('提示', $(this).attr('class').replace(/.* bg\-/, ''));
 				return false;
 			});

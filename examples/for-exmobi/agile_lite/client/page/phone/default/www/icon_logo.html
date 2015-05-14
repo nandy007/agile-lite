@@ -238,7 +238,7 @@
 		<!-- app -->
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
-			$('.grid-cell').tap(function(){
+			$('.grid-cell').on(A.options.clickEvent,function(){
 		    	A.alert('提示', $(this).find('.iconfont').attr('class').replace(/.* /,''));
 		    	return false;
 		    });

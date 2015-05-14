@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.1 beta
+*	Version	:	1.0.2 beta
 *	Author	:	nandy007
 *   License MIT
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.1',
+			version : '1.0.2',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -101,8 +101,7 @@ var A = (function($){
 					var hide = function($el){
 						$el.removeClass('active').trigger(targetRole+'hide');
 					};
-					
-					if(controllerObj.isToggle){
+					if(controllerObj.isToggle){						
 						if($target.hasClass('active')){
 							hide($target);
 						}else{
@@ -117,9 +116,12 @@ var A = (function($){
 					}
 				}
 				
+				function _setDefaultTransition($el){
+					var targetTransition = $el.data('transition')||controllerObj.transition;
+					if(targetTransition) $el.data('transition', targetTransition);
+				};
+				
 				function _next(){														
-					var targetTransition = $target.data('transition')||controllerObj.transition||'empty';
-					$target.data('transition', targetTransition);
 					var targetRole = $target.data('role');
 					var toggleSelector = targetRole?'[data-role="'+targetRole+'"].active':'.active';
 					if($target.hasClass('active')){
@@ -127,14 +129,12 @@ var A = (function($){
 						controllerObj.complete&&controllerObj.complete($target, {result:'thesame'});
 					}else{
 						var $current = $target.siblings(toggleSelector);
-						var transitionType = A.anim.classes[targetTransition][0];	
-						A.anim.change($current, $target, false, function(){						
-
-						});				
-						_event($target, $current);
+						_setDefaultTransition($current);_setDefaultTransition($target);
+						A.anim.change($current, $target, false, function(){				
+							_event($target, $current);
+						});	
 						controllerObj.complete&&controllerObj.complete($target, {result:'success'});
 					}
-				
 				}
 				
 				if($target.length==0){
@@ -194,7 +194,6 @@ var A = (function($){
 				}else if(msg.result=='success'){
 					_add2History(hash ,false);
 				}
-				
 			}
 		},
 		article : {
@@ -234,7 +233,6 @@ var A = (function($){
 
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
- 	   	
 		        A.anim.change($current, $target, true, function(){		        			       	       	
 		        	var targetRole = $target.data('role');
 		        	$target.addClass('active').trigger(targetRole+'show');
@@ -249,10 +247,8 @@ var A = (function($){
      * 添加控制器
      * @param {Object} 控制器对象，形如{key:{selector:'',handler:function(){}}}
      */
-	controller.add = function(c){
-		
+	controller.add = function(c){	
 		$.extend(_controllers, c);
-
 	};
 	
 	/**
@@ -286,11 +282,9 @@ var A = (function($){
 					return false;
 				});
 			})(k);
-
 		}
-
 	};
-
+	
 	/**
      * 启动控制器，如果需要在启动agile的时候启动，则函数名必须叫launch
      */
@@ -299,7 +293,6 @@ var A = (function($){
 	};
 
 	A.register('Controller', controller);
-	
 })(A.$);
 
 //组件
@@ -320,7 +313,7 @@ var A = (function($){
 				if(componentObj.container){
 					$current = $el.parents(componentObj.container).first().find(curSelector);
 				}else{
-					$current = $el.siblings(curSelector);
+					$current = $el.siblings(curSelector+'.active');
 				}
 				$el.addClass('active');
 				$current.removeClass('active');
@@ -552,8 +545,7 @@ var A = (function($){
      * 初始化组件
      * @private 仅能调用一次
      */
-	_makeHandler = function(){
-		
+	_makeHandler = function(){		
 		for(var k in _components){		
 			(function(k){	
 				//定义JS调用函数
@@ -564,13 +556,10 @@ var A = (function($){
 				};
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
-
-				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){
-					
-					var curr = _components[k].handler?k:'default';
-					
-					_components[curr].handler(this, k);		
-	
+				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){	
+								
+					var curr = _components[k].handler?k:'default';				
+					_components[curr].handler(this, k);			
 					return false;		
 				});
 				
@@ -649,11 +638,12 @@ var A = (function($){
 		}
 		
 		var targetTransition = $target.data('transition');
-		
-		var transitionType = (anim.classes[targetTransition]||anim.classes['empty'])[isBack?1:0];	
-
-		anim.run($current, transitionType[0]);
-							
+		if(!anim.classes[targetTransition]){
+			callback&&callback();
+			return;
+		}
+		var transitionType = anim.classes[targetTransition][isBack?1:0];
+		anim.run($current, transitionType[0]);							
 		anim.run($target, transitionType[1], function(){	
 			callback&&callback();
 		});
@@ -1787,7 +1777,6 @@ var A = (function($){
      */
 	_events.backEvent = function(){
 		$(document).on(A.options.backEvent, function(event, func){
-
 			if(A.pop.hasPop){
 				if($('#agile_popup').data('block')==false){
 					A.closePopup();

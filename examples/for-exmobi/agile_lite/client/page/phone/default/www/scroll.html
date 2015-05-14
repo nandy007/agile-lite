@@ -77,7 +77,7 @@
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
 			$('#main_article').on('scrollInit', function(){
-				var scroll = A.Scroll('#main_article');//已经初始化后不会重新初始化，但是可以得到滚动对象
+				var scroll = A.Scroll(this);//已经初始化后不会重新初始化，但是可以得到滚动对象
 				scroll.on('scrollTop', function(){
 					A.showToast('滚动到顶部');
 				});
