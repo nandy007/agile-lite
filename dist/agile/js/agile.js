@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.2 beta
+*	Version	:	1.0.3 beta
 *	Author	:	nandy007
 *   License MIT
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.2',
+			version : '1.0.3',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -17,7 +17,6 @@ var A = (function($){
 			crossDomainHandler : null, //跨域请求的处理类
 			showPageLoading : false, //ajax默认是否有loading界面
 			viewSuffix : 'html', //加载静态文件的默认后缀
-			toastDuration : 2000, //toast显示时间
 			lazyloadPlaceholder : '' //懒人加载默认图片
 		};
 		
@@ -32,7 +31,7 @@ var A = (function($){
 	/**
      * 注册Agile框架的各个部分，可扩充
      * @param {String} 控制器的唯一标识
-     * @param {Object} 任意可操作的对象，建议面向对象变成返回的对象
+     * @param {Object} 任意可操作的对象，建议面向对象方式返回的对象
      */
 	Agile.prototype.register = function(key, obj){
 		//if(this[key]) return false;
@@ -69,7 +68,6 @@ var A = (function($){
 
 //控制器
 (function($){
-
 	/**
      * 控制器的基本结构，形如{key:{selector:'控制器选择器'，默认为body',handler:function($trigger){}}}
      * selector为选择器，handler为处理函数
@@ -184,7 +182,6 @@ var A = (function($){
 			        }else{
 			            window.history.pushState(hashObj,'',hash);
 			        }
-			        
 			        _history.unshift(hashObj);
 			    };
 				var hash = '#'+$target.attr('id');
@@ -230,7 +227,7 @@ var A = (function($){
 				if('#'+locationObj.getFragment()==_history[0].tag){
 					return;
 				}
-
+				if(_history.length<2) return;
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
 		        A.anim.change($current, $target, true, function(){		        			       	       	
@@ -238,6 +235,16 @@ var A = (function($){
 		        	$target.addClass('active').trigger(targetRole+'show');
 					$current.removeClass('active').trigger(targetRole+'hide');
 		        });
+			}
+		},
+		page : {
+			selector : '[data-toggle="page"]',
+			handler : function(el){
+				var $el = $(el);
+				var _index = $el.index();
+				var $parent = $el.parent().parent();
+				var slider = A.Slider($parent);
+				slider.index(_index);
 			}
 		}
 	};	
@@ -264,7 +271,6 @@ var A = (function($){
      * @private 只能初始化一次，启动后添加的不生效
      */
 	var _makeHandler = function(){
-
 		for(var k in _controllers){			
 			(function(k){
 				//定义JS调用函数
@@ -302,11 +308,12 @@ var A = (function($){
 	var _components = {
 		default : {
 			selector : '[data-role="component"]',
-			handler : function(el, roleType){
+			handler : function(el, roleType){				
 				var $el = $(el);
 				if($el.hasClass('active')){
 					return;
 				}
+				roleType = roleType=='default'?$el.data('role'):roleType;
 				var componentObj = _components[roleType]||{};
 				var $current;
 				var curSelector = '[data-role="'+roleType+'"].active';
@@ -365,7 +372,7 @@ var A = (function($){
 				};
 
 				var _doScroll = function($scroll){
-					var opts = options[$scroll.data('scroll')];
+					var opts = options[$scroll.data('scroll')];					
 					A.Scroll('#'+$scroll.attr('id'), opts).refresh();
 				};
 				
@@ -906,7 +913,7 @@ var A = (function($){
 							try{
 								return $inner[k].apply(this, arguments);
 							}catch(e){
-								A.alert('提示', '请在'+(eventName||A.options.readyEvent)+'之后调用'+targetName+'.'+k+'桥接函数');
+								console.log('提示', '请在'+(eventName||A.options.readyEvent)+'之后调用'+targetName+'.'+k+'桥接函数');
 							}						
 						};
 			})(k);
@@ -1157,7 +1164,6 @@ var A = (function($){
 		
 		var $scroller,$slide,outWidth,slideNum,$dots;
 
-		
 		var init = function(){
 			if(!$el.hasClass('active')) $el.addClass('active');
 			$scroller = $el.children('.scroller');
@@ -1169,17 +1175,14 @@ var A = (function($){
 			$el.height()?$scroller.height($el.height()):$el.height($scroller.height());
 		};
 		
-		var createDots = function(){
-			
-			$el.find('.dots').remove();
-			
+		var createDots = function(){			
+			$el.children('.dots').remove();			
 			var arr = [];
 			arr.push('<div class="dots">');
 			for(var i=0;i<slideNum;i++){
 				arr.push('<div class="dotty"></div>');
 			}
-			arr.push('</div>');
-			
+			arr.push('</div>');			
 			$dots = $(arr.join('')).appendTo($el).addClass(sliderOpts.dots).find('.dotty');
 		};
 		
@@ -1193,14 +1196,27 @@ var A = (function($){
 			momentum: false,
 			snap: true,
 			snapSpeed: 400,
-			keyBindings: true
+			keyBindings: true,
+			bounceEasing : 'circular'
 		};
 		
 		var myScroll = A.Scroll('#'+eId, options);
 		
-		var index = 0;
-		
+		var index = 0,outerSlider;
+		myScroll.on('beforeScrollStart', function(){
+			var $outerSlider = $el.parent().closest('[data-role="slider"]');
+			if($outerSlider.length==0) return;
+			outerSlider = A.Slider($outerSlider[0]);
+			outerSlider._execEvent('__setdiabled');
+		});
+		myScroll.on('__setdiabled', function(){
+			this.enabled = false;
+		});
+		myScroll.on('__setenabled', function(){
+			this.enabled = true;
+		});
 		myScroll.on('scrollEnd', function(){
+			if(outerSlider) outerSlider._execEvent('__setenabled');
 			index = this.currentPage.pageX;
 			var curSlide = $($slide.get(index));
 			var curDots = $($dots.get(index));
@@ -1210,13 +1226,16 @@ var A = (function($){
 				curSlide.addClass('active').trigger('slidershow').siblings('.active').removeClass('active').trigger('sliderhide');
 				curDots.addClass('active').siblings('.active').removeClass('active');
 			}
-		});
-		
+		});		
 		myScroll.on('refresh', function(){
 			init();
 			createDots();
 		});
-		
+		myScroll.index = function(){
+			if(arguments.length==0) return index;
+			myScroll.goToPage(arguments[0], 0, options.snapSpeed);
+			myScroll._execEvent('scrollEnd');
+		};
 		myScroll.goToPage(index, 0, options.snapSpeed);
 
 		if(sliderOpts.auto){
@@ -1234,53 +1253,53 @@ var A = (function($){
 	A.register('Slider', slider);
 })(A.$);
 
-
+//侧边栏
 (function($){
-    var $asideContainer,$sectionContainer,$sectionMask;
-    var init = function(){
-        $asideContainer = $('#aside_container');
-        $sectionContainer = $('#section_container');
-        if($('#section_container_mask').length==0) $sectionMask = $('<div id="section_container_mask"></div>').appendTo('#section_container');
-        //添加各种关闭事件
-        $sectionMask.on(A.options.clickEvent, function(){
-        	hideAsideMenu();
+	var $asideContainer=$('#aside_container'), $sectionContainer=$('#section_container'), $sectionMask=$('#section_container_mask');
+	
+	var Aside = function(){	
+		if($asideContainer.length==0) $asideContainer = $('<div id="aside_container"></div>').appendTo('body');
+        if($sectionContainer.length==0) $sectionContainer = $('<div id="section_container"></div>').appendTo('body');
+        if($sectionMask.length==0) $sectionMask = $('<div id="section_container_mask"></div>').appendTo('#section_container');
+  		var _this = this;
+  		$sectionMask.on(A.options.clickEvent, function(){
+        	_this.hide();
         	return false;
         });
 		
 		$sectionMask.on('swipeleft', function(e){
 			var $activeAside = $('#aside_container aside.active');
 			if($activeAside.data('position') == 'left'){
-				hideAsideMenu();
+				_this.hide();
 			}
 		});
 		
 		$sectionMask.on('swiperight', function(e){
 			var $activeAside = $('#aside_container aside.active');
 			if($activeAside.data('position') == 'right'){
-				hideAsideMenu();
+				_this.hide();
 			}
 		});
 
-
         $(document).on('swiperight','section.active[data-aside-left]',function(e){
         	if($(e.target).closest('[data-role="slider"]').length==0){
-        		showAsideMenu($(this).data('aside-left'));
+        		_this.show($(this).data('aside-left'));
         	}
         });
         
         $(document).on('swipeleft','section.active[data-aside-right]',function(e){
         	if($(e.target).closest('[data-role="slider"]').length==0){
-        		showAsideMenu($(this).data('aside-right'));
+        		_this.show($(this).data('aside-right'));
         	}
         });
-
-    };
-    /**
+	};
+	 /**
      * 打开侧边菜单
      * @param selector css选择器或element实例
+     * @param callback 动画完毕回调函数
      */
-    var showAsideMenu = function(selector){
-        var $aside = $(selector).addClass('active'),
+	Aside.prototype.show = function(selector, callback){
+		var $aside = $(selector).addClass('active'),
             transition = $aside.data('transition'),// push overlay  reveal
             position = $aside.data('position') || 'left',
             showClose = $aside.data('show-close'),
@@ -1292,33 +1311,36 @@ var A = (function($){
         };
         cssName.aside[position] = width+'px';
         cssName.section['left'] = translateX;
+        var _finish = function(){
+        	callback&&callback();$aside.trigger('asideshow');
+        };
         if(transition == 'overlay'){
-            A.anim.run($aside, cssName.aside);
+            A.anim.run($aside, cssName.aside, _finish);
         }else if(transition == 'reveal'){
-            A.anim.run($sectionContainer, cssName.section);
+            A.anim.run($sectionContainer, cssName.section, _finish);
         }else{//默认为push
             A.anim.run($aside, cssName.aside);
-            A.anim.run($sectionContainer, cssName.section);
+            A.anim.run($sectionContainer, cssName.section, _finish);
         }
 
         $('#section_container_mask').show();
         A.pop.hasAside = true;
-    };
-    /**
+	};
+	
+	/**
      * 关闭侧边菜单
-     * @param duration {int} 动画持续时间
      * @param callback 动画完毕回调函数
      */
-    var hideAsideMenu = function(duration,callback){
+    Aside.prototype.hide = function(callback){
         var $aside = $('#aside_container aside.active'),
             transition = $aside.data('transition'),// push overlay  reveal
             position = $aside.data('position') || 'left',
             translateX = position == 'left'?'-100%':'100%';
 
-        var _finishTransition = function(){
+        var _finish = function(){
             $aside.removeClass('active');
             A.pop.hasAside = false;
-            callback && callback.call(this);
+            callback&&callback.call(this);$aside.trigger('asidehide');
         };
         
         var cssName = {
@@ -1329,397 +1351,335 @@ var A = (function($){
         cssName.section['left'] = 0;
         
         if(transition == 'overlay'){
-            A.anim.run($aside, cssName.aside, _finishTransition);
+            A.anim.run($aside, cssName.aside, _finish);
         }else if(transition == 'reveal'){
-            A.anim.run($sectionContainer, cssName.section, _finishTransition);
+            A.anim.run($sectionContainer, cssName.section, _finish);
         }else{//默认为push
             A.anim.run($aside, cssName.aside);
-            A.anim.run($sectionContainer, cssName.section, _finishTransition);
+            A.anim.run($sectionContainer, cssName.section, _finish);
         }
         $('#section_container_mask').hide();
-    };  
-    
-    A.register('Aside', {
-        init : init,
-        show : showAsideMenu,
-        hide : hideAsideMenu
-    });
+    };
+    A.register('Aside', new Aside());
 })(A.$);
 
 /**
  * 弹出框组件
  */
 (function($){
-    var _popup,_mask,transition,clickMask2close,     
-        ANIM = {
-            top : ['slideDownIn','slideUpOut'],
-            bottom : ['slideUpIn','slideDownOut'],
-            center : ['bounceIn','bounceOut'],
-            left : ['slideRightIn','slideLeftOut'],
-            right : ['slideLeftIn','slideRightOut'],
-            'default' : ['fadeIn','fadeOut']
-        },
-        TEMPLATE = {
-            alert : '<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div id="popup_btn_container"><a data-toggle="closePopup" class="agile-icon agile-popup-alert-ok">${ok}</a></div>',
-            confirm : '<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div id="popup_btn_container"><a class="cancel agile-icon agile-popup-alert-cancel">${cancel}</a><a class="agile-icon agile-popup-alert-ok">${ok}</a></div>',
-            loading : '<i class="agile-icon agile-popup-spinner"></i><p>${title}</p>'
-        };
-
-    /**
-     * 全局只有一个popup实例
-     * @private
-     */
-    var _init = function(){
-        $('body').append('<div id="agile_popup"></div><div id="agile_popup_mask"></div>');
-        _mask = $('#agile_popup_mask');
-        _popup = $('#agile_popup');
-        _subscribeEvents();
-    };
-
-    var _show = function(opts){
+	var _popMap= {index:0};
+    var transitionMap = {
+    	default : ['fadeIn','fadeOut'],
+        top : ['slideDownIn','slideUpOut'],
+        bottom : ['slideUpIn','slideDownOut'],
+        center : ['bounceIn','bounceOut'],
+        left : ['slideRightIn','slideLeftOut'],
+        right : ['slideLeftIn','slideRightOut']           
+	};
+        
+        
+    var Popup = function(opts){
+    	var _index = _popMap.index++;  
     	var options = {
+    		id : '__popup__'+_index,//popup对象的id
     		html : '',//位于pop中的内容
     		pos : 'default',//pop显示的位置和样式,default|top|bottom|center|left|right|custom
     		css : {},//自定义的样式
-    		isBlock : false,//是否禁止关闭，false为不禁止，true为禁止
-    		onShow : undefined, //@event 在popup内容加载完毕，动画开始前触发
-            onHide : undefined, //@event 在popup隐藏后触发
-            onClose : undefined //@event 在popup被手动关闭后触发 
+    		isBlock : false//是否禁止关闭，false为不禁止，true为禁止
     	};
     	$.extend(options,opts);
+    	if(_popMap[options.id]) return this;
     	
-    	clickMask2close = !options.isBlock;
-    	
-    	_popup.data('block', options.isBlock);
-    	_popup.attr({'style':'','class':''});
-    	_popup.css(options.css);
-    	_popup.addClass(options.pos);
-    	   	
-    	transition = ANIM[options.pos];
-    	
-    	_mask.show();
-        
-        _popup.html(options.html).show();
-        
-        var popHeight = _popup.height();
-        //显示获取容器高度，调整至垂直居中
-        if(options.pos == 'center') _popup.css('margin-top','-'+popHeight/2+'px');
-
-        //执行onShow事件，可以动态添加内容
-        options.onShow && options.onShow.call(_popup);
-        $(document).trigger('popupshow', [_popup]);
-        options.onHide && $(document).on('popuphide',function(){
-			options.onHide();
-        	options.onHide = undefined;
+    	var _this = _popMap[options.id] = this;
+    	$('<div data-refer="'+options.id+'" class="popup-mask"></div><div id="'+options.id+'" class="agile-popup"></div>').appendTo('body');
+    	var $popup = $('#'+options.id), $mask = $('[data-refer="'+options.id+'"]');
+    	$popup.data('block', options.isBlock);
+    	$popup.css(options.css);
+    	$popup.addClass(options.pos);
+		$popup.html(options.html);
+		$mask.on(A.options.clickEvent, function(){
+        	if(options.isBlock) return false;
+        	_this.close();
+        	return false;
         });
-        options.onClose && $(document).on('popupclose',function(){
-        	options.onClose();
-        	options.onClose = undefined;
-        });
-        if(transition) A.anim.run(_popup,transition[0]);
-        
-        A.pop.hasPop = true;
-
+        $popup.on(A.options.clickEvent,'[data-toggle="popup"]',function(){
+        	_this.close();
+			return false;
+		});
+		this.options = options;
+		this.popup = $popup;
+		this.mask = $mask;
+		this._event = {};
     };
-
-    /**
-     * 关闭弹出框
-     * @param noTransition 立即关闭，无动画
-     */
-    var _hide = function(noTransition){
-        _mask.hide();
-        if(transition && !noTransition){
-            A.anim.run(_popup,transition[1],function(){
-                _popup.hide().empty();
-                A.pop.hasPop = false;
-            });
-        }else{
-            _popup.hide().empty();
-            A.pop.hasPop = false;
-        }
-        $(document).trigger('popuphide');
+    
+    Popup.prototype.on = function(eType, callback){
+    	if(this._event[eType]){
+    		this._event[eType].push(callback);
+    	}else{
+    		this._event[eType] = [callback];
+    	}
+    	return this;
     };
-    var _subscribeEvents = function(){
-    	var closePopup = function(){
-    		_hide();
-    		$(document).trigger('popupclose');
+    Popup.prototype.trigger = function(eType, callback){
+    	var arr = this._event[eType];
+    	for(var i=0;i<(arr||[]).length;i++){
+    		arr[i].apply(this);
     	};
-
-        _mask.on(A.options.clickEvent, function(){
-            clickMask2close &&  closePopup();
-            return false;
-        });
-        _popup.on(A.options.clickEvent,'[data-toggle="closePopup"]',function(){closePopup();return false;});
+    	callback&&callback.apply(this);
+    	return this;
     };
+    
+    Popup.prototype.open = function(callback){
+    	var $popup=this.popup, $mask=this.mask, options=this.options;
+    	$('body').children('.popup-mask.active').removeClass('active');
+    	$mask.addClass('active').show();
+        $popup.show();
+        var popHeight = $popup.height();
+        if(options.pos == 'center') $popup.css('margin-top','-'+popHeight/2+'px');
+        var transition = transitionMap[options.pos];
+        if(transition) A.anim.run($popup,transition[0]);
+		this.trigger('popupopen', callback);
+		A.pop.hasPop = $popup;
+		return this;
+    };
+    
+    var _finish = function($popup, $mask){
+    	$popup.remove();$mask.remove();
+    	$last = $('body').children('.popup-mask').last().addClass('active');
+    	A.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
+    };
+    
+    Popup.prototype.close = function(callback){
+    	var $popup=this.popup, $mask=this.mask, options=this.options;
+    	this.trigger('popupclose', callback);
+        var transition = transitionMap[options.pos];
+        if(transition){
+            A.anim.run($popup,transition[1],function(){ _finish($popup, $mask); });
+        }else{
+            _finish($popup, $mask);
+        }
+        delete _popMap[options.id];
+        return this;
+    };
+    
+    A.register('Popup' , Popup);
+    
+    var _ext = {};
+    
+    _ext.popup = function(opts){
+    	return new Popup(opts).open();
+    };
+    
+    _ext.closePopup = function(){
+    	var _id = A.pop.hasPop.attr('id');
+    	_popMap[_id].close();
+    };
+    
     /**
      * alert组件
      * @param title 标题
      * @param content 内容
      */
-    var _alert = function(title,content,btnName){
-        var markup = A.util.provider(TEMPLATE.alert, {title : title, content:content, ok:btnName || '确定'});
-        _show({
-            html : markup,
+    _ext.alert = function(title,content){
+        return new Popup({
+            html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
             pos : 'center',
             isBlock : true
-        });
+        }).open();
     };
-
+    
     /**
      * confirm 组件
      * @param title 标题
      * @param content 内容
-     * @param okFunc 确定按钮handler
-     * @param cancelFunc 取消按钮handler
+     * @param okCallback 确定按钮handler
+     * @param cancelCallback 取消按钮handler
      */
-    var _confirm = function(title,content,okFunc,cancelFunc){
-        var markup = A.util.provider(TEMPLATE.confirm, {title : title, content:content, cancel:'取消', ok:'确定'});
-        _show({
-            html : markup,
+    _ext.confirm = function(title,content,okCallback,cancelCallback){
+        return new Popup({
+            html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
             pos : 'center',
             isBlock : true
-        });
-        $('#popup_btn_container .agile-popup-alert-ok').on(A.options.clickEvent, function(){
-            _hide();
-            okFunc.call(this);
-            return false;
-        });
-        $('#popup_btn_container .agile-popup-alert-cancel').on(A.options.clickEvent, function(){
-            _hide();
-            cancelFunc.call(this);
-            return false;
-        });
+        }).open(function(){    	
+        	var $popup = $(this.popup), _this=this;
+        	$popup.find('.popup-handler-ok').on(A.options.clickEvent, function(){
+	            okCallback&&okCallback.call(this);
+	        });
+	        $popup.find('.popup-handler-cancel').on(A.options.clickEvent, function(){
+	            cancelCallback&&cancelCallback.call(this);
+	        });
+        });        
     };
-
 
     /**
      * loading组件
      * @param text 文本，默认为“加载中...”
-     * @param closeCallback 函数，当loading被人为关闭的时候的触发事件
+     * @param callback 函数，当loading被人为关闭的时候的触发事件
      */
-    var _loading = function(text,closeCallback){
-        var markup = A.util.provider(TEMPLATE.loading, {title : text||'加载中'});
-        _show({
-            html : markup,
+    _ext.showMask = function(text,callback){
+    	if(typeof text=='function'){
+    		callback = text;
+    		text = '加载中';
+    	}
+        return new Popup({
+        	id : 'popup_loading',
+            html : A.util.provider('<i class="popup-spinner"></i><p>${title}</p>', {title : text||'加载中'}),
             pos : 'loading',
-            isBlock : true,
-            onClose : closeCallback
-        });
+            isBlock : true
+        }).on('popupclose', function(){
+        	callback&&callback();
+        }).open();
+    };
+    
+    _ext.hideMask = function(callback){
+    	_popMap['popup_loading'].close();
     };
 
     /**
      * actionsheet组件
      * @param buttons 按钮集合
-     * [{color:'red',text:'btn',handler:function(){}},{color:'red',text:'btn',handler:function(){}}]
+     * [{css:'red',text:'btn',handler:function(){}},{css:'red',text:'btn',handler:function(){}}]
      */
-    var _actionsheet = function(buttons,showCancel){
-        var markup = '<div class="actionsheet"><div class="actionsheet_group">';
-        var defaultCalssName = "button block agile-popup-actionsheet-normal";
-        var defaultCancelCalssName = "button block agile-popup-actionsheet-cancel";
+    _ext.actionsheet = function(buttons,showCancel){
+        var markMap = ['<div class="actionsheet"><div class="actionsheet-group">'];
+        var defaultCalssName = "button block popup-actionsheet-normal";
+        var defaultCancelCalssName = "button block popup-actionsheet-cancel";
         var showCancel = showCancel==false?false:(showCancel||true);
         $.each(buttons,function(i,n){
-            markup += '<button class="'+(n.css||defaultCalssName)+'">'+ n.text +'</button>';
+            markMap.push('<button data-toggle="popup" class="'+(n.css||defaultCalssName)+'">'+ n.text +'</button>');
         });
-        markup += '</div>';
-        if(showCancel) markup += '<button class="'+(typeof showCancel=='string'?showCancel:defaultCancelCalssName)+'">取消</button>';
-        markup += '</div>';
-        
-        _show({
-            html : markup,
+        markMap.push('</div>');
+        if(showCancel) markMap.push('<button data-toggle="popup" class="'+(typeof showCancel=='string'?showCancel:defaultCancelCalssName)+'">取消</button>');
+        markMap.push('</div>');
+        return new Popup({
+            html : markMap.join(''),
             pos : 'bottom',
             css : {'background':'transparent'},
-            onShow : function(){           	
-                $(this).find('button').each(function(i,button){              	
-                    $(button).on(A.options.clickEvent,function(){
-                        if(buttons[i] && buttons[i].handler){
-                            buttons[i].handler.call(button);
-                        }
-                        _hide();
-                        return false;
-                    });
+       	}).open(function(){           	
+ 			$(this.popup).find('button').each(function(i,button){              	
+            	$(button).on(A.options.clickEvent,function(){
+                	if(buttons[i] && buttons[i].handler){
+                    	buttons[i].handler.call(button);
+                    }
                 });
-            }
-        });
+            });
+    	});
     };
     
     /**
      * 带箭头的弹出框
      * @param html 弹出的内容可以是html文本也可以输button数组
      * @param el 弹出位置相对的元素对象
-     * @param onShow [可选] 显示之前执行
      */
-    var _popover = function(html,el,onShow){
-    	var markup = [];
-    	markup.push('<div class="popover-angle"></div>');
+    _ext.popover = function(html,el){
+    	var markMap = [];
+    	markMap.push('<div class="popover-angle"></div>');
     	if(typeof html=='object'){
-    		markup.push('<ul class="popover-items">');
+    		markMap.push('<ul class="popover-items">');
     		for(var i=0;i<html.length;i++){
-    			markup.push('<li>'+html[i].text+'</li>');
+    			markMap.push('<li data-toggle="popup">'+html[i].text+'</li>');
     		}
-    		markup.push('</ul>');
+    		markMap.push('</ul>');
     	}else{
-    		markup.push(html);
+    		markMap.push(html);
     	}
 
-        _show({
-            html : markup.join(''),
-            onShow : function(){     
-            	
-            	var $del = $(document);
-            	var dHeight = $del.height();
-            	var dWidth = $del.width();
-
-            	var $rel = $(el);
-            	var rHeight = $rel.height();
-            	var rWidth = $rel.width();
-    			var rTop = $rel.offset().top;
-    			var rLeft = $rel.offset().left;
-    			var rCenter = rLeft+(rWidth/2);
-    			var $el = $(this).addClass('popover');
-    			var $angle = $($el.find('.popover-angle').get(0));
-    			var gapH = $angle.height()/2;
-    			var gapW = Math.ceil($angle.width()*Math.sqrt(2))-4;
-
-				var height = $el.height();
-            	var width = $el.width();
-				
-				var posX = rCenter==dWidth/2?'center':(rCenter>dWidth/2?'right':'left');
-    			var posY = dHeight-height-rHeight<0&&rTop>height?'up':'down';
-    			
-    			var elCss = {}, anCss = {};
-    			
-    			if(posY=='up'){
-    				elCss.top = rTop - (height + gapH);
-    				anCss.bottom = -gapH+4;
-    			}else{
-    				elCss.top = rTop + (rHeight + gapH);
-    				anCss.top = -gapH+4;
-    			}
-    			
-    			if(posX=='center'){
-    				elCss.left = '50%';
-    				elCss['margin-left'] = -width/2;
-    				anCss.left = (width-gapW)/2;
-    			}else if(posX=='right'){
-    				elCss.right = rCenter-width>0?dWidth-rLeft-rWidth:4;
-    			}else if(posX=='left'){
-					elCss.left = dWidth-rCenter-width>0?rLeft:4;
-    			}
-    			
-    			$el.css(elCss);
-    			
-    			var center = $el.offset().left+width/2;
-    			anCss.left = anCss.left||width/2+(rCenter-center)-gapW/2;	
-    			$angle.css(anCss);
-
-                $(this).find('.popover-items li').each(function(i,button){             	
-                    $(button).on(A.options.clickEvent,function(){
-                        if(html[i] && html[i].handler){
-                            html[i].handler.call(button);
-                        }
-                        _hide();
-                        return false;
-                    });
+        return new Popup({
+            html : markMap.join('')
+        }).on('popupopen', function(){
+        	var $del = $(document);
+			var dHeight = $del.height();
+			var dWidth = $del.width();
+			
+			var $rel = $(el);
+			var rHeight = $rel.height();
+			var rWidth = $rel.width();
+			var rTop = $rel.offset().top;
+			var rLeft = $rel.offset().left;
+			var rCenter = rLeft+(rWidth/2);
+			
+			var $el = $(this.popup).addClass('popover');
+			var $angle = $($el.find('.popover-angle').get(0));
+			var gapH = $angle.height()/2;
+			var gapW = Math.ceil(($angle.width()-2)*Math.sqrt(2));			
+			var height = $el.height();
+			var width = $el.width();
+			
+			var posY = dHeight-height-rHeight<0&&rTop>height?'up':'down';			
+			var elCss = {}, anCss = {};   		
+    		if(posY=='up'){
+    			elCss.top = rTop - (height + gapH);
+    			anCss.bottom = -gapH+4;
+    		}else{
+    			elCss.top = rTop + (rHeight + gapH);
+    			anCss.top = -gapH+4;
+    		}
+    		elCss.left = rCenter-width/2;
+			if(elCss.left+width>=dWidth-4){
+				elCss.left = dWidth - width - 4;
+			}else if(elCss.left<4){
+				elCss.left = 4;
+			}			
+			anCss.left = rCenter - elCss.left - gapW/2;
+    		$el.css(elCss);
+    		$angle.css(anCss);
+            $el.find('.popover-items li').each(function(i,button){             	
+                $(button).on(A.options.clickEvent,function(){
+                    if(html[i] && html[i].handler){
+                        html[i].handler.call(button);
+                    }
                 });
-            }
-        });
+            });
+        }).open();
     };
-
-    _init();
-    	
-	var _ext = {};
 	
-	/**
-     * 显示loading框
-     * @param text
-     */
-    _ext.showMask = function(text, closeCallback){
-    	if(typeof text=='function'){
-    		closeCallback = text;
-    		text = '';
-    	}
-        _loading(text, closeCallback);
-    };
-    /**
-     * 关闭loading框
-     */
-    _ext.hideMask = function(){
-        _hide(true);
-    };
-    
-    _ext.alert = _alert;
-    
-    _ext.confirm = _confirm;
-    /**
-     * 弹出窗口
-     * @param options
-     */
-    _ext.popup = _show;
-    /**
-     * 关闭窗口
-     */
-    _ext.closePopup = _hide;
-    /**
-     * 带箭头的弹出框
-     * @param html 弹出的内容可以是html文本也可以输button数组
-     * @param el 弹出位置相对的元素对象
-     * @param onShow [可选] 显示之前执行
-     */
-    _ext.popover = _popover;
-    
-    /**
-     * actionsheet
-     * @param buttons 按钮组
-     */
-    _ext.showActionsheet = function(buttons){
-        _actionsheet(buttons, true);
-    };
-    
-    
-    
-    for(var k in _ext){
-    	A.register(k, _ext[k]);
-    }
+	for(var k in _ext){
+		A.register(k, _ext[k]);
+	}
     
 })(A.$);
 
+/*
+ * Toast提示框
+ * */
 (function($){
-    var _toast,timer;
-
-    var _init = function(){
-        //全局只有一个实例
-        $('body').append('<div id="agile_toast"></div>');
-        _toast = $('#agile_toast');
+    var _toastMap= {index:0};
+    var Toast = function(opts){
+    	var _index = _toastMap.index++;
+    	var options = {
+    		id : '__toast__'+_index,//popup对象的id
+    		isBlock : false,
+    		duration : 2000,
+    		css : '',
+    		text : ''
+    	};
+    	$.extend(options, opts);
+    	if(_toastMap[options.id]) return this;
+    	var _this = _toastMap[options.id] = this;
+    	var $toast = this.toast = $('<div id="'+options.id+'" class="agile-toast"><a>'+options.text+'</a></div>').appendTo('body');
+    	$toast.addClass('class', options.css);
+    	this.options = options;
     };
-
-    /**
-     * 关闭消息提示
-     */
-    var _hide = function(){
-        A.anim.run(_toast,'scaleOut',function(){
-            _toast.hide();
-           _toast.empty();
+    Toast.prototype.show = function(){
+    	var $toast = this.toast, options = this.options;
+        $toast.show();
+        var _this = this;
+        A.anim.run($toast,'scaleIn', function(){
+        	if(options.isBlock==false) setTimeout(function(){ _this.hide();}, options.duration);
         });
+        return this;
     };
-    /**
-     * 显示消息提示
-     * @param type 类型  toast|alarm
-     * @param text 文字内容
-     * @param duration 持续时间 为0则不自动关闭,默认为3000ms
-     */
-    var _show = function(type,text,duration){
-    	duration = duration||3000;
-        if(timer) clearTimeout(timer);
-        _toast.attr('class',type).html('<a>'+text+'</a>').show();
-        A.anim.run(_toast,'scaleIn');
-        if(duration !== 0){//为0 不自动关闭
-            timer = setTimeout(_hide,duration || A.options.toastDuration);
-        }
+    Toast.prototype.hide = function(){
+    	var $toast = this.toast, options = this.options;
+    	A.anim.run($toast,'scaleOut',function(){
+        	$toast.remove();
+        	delete _toastMap[options.id];
+        });
+        return this;
     };
+    
+    A.register('Toast', Toast);
 
-    _init();
-    
-    
     var _ext = {};
     /**
      *  显示消息
@@ -1727,10 +1687,17 @@ var A = (function($){
      * @param duration 持续时间
      */
     _ext.showToast = function(text,duration){
-        _show('toast',text,duration);
+        new Toast({
+        	text : text,
+        	duration : duration
+        }).show();
     };   
     _ext.alarmToast = function(text,duration){
-        _show('alarm',text,duration);
+        new Toast({
+        	text : text,
+        	duration : duration,
+        	css : 'alarm'
+        }).show();
     };
     
     for(var k in _ext){
@@ -1744,7 +1711,6 @@ var A = (function($){
  * */
 (function($){
 	var event = {},_events = {};
-
 	 /**
      * 处理浏览器的后退事件
      * @private
@@ -1778,10 +1744,9 @@ var A = (function($){
 	_events.backEvent = function(){
 		$(document).on(A.options.backEvent, function(event, func){
 			if(A.pop.hasPop){
-				if($('#agile_popup').data('block')==false){
+				if(A.pop.hasPop.data('block')==false){
 					A.closePopup();
 				}
-				
 			}else if($('.modal.active').length>0){
 				A.Controller.modal('#'+$('.modal.active').first().attr('id'));
 			}else if(A.pop.hasAside){
@@ -1805,25 +1770,24 @@ var A = (function($){
      * 初始化相关组件
      */
 	_events.initComponents = function(){
-
 		$(document).on(A.options.agileReadyEvent, function(){
 			//初始化section
 			var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
 			var $section = $(sectionSelecor+'.active').first();
 			if($section.length==0) $section = $(sectionSelecor).first();
 			A.Controller.section('#'+$section.attr('id'));
-			//初始化侧边栏
-			A.Aside.init();
-		});
-		
+		});		
 		$(document).on('sectionload', 'section', function(){
 			//初始化article
 			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
-		});
-		
+		});		
 		$(document).on('modalload', '.modal', function(){
 			//初始化article
 			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
+		});
+		$(document).on('slidershow', '[data-role="page"]', function(){
+			var id = $(this).attr('id');
+			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
 	};
 	
@@ -1966,7 +1930,6 @@ var A = (function($){
 			return null;
 		}
 	};
-
 	JSON.stringify = function(o){
 		var r = [];
 		if(typeof o =="string") return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\"";
@@ -1986,6 +1949,5 @@ var A = (function($){
 		}
 		return r;
 	};
-	
 	A.register('JSON', JSON);
 })();

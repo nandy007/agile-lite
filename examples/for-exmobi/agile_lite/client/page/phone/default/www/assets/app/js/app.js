@@ -1,6 +1,6 @@
 //启动agile
 var $config = {
-	exmobiSevice : 'http://${$native.getAppSetting().domain}/process/service/${ClientUtil.getAppId()}'
+	exmobiSevice : '${$native.getAppSetting().domain}/process/service/${ClientUtil.getAppId()}'
 };
 A.launch({
 	readyEvent : 'ready',//触发ready的事件，在ExMobi中为plusready

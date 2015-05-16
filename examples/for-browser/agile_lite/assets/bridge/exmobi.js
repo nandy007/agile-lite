@@ -172,7 +172,7 @@ var $native = (function(){
 	
 	//打开文件选择
 	_native.openFileGroupSelector = function(callback){
-		A.showActionsheet(
+		A.actionsheet(
 			[
 				{
 					text : '拍照',

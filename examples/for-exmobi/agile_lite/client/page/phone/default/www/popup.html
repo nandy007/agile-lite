@@ -45,7 +45,7 @@
 		            <div style="text-align:center;font-size:20px;color:#3498DB;font-weight:600;margin:5px 0;">登录</div>
 		            <input type="text" name="name" class="full-width" placeholder="用户名"><div class="rowspace"></div>
 		            <input type="password" name="password" class="full-width" placeholder="密码"><div class="rowspace"></div>
-		            <button class="width-full" data-toggle="closePopup">登录</button>
+		            <button class="width-full">登录</button>
 		        </div>
 		    	</script>
 			</section>
@@ -89,18 +89,35 @@
 			    return false;
 			});
 			$('#btn_center').tap(function(){
-				A.popup({
+				var $popup = A.popup({
 			   		html: $('#login_template').html(),
 			        css : {width:'auto'},
 			        pos : 'center'
 			    });
+			    $popup.popup.find('button').on(A.options.clickEvent, function(){
+			    	A.confirm('提示','确定登录吗？', function(){
+			    		$popup.close();
+			    	});
+			    });
 			    return false;
 			});
 			$('#btn_t_top').tap(function(){
-			    A.popup({
+			    var $popup = new A.Popup({
 			    	html: '这是一个来自顶部的弹出框',
 			        pos : 'top',
-			    });
+			    }).on('popupopen', function(){
+			    	A.showToast('打开的时候提示');
+			    }).on('popupclose', function(){
+			    	A.showToast('关闭的时候提示');
+			    }).open(function(){
+			    	//this对象就是A.popup对象，this.popup就是弹出窗的$DOM对象
+			    	//alert(this.popup.html());//得到就是弹出窗的代码片段
+					A.showToast('打开的时候提示');
+				});
+				setTimeout(function(){
+					//手动关闭弹出窗
+					$popup.close();
+				}, 2000);
 			    return false;
 			});
 			$('#btn_t_bottom').tap(function(){
@@ -125,7 +142,7 @@
 			    return false;
 			});
 			$('#btn_actionsheet').tap(function(){
-			    A.showActionsheet([{
+			    A.actionsheet([{
 					text : '这是第一个菜单',
 			        handler : function(){
 			        	A.showToast('这是第一个菜单！');

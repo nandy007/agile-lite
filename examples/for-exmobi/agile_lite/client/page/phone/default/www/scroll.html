@@ -19,8 +19,22 @@
 				    	<a data-toggle="back" href="#"><i class="iconfont iconline-arrow-left"></i></a>
 				    	<h1>滚动组件</h1>
 				    </div>
+				    <div id="tabbarOuter" data-scroll="horizontal">
+				    	<div class="scroller" style="width:500px;">
+						    <div class="tabbar" style="width:100%;">
+						    	<a class="tab active" data-role="tab" href="#">头条</a>
+						    	<a class="tab" data-role="tab" href="#">南京</a>
+						    	<a class="tab" data-role="tab" href="#">江苏</a>
+						    	<a class="tab" data-role="tab" href="#">国内</a>
+						    	<a class="tab" data-role="tab" href="#">国际</a>
+						    	<a class="tab" data-role="tab" href="#">国际</a>
+						    	<a class="tab" data-role="tab" href="#">国际</a>
+						    	<a class="tab" data-role="tab" href="#">国际</a>
+						    </div>
+					    </div>
+				    </div>
 				</header>
-				<article data-role="article" id="main_article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
+				<article data-role="article" id="main_article" data-scroll="verticle" class="active" style="top:88px;bottom:0px;">
 					<div class="scroller">
 						<ul class="listitem">
 							<li class="sliver">用法</li>
@@ -34,7 +48,6 @@
 					        <li>
 					            <div class="text">horizontal：横滚动条</div>
 					        </li>
-					        <!-- 
 					        <li>
 					            <div class="text">scroll：纵向、横滚动条</div>
 					        </li>
@@ -55,7 +68,7 @@
 					        <li>
 					            <div class="text">扩展支持：scrollInit、scrollTop和scrollBottom</div>
 					        </li>
-					        -->
+
 					    </ul>
 					</div>  
 
@@ -84,6 +97,10 @@
 				scroll.on('scrollBottom', function(){
 					A.showToast('滚动到底部');
 				});
+			});
+			
+			$('#scroll_section').on('sectionshow', function(){
+				A.Component.scroll('#tabbarOuter');
 			});
 		</script>
 	</body>

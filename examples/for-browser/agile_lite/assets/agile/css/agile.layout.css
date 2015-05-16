@@ -334,8 +334,8 @@ aside[data-position][data-transition="reveal"]{
 
 
 /*弹出窗*/
-#agile_popup_mask{
-	background: #000;
+.popup-mask{
+	background-color:transparent;
     display: none;
     position: absolute;
     z-index: 90;
@@ -343,30 +343,31 @@ aside[data-position][data-transition="reveal"]{
     right:0;
     top:0;
     bottom: 0;
-    opacity: .4;
 }
-#agile_popup{
-	display: none;
+.popup-mask.active{
+	background: #000;
+	opacity: .4;
+}
+.agile-popup{
+	display:none;
     position: absolute;
-    z-index: 98;
+    z-index: 90;
     min-height: 50px;
     background-color: #e8e8e8;
-    -webkit-transform:translateY(0%);
+    -webkit-transform:translateY(0%) !important;
+    -webkit-transform:translateX(0%) !important;
 }
-#agile_popup:active{
-	background-color: #e8e8e8;
-}
-#agile_popup.top {
+.agile-popup.top {
 	top:0;
    	left:0;
     right:0;
 }
-#agile_popup.bottom {
+.agile-popup.bottom {
 	bottom:0;
     left:0;
     right:0;
 }
-#agile_popup.center {
+.agile-popup.center {
 	top:50%;
     left:5%;
     right:5%;
@@ -375,12 +376,12 @@ aside[data-position][data-transition="reveal"]{
     margin : 0 auto;
     -webkit-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.6);
 }
-#agile_popup.left {
+.agile-popup.left {
     left:0;
     top:0;
     bottom:0;
 }
-#agile_popup.right {
+.agile-popup.right {
     right:0;
     top:0;
     bottom:0;
@@ -397,12 +398,12 @@ aside[data-position][data-transition="reveal"]{
     padding: 0 10px 10px 10px;
     line-height: 1.2em;
 }
-#popup_btn_container{
+.popup-handler{
     text-align: center;
     display: -webkit-box;
     display: box;
 }
-#popup_btn_container > a{
+.popup-handler > a{
     -webkit-box-flex:1;
     box-flex:1;
     padding: 12px;
@@ -414,16 +415,16 @@ aside[data-position][data-transition="reveal"]{
     color: #007aff;
     font-size: 17px;
 }
-#popup_btn_container > a:last-child{
+.popup-handler > a:last-child{
     border-right: 0 none;
 }
-.agile-popup-alert-ok:before{
+.popup-handler-ok:before{
 	
 }
-.agile-popup-alert-cancel:before{
+.popup-handler-cancel:before{
 
 }
-.agile-popup-spinner{
+.popup-spinner{
 	display: inline-block;
 	width: 54px;  
     height: 54px;  
@@ -433,7 +434,7 @@ aside[data-position][data-transition="reveal"]{
     -webkit-animation: spinner 3s infinite linear;
     animation: spinner 3s infinite linear;
 }
-.agile-popup-close:before{
+.popup-handler-close:before{
 	content: "×";
 	color:#fff;
 	opacity:0.6;
@@ -442,11 +443,11 @@ aside[data-position][data-transition="reveal"]{
 .actionsheet{
     padding: 0 6px;
 }
-.actionsheet .actionsheet_group > button:first-child{
+.actionsheet .actionsheet-group > button:first-child{
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
 }
-.actionsheet .actionsheet_group > button:last-child{
+.actionsheet .actionsheet-group > button:last-child{
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	margin-bottom:6px !important;
@@ -472,7 +473,7 @@ aside[data-position][data-transition="reveal"]{
 	margin-bottom:6px !important;
 	border-radius: 4px;
 }
-#agile_popup.loading{
+.agile-popup.loading{
     top:50%;
     left:5%;
     right:5%;
@@ -486,16 +487,16 @@ aside[data-position][data-transition="reveal"]{
     padding:13px;
     opacity: .5;
 }
-#agile_popup.loading p{
+.agile-popup.loading p{
     color: #BDC3C7;
 }
-#agile_popup.loading i.icon{
+.agile-popup.loading i.icon{
 	text-align: center;
     color: #fff;
 }
-#agile_popup.popover{
+.agile-popup.popover{
 	border-radius: 6px;
-	min-width: 50%;
+	min-width: 100px;
 }
 .popover-angle{
 	display:inline-block;
@@ -521,7 +522,7 @@ aside[data-position][data-transition="reveal"]{
 .popover-items li:last-child{
 	border-bottom: none;
 }
-#agile_toast{
+.agile-toast{
     display: none;
     position: absolute;
     z-index: 99;
@@ -531,9 +532,8 @@ aside[data-position][data-transition="reveal"]{
     text-align: center;
     width: 100%;
     left: 0;
-    
 }
-#agile_toast>a{
+.agile-toast>a{
     padding: 10px 15px;
     background: #222;
     opacity :.7;
@@ -544,7 +544,7 @@ aside[data-position][data-transition="reveal"]{
     text-align: center;
     border-radius: 20px;
 }
-#agile_toast.alarm>a{background-color: #E74C3C;!important}
+.agile-toast.alarm>a{background-color: #E74C3C;!important}
 
 
 
