@@ -48,7 +48,7 @@ var $native = (function(){
 	};
 	
 	//要在新的uixml打开webview
-	_native.openWebview = function(hash, isBlank, transition){
+	_native.openWebView = _native.openWebview = function(hash, isBlank, transition){
 	
 		var urlObj = A.util.parseURL(hash);
 		
@@ -80,7 +80,7 @@ var $native = (function(){
 		html.push('</script>');
 		html.push('</head>');
 		html.push('<body style="margin:0px;padding:0px;">');
-		html.push('<webview id="browser" url="'+url+'" backmonitor="true"/>');// backMonitor="true"
+		html.push('<webview id="browser" url="'+url.replace(/\&/g,'&amp;')+'" backmonitor="true"/>');// backMonitor="true"
 		html.push('</body>');
 		html.push('</html>');
 		
@@ -230,6 +230,14 @@ var $native = (function(){
 		
 	};
 	
+	_native.getParameter = function(k){
+		return ExMobiWindow.getParameter(k);
+	};
+	
+	_native.getParameters = function(){
+		return ExMobiWindow.getParameters();
+	};
+	
 	_native.session = function(){
 		if(arguments.length==1){
 			try{
@@ -272,6 +280,15 @@ var $native = (function(){
 				return CacheUtil.getCache(k);
 			}
 		}
+	};
+	
+	_native.exit = function(msg){
+		if(msg){
+			ClientUtil.exit(msg);
+		}else{
+			ClientUtil.exitNoAsk();
+		}
+	
 	};
 	
 	return A.util.readyAlarm(_native, '$native', 'plusready');
@@ -414,4 +431,3 @@ var $util = (function(){
 	return A.util.readyAlarm(_util, '$util', 'plusready');
 	
 })();
-

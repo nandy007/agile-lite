@@ -53,6 +53,12 @@
 	
 				$native.openNativePage(hash, isBlank);
 			}
+		},
+		exit : {
+			selector : '[data-toggle="exit"]',
+			handler : function(){
+				$native.exit('是否退出程序？');
+			}
 		}
 	});
 	

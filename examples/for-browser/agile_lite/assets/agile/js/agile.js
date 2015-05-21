@@ -1,14 +1,14 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.3 beta
+*	Version	:	1.0.4 beta
 *	Author	:	nandy007
-*   License MIT
+*   License MIT @ http://www.exmobi.cn/agile-lite/index.html
 */
 var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.3',
+			version : '1.0.4',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -57,7 +57,9 @@ var A = (function($){
 		if(A.options.complete==true) return;
 		$.extend(this.options, opts);
 		var _this = this;
-		if($(document)[this.options.readyEvent]){
+		if(!this.options.readyEvent){
+			_doLaunch();
+		}else if($(document)[this.options.readyEvent]){
 			$(document)[this.options.readyEvent](_doLaunch);
 		}else{
 			$(document).on(this.options.readyEvent, _doLaunch);
@@ -245,6 +247,13 @@ var A = (function($){
 				var $parent = $el.parent().parent();
 				var slider = A.Slider($parent);
 				slider.index(_index);
+			}
+		},
+		scrollTop : {
+			selector : '[data-toggle="scrollTop"]',
+			handler : function(el){
+				var scroll = A.Scroll(el);
+				scroll.scrollTo(0, 0, 1000, IScroll.utils.ease.circular);
 			}
 		}
 	};	
@@ -528,6 +537,28 @@ var A = (function($){
 		    			_doLazyload($(lazyloads[i]));
 		    		}
 		    	}		    	
+			}
+		},
+		scrollTop : {
+			selector : '[data-role="article"].active',
+			event : 'articleload',
+			handler : function(el, roleType){				
+				var _work = function($el){
+					$el.on(A.options.clickEvent, function(){ $el.removeClass('active');});
+					var scroll = A.Scroll($el.attr('href'));
+					scroll.on('scrollEnd', function(){
+						$el[this.y<-120?'addClass':'removeClass']('active');
+					});
+				};
+				var $el = $(el);
+				if($el.data('role')=='scrollTop'){
+					_work($el);
+				}else{
+					var comps = $el.find('[data-role="scrollTop"]');
+					for(var i=0;i<comps.length;i++){
+						_work($(comps[i]));
+					}
+				}
 			}
 		}
 	};
@@ -949,7 +980,8 @@ var A = (function($){
 		var options = {
 			mouseWheel: true,
 			scrollbars : 'custom',
-			fadeScrollbars : true
+			fadeScrollbars : true,
+			bindToWrapper : true
 		};
 		$.extend(options, $el.data('scroll-options')||{});
 		$.extend(options, opts||{});

@@ -1,4 +1,7 @@
-﻿/*******************alige框架样式-start*******************/
+﻿/*
+ * for Agile Lite 1.0.4 beta
+ * */
+/*******************alige框架样式-start*******************/
 
 /****  for section start ***/
 @-webkit-keyframes emptyAnim{
@@ -772,3 +775,12 @@ aside[data-position][data-transition="reveal"]{
 	opacity: .9;
 }
 /* slider end*/
+/* scrollTop start */
+[data-role="scrollTop"]{
+	display:none;
+}
+[data-role="scrollTop"].active{
+	position:fixed;
+	display:inline-block;
+}
+/* scrollTop end */
