@@ -980,8 +980,7 @@ var A = (function($){
 		var options = {
 			mouseWheel: true,
 			scrollbars : 'custom',
-			fadeScrollbars : true,
-			bindToWrapper : true
+			fadeScrollbars : true
 		};
 		$.extend(options, $el.data('scroll-options')||{});
 		$.extend(options, opts||{});
