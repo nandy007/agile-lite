@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.4 beta
+*	Version	:	1.0.5 beta
 *	Author	:	nandy007
 *   License MIT @ http://www.exmobi.cn/agile-lite/index.html
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.4',
+			version : '1.0.5',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -877,7 +877,6 @@ var A = (function($){
     	var _isBlock = util.checkBoolean(opts.isBlock,A.options.showPageLoading);
 
     	opts.dataType = (opts.dataType||'text').toLowerCase();
-		if(_isBlock) A.showMask();
     	var ajaxData = {
                 url : opts.url,
                 timeout : 20000,
@@ -892,11 +891,9 @@ var A = (function($){
                 	opts.error && opts.error(null);
                 }
            };
-
+        if(opts.data) ajaxData.data = opts.data;
     	var isCross = _isCrossDomain(opts.url);
-
-    	var handler = A.ajax;
-		
+    	var handler = A.ajax;		
     	if(isCross){
     		ajaxData.dataType = A.options.crossDomainHandler?ajaxData.dataType:'jsonp';
     		handler = A.options.crossDomainHandler||handler;
@@ -904,9 +901,7 @@ var A = (function($){
     	if(ajaxData.dataType.toLowerCase()=='jsonp'){
     		ajaxData.jsonp = opts.jsonp||'agilecallback';
     	}
-
     	if(_isBlock) A.showMask();
-
     	handler(ajaxData);
     };
     
