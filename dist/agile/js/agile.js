@@ -219,12 +219,11 @@ var A = (function($){
 		back : {
 			selector : '[data-toggle="back"]',
 			handler : function(hash){
-				if(hash){
+				if(arguments.length==0||typeof hash=='string'||typeof hash=='undefined'){
 					$(document).trigger(A.options.backEvent);
 					return;
 				}
-				var _history = _controllers.section.history;
-				
+				var _history = _controllers.section.history;				
 				var locationObj = A.util.parseURL(location.href);
 				if('#'+locationObj.getFragment()==_history[0].tag){
 					return;
@@ -1419,8 +1418,7 @@ var A = (function($){
     		isBlock : false//是否禁止关闭，false为不禁止，true为禁止
     	};
     	$.extend(options,opts);
-    	if(_popMap[options.id]) return this;
-    	
+    	if(_popMap[options.id]) return _popMap[options.id];
     	var _this = _popMap[options.id] = this;
     	$('<div data-refer="'+options.id+'" class="popup-mask"></div><div id="'+options.id+'" class="agile-popup"></div>').appendTo('body');
     	var $popup = $('#'+options.id), $mask = $('[data-refer="'+options.id+'"]');
@@ -1462,6 +1460,7 @@ var A = (function($){
     
     Popup.prototype.open = function(callback){
     	var $popup=this.popup, $mask=this.mask, options=this.options;
+    	if($mask.hasClass('active')) return _popMap[options.id];
     	$('body').children('.popup-mask.active').removeClass('active');
     	$mask.addClass('active').show();
         $popup.show();
@@ -1490,7 +1489,7 @@ var A = (function($){
             _finish($popup, $mask);
         }
         delete _popMap[options.id];
-        return this;
+        //return this;
     };
     
     A.register('Popup' , Popup);
@@ -1503,7 +1502,7 @@ var A = (function($){
     
     _ext.closePopup = function(){
     	var _id = A.pop.hasPop.attr('id');
-    	_popMap[_id].close();
+    	if(_popMap[_id]) _popMap[_id].close();
     };
     
     /**
@@ -1563,7 +1562,7 @@ var A = (function($){
     };
     
     _ext.hideMask = function(callback){
-    	_popMap['popup_loading'].close();
+    	if(_popMap['popup_loading']) _popMap['popup_loading'].close();
     };
 
     /**
