@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.5 beta
+*	Version	:	1.0.6 beta
 *	Author	:	nandy007
 *   License MIT @ http://www.exmobi.cn/agile-lite/index.html
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.5',
+			version : '1.0.6',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -357,7 +357,7 @@ var A = (function($){
 				};
 				
 				var options = {
-					verticle : {},
+					verticle : { bindToWrapper : true },
 					horizontal : {
 						scrollbars : false,
 						scrollX : true,
@@ -1165,12 +1165,10 @@ var A = (function($){
 (function($){
 	
 	var _index_key_ = {};
-	
 	/*
      * slider滑动容器
      * @param selector，slider容器的id选择器
      * @param 选项，auto：是否自动播放|自动播放的毫秒数；dots：指示点显示的位置，center|right|left|hide；change：每次切换slider后的事件，{auto:false,dots:'right',change:function(){}}
-     * 
      * */
 	var slider = function(selector, opts){
 		var $el = $(selector);
@@ -1207,7 +1205,7 @@ var A = (function($){
 			for(var i=0;i<slideNum;i++){
 				arr.push('<div class="dotty"></div>');
 			}
-			arr.push('</div>');			
+			arr.push('</div>');
 			$dots = $(arr.join('')).appendTo($el).addClass(sliderOpts.dots).find('.dotty');
 		};
 		
@@ -1802,11 +1800,11 @@ var A = (function($){
 			if($section.length==0) $section = $(sectionSelecor).first();
 			A.Controller.section('#'+$section.attr('id'));
 		});		
-		$(document).on('sectionload', 'section', function(){
+		$(document).on('sectionshow', 'section', function(){
 			//初始化article
 			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
 		});		
-		$(document).on('modalload', '.modal', function(){
+		$(document).on('modalshow', '.modal', function(){
 			//初始化article
 			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
 		});
