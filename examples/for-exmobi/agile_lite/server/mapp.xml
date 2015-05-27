@@ -5,7 +5,11 @@
   <config>
     <htmlformat wellformat="true" />
     <filepreviewconfig wordtohtml="true"/>
+    
   </config>
+  <route baseaddr="">
+  	<forward pattern="/render" path="render.jsp"/>
+  </route>
   <services>
   	<http-service>
   		<forward pattern="/render" path="render.jsp"/>

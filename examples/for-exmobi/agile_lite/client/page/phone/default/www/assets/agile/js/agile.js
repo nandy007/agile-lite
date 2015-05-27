@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.0.6 beta
+*	Version	:	1.1
 *	Author	:	nandy007
 *   License MIT @ http://www.exmobi.cn/agile-lite/index.html
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.0.6',
+			version : '1.1',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
@@ -101,7 +101,7 @@ var A = (function($){
 					var hide = function($el){
 						$el.removeClass('active').trigger(targetRole+'hide');
 					};
-					if(controllerObj.isToggle){						
+					if(controllerObj.isToggle){
 						if($target.hasClass('active')){
 							hide($target);
 						}else{
@@ -440,8 +440,7 @@ var A = (function($){
 			event : 'articleload',
 			handler : function(el, roleType){
 				var $el = $(el);
-				var _doToggle = function($el){
-					
+				var _doToggle = function($el){					
 					if($el.find('div.toggle-handle').length>0){//已经初始化
 			            return;
 			        }
@@ -878,20 +877,22 @@ var A = (function($){
 
     	opts.dataType = (opts.dataType||'text').toLowerCase();
     	var ajaxData = {
-                url : opts.url,
-                timeout : 20000,
-                type : opts.type||'get',
-                dataType : opts.dataType,
-                success : function(html){
-                	if(_isBlock) A.hideMask();
-                    opts.success && opts.success(opts.dataType=='text'?util.script(html):html);
-                },
-                error : function(html){
-                	if(_isBlock) A.hideMask();
-                	opts.error && opts.error(null);
-                }
-           };
+        	url : opts.url,
+            timeout : 20000,
+            type : opts.type||'get',
+            dataType : opts.dataType,
+            success : function(html){
+            	if(_isBlock) A.hideMask();
+                opts.success && opts.success(opts.dataType=='text'?util.script(html):html);
+            },
+            error : function(html){
+            	if(_isBlock) A.hideMask();
+               	opts.error && opts.error(null);
+            },
+            reqCharset : opts.reqCharset||'utf-8'
+        };
         if(opts.data) ajaxData.data = opts.data;
+        if(opts.headers) ajaxData.headers = opts.headers;
     	var isCross = _isCrossDomain(opts.url);
     	var handler = A.ajax;		
     	if(isCross){
@@ -923,11 +924,8 @@ var A = (function($){
     	});
     };
     
-    
     util.readyAlarm = function($inner,targetName,eventName){
-	
-		var _return = {};
-		
+		var _return = {};		
 		for(var k in $inner){
 			if(typeof $inner[k]!='function'){
 				_return[k] = $inner[k];
@@ -945,17 +943,13 @@ var A = (function($){
 		}
 		return _return;
 	};
-
     A.register('util', util);
 
 })(A.$);
 
-(function($){
-	
-	var _index_key_ = {};
-	
-	var scroll = function(selector, opts){
-		
+(function($){	
+	var _index_key_ = {};	
+	var scroll = function(selector, opts){		
 		var $el = $(selector);
 		var eId = $el.attr('id');
 		if($el.length==0||!eId){
@@ -1502,12 +1496,23 @@ var A = (function($){
      * alert组件
      * @param title 标题
      * @param content 内容
+     * @param callback 点击确定按钮后的回调
      */
-    _ext.alert = function(title,content){
+    _ext.alert = function(title,content,callback){
+    	if(!content){
+    		content = title;
+    		title = '提示';
+    	}else if(typeof content=='function'){
+    		callback = content;
+    		content = title;
+    		title = '提示';
+    	}
         return new Popup({
             html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
             pos : 'center',
             isBlock : true
+        }).on('popupclose', function(){
+        	callback&&callback();
         }).open();
     };
     
@@ -1519,6 +1524,12 @@ var A = (function($){
      * @param cancelCallback 取消按钮handler
      */
     _ext.confirm = function(title,content,okCallback,cancelCallback){
+    	if(typeof content=='function'){
+    		cancelCallback = okCallback;
+    		okCallback = content;
+    		content = title;
+    		title = '提示';
+    	}
         return new Popup({
             html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
             pos : 'center',
@@ -1565,8 +1576,8 @@ var A = (function($){
      */
     _ext.actionsheet = function(buttons,showCancel){
         var markMap = ['<div class="actionsheet"><div class="actionsheet-group">'];
-        var defaultCalssName = "button block popup-actionsheet-normal";
-        var defaultCancelCalssName = "button block popup-actionsheet-cancel";
+        var defaultCalssName = "popup-actionsheet-normal";
+        var defaultCancelCalssName = "popup-actionsheet-cancel";
         var showCancel = showCancel==false?false:(showCancel||true);
         $.each(buttons,function(i,n){
             markMap.push('<button data-toggle="popup" class="'+(n.css||defaultCalssName)+'">'+ n.text +'</button>');
@@ -1802,11 +1813,11 @@ var A = (function($){
 		});		
 		$(document).on('sectionshow', 'section', function(){
 			//初始化article
-			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
+			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});		
 		$(document).on('modalshow', '.modal', function(){
 			//初始化article
-			A.Controller.article('#'+$(this).find('[data-role="article"].active').attr('id'));		
+			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});
 		$(document).on('slidershow', '[data-role="page"]', function(){
 			var id = $(this).attr('id');

@@ -282,6 +282,15 @@ var $native = (function(){
 		}
 	};
 	
+	_native.exit = function(msg){
+		if(msg){
+			ClientUtil.exit(msg);
+		}else{
+			ClientUtil.exitNoAsk();
+		}
+	
+	};
+	
 	return A.util.readyAlarm(_native, '$native', 'plusready');
 })();
 
@@ -318,10 +327,10 @@ var $util = (function(){
 		if(opts.data) ajaxData.data = opts.data;
 		ajaxData.successFunction = '$util._ajax_successFunction';
 		ajaxData.failFunction = '$util._ajax_errorFunction';
-		if(opts.headers) ajaxData.requestHeader = opts.headers;
+		if(opts.headers) ajaxData.requestHeader = A.JSON.stringify(opts.headers);
 		ajaxData.isBlock = opts.isBlock = opts.isBlock==true?true:false;
 		ajaxData.timeout = opts.timeout?(opts.timeout/1000):20;
-	
+		ajaxData.reqCharset = opts.reqCharset||'utf-8';
 		var ajax = new handler(ajaxData);
 		
 		var index = $util._cacheMap.index++;
@@ -383,7 +392,7 @@ var $util = (function(){
 		$util.go(opts, DirectAjax);
 	};
 	//对应ExMobi的DirectFormSubmit 
-	_util.form = function(opts){
+	_util.form = function(opts, handler){
 		if(!opts||!opts.url) return;
 		opts.type = opts.type||'post';
 		if(opts.data){
@@ -403,7 +412,12 @@ var $util = (function(){
 			opts.data = dataArr;
 		}
 		
-		$util.go(opts, DirectFormSubmit);
+		$util.go(opts, handler||DirectFormSubmit);
+	};
+	
+	//对应ExMobi的FormSubmit 
+	_util.serverForm = function(opts){
+		_util.form(opts, FormSubmit);
 	};
 	
 	_util.paramsToJSON = function(data){

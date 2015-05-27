@@ -76,15 +76,18 @@
 		<!-- app -->
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
+			//当refresh初始化会进入此监听
 			$('#main_article').on('refreshInit', function(){
 				var refresh = A.Refresh(this);
+				//监听下拉刷新事件，可以做一些逻辑操作，当data-scroll="pullup"时无效
 				refresh.on('pulldown', function(){
 					$('#content').prepend('<li><div class="text">下拉刷新的内容</div></li>');
-					refresh.refresh();
+					refresh.refresh();//当scroll区域有dom结构变化需刷新
 				});
+				//监听上拉刷新事件，可以做一些逻辑操作，当data-scroll="pulldown"时无效
 				refresh.on('pullup', function(){
 					$('#content').append('<li><div class="text">上拉刷新的内容</div></li>');
-					refresh.refresh();
+					refresh.refresh();//当scroll区域有dom结构变化需刷新
 				});
 			});
 		</script>

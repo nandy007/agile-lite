@@ -38,8 +38,7 @@
 							    <% } %>
 							</script>
 						</ul>
-    				</div>  
-
+    				</div>
 				</article>
 			</section>
 		</div>
@@ -68,15 +67,12 @@
 					A.template('#template').renderBefore({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']},function(h){
 						refresh.refresh();
 					});
-					
-					
 				});
 				refresh.on('pullup', function(){
 					//上拉刷新加载到后面用after
 					A.template('#template').renderAfter({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']}, function(){
 						refresh.refresh();
 					});
-					
 				});
 			});
 			

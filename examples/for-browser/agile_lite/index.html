@@ -235,5 +235,12 @@
 		<script type="text/javascript" src="assets/bridge/agile.exmobi.js"></script>
 		<!-- app -->
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
+		<script>
+			$(document).on('plusready', function(){
+				A.util.ajax({
+					url : 'http://www.baidu.com'
+				});
+			});
+		</script>
 	</body>
 </html>

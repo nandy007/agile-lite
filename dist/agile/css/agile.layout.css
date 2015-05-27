@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 1.0.4 beta
+ * for Agile Lite 1.1
  * */
 /*******************alige框架样式-start*******************/
 
@@ -186,7 +186,9 @@ section{
 section.active{
 	display: block !important;
 }
-
+section > *{
+	position: absolute !important;
+}
 article{
 	display: none !important;
 	position: absolute;
@@ -471,6 +473,7 @@ aside[data-position][data-transition="reveal"]{
     background: #e8e8e8;
     color :#007aff;
     opacity: .9;
+    border-color: #e8e8e8;
 }
 .actionsheet > button{
 	margin-bottom:6px !important;
