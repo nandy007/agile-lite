@@ -13,9 +13,9 @@
 		<link rel="stylesheet" href="assets/app/css/app.css">
 		<style>
 			.outer { border:1px solid #ccc; border-radius: 6px;}
-			[data-role="accordionbar"] { display: block;padding:10px;border-bottom:1px solid #ccc;background-color: #efefef; color: #444;}
-			[data-role="accordionbar"].active { /*color:#aaa;*/}
-			[data-role="accordion"]{	
+			.accordionbar { display: block;padding:10px;border-bottom:1px solid #ccc;background-color: #efefef; color: #444;}
+			.accordionbar.active { color:#aaa;}
+			[data-role="accordion"]{
 				overflow: hidden;
 				height: 0px;
 				/*可以适当加一些动画*/
@@ -59,14 +59,14 @@
 					<div class="scroller padded">
 						<div class="text-center padded">下面是两个通过扩展的accordion的效果</div>
 						<div class="outer">
-							<a data-role="accordionbar" data-toggle="accordion" href="#accordion1" class="active">组件</a>
+							<a class="accordionbar active" data-role="accordionbar" data-toggle="accordion" href="#accordion1">组件</a>
 							<ul data-role="accordion" id="accordion1" class="listitem active">
 								<li><div class="text">设置了data-role的即为组件</div></li>
 								<li><div class="text">组件是可以被控制器控制的</div></li>
 								<li><div class="text">组件必须设置常态样式（非active样式）</div></li>
 								<li><div class="text">和活动时的样式（active样式）</div></li>
 							</ul>
-							<a data-role="accordionbar" data-toggle="accordion" href="#accordion2">控制器</a>
+							<a class="accordionbar" data-role="accordionbar" data-toggle="accordion" href="#accordion2">控制器</a>
 							<ul data-role="accordion" id="accordion2" class="listitem">
 								<li><div class="text">设置了data-toggle的即为控制器</div></li>
 								<li><div class="text">当控制器和组件的值一致，则组件被控制</div></li>
@@ -76,14 +76,14 @@
 						</div>
 						<br>
 						<div class="outer">
-							<a data-role="accordionbar" data-toggle="accordionone" href="#accordion3" class="active">组件扩展</a>
+							<a class="accordionbar" data-role="accordionbarone" data-toggle="accordionone" href="#accordion3" class="active">组件扩展</a>
 							<ul data-role="accordionone" id="accordion3" class="listitem active">
 								<li><div class="text">通过A.Component.add(componentObj)扩展</div></li>
 								<li><div class="text">componentObj形式为{key:options}</div></li>
 								<li><div class="text">options支持selector[、handler、event]</div></li>
 								<li><div class="text">其中handler为处理函数，event默认是click</div></li>
 							</ul>
-							<a data-role="accordionbar" data-toggle="accordionone" href="#accordion4">控制器扩展</a>
+							<a class="accordionbar" data-role="accordionbarone" data-toggle="accordionone" href="#accordion4">控制器扩展</a>
 							<ul data-role="accordionone" id="accordion4" class="listitem">
 								<li><div class="text">通过A.Controller.add(controllerObj)扩展</div></li>
 								<li><div class="text">controllerObj形式为{key:options}</div></li>
@@ -120,13 +120,14 @@
 				}
 			});
 			//[可选]添加accordionbar组件，只有在组件有样式切换的时候需要添加，本例不添加
-			/*
+			
 			A.Component.add({
 				accordionbar : {
 					selector : '[data-role="accordionbar"]',
+					isToggle : true
 				}
 			});
-			*/
+			
 			$('#main_article').on('scrollInit', function(){
 				//控制器完成后需要刷新滚动容器
 				var scroll = A.Scroll(this);

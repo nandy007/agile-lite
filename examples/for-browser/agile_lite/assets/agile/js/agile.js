@@ -318,11 +318,16 @@ var A = (function($){
 			selector : '[data-role="component"]',
 			handler : function(el, roleType){				
 				var $el = $(el);
-				if($el.hasClass('active')){
-					return;
-				}
 				roleType = roleType=='default'?$el.data('role'):roleType;
 				var componentObj = _components[roleType]||{};
+
+				if(componentObj.isToggle){
+					$el[$el.hasClass('active')?'removeClass':'addClass']('active');
+					return;
+				}else if($el.hasClass('active')){
+					return;
+				}
+				
 				var $current;
 				var curSelector = '[data-role="'+roleType+'"].active';
 				if(componentObj.container){
