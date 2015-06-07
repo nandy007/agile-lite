@@ -14,6 +14,11 @@
 				A.Component.scanning($el);
 				A.Component.file($el);
 			});
+		},
+		exmobiOnstart : function(){
+			$(document).on('onstart', function(){
+				$(document).trigger(A.options.agileStartEvent);
+			});
 		}
 	});
 	

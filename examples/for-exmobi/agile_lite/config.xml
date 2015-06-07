@@ -3,7 +3,7 @@
   <appid>agile_lite</appid>
   <appname>Agile Lite移动前端框架</appname>
   <description></description>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <date>2015-04-14</date>
   <homepage src="res:page/index.uixml"/>
   <faultconfig src=""/>

@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1
+*	Version	:	1.1.2 beta
 *	Author	:	nandy007
 *   License MIT @ http://www.exmobi.cn/agile-lite/index.html
 */
@@ -8,15 +8,16 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1',
+			version : '1.1.2',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
+			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
 			readyEvent : 'ready', //宿主容器的准备事件，默认是document的ready事件
 			backEvent : 'backmenu', //宿主容器的返回按钮
 			complete : false, //是否启动完成
 			crossDomainHandler : null, //跨域请求的处理类
 			showPageLoading : false, //ajax默认是否有loading界面
-			viewSuffix : 'html', //加载静态文件的默认后缀
+			viewSuffix : '.html', //加载静态文件的默认后缀
 			lazyloadPlaceholder : '' //懒人加载默认图片
 		};
 		
@@ -40,11 +41,8 @@ var A = (function($){
 			_launchMap[key] = obj.launch;
 		}
 	};
-	
 	var _doLaunch = function(){
-		for(var k in _launchMap){
-			_launchMap[k]();
-		}
+		for(var k in _launchMap){ _launchMap[k](); }
 		A.options.complete = true;
 		$(document).trigger(A.options.agileReadyEvent);
 	};
@@ -86,8 +84,8 @@ var A = (function($){
 				var controllerObj = _controllers[toggleType]||{};				
 				var $target = $(hashObj.tag);
 				var $container = $(controllerObj.container);				
-				function _event($target, $current){					
-					$target.data('params', urlObj.getQueryobject());					
+				function _event($target, $current){				
+					if(urlObj.getQueryobject()) $target.data('params', A.JSON.stringify(urlObj.getQueryobject()));					
 					var targetRole = $target.data('role')||'';					
 					var show = function($el){
 						if(!$el.hasClass('active')) $el.addClass('active');					
@@ -177,7 +175,6 @@ var A = (function($){
 			    	if(_history.length==0||(_history.length>0&&$(_history[0].tag).length==0)){
 			    		noState = true;
 			    	}
-					
 			        if(noState){//不添加浏览器历史记录
 			            _history.shift(hashObj);
 			            window.history.replaceState(hashObj,'',hash);
@@ -354,23 +351,15 @@ var A = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
-				var onPullDown = function(){
-					
-				};
-				var onPullUp = function(){
-					
-				};
-				
+				var onPullDown = function(){};
+				var onPullUp = function(){};
 				var options = {
-					verticle : { bindToWrapper : true },
+					verticle : { },
 					horizontal : {
-						scrollbars : false,
-						scrollX : true,
-						scrollY : false
+						scrollbars : false, scrollX : true, scrollY : false, bindToWrapper : true
 					},
 					scroll : {
-						scrollX : true,
-						scrollY : true
+						scrollX : true, scrollY : true
 					},
 					pulldown : {
 						onPullDown : onPullDown
@@ -379,8 +368,7 @@ var A = (function($){
 						onPullUp : onPullUp
 					},
 					pull : {
-						onPullDown : onPullDown,
-						onPullUp : onPullUp
+						onPullDown : onPullDown, onPullUp : onPullUp
 					}
 				};
 
@@ -608,6 +596,12 @@ var A = (function($){
 		}
 
 	};
+	/**
+     * 获取控制器传给组件的参数,hash为被控制的组件的#id
+     */
+	component.params = function(hash){
+		return A.JSON.parse($(hash).data('params'))||{};
+	};
 	
 	//启动组件
 	component.launch = function(){
@@ -834,7 +828,7 @@ var A = (function($){
 	util.parseURL = function(url){
 		url = util.script(url||'');
 		if(url.indexOf('#')==0){
-			url = url.replace('#','')+(A.options.viewSuffix?'.'+A.options.viewSuffix:'');
+			url = url.replace('#','')+(A.options.viewSuffix?A.options.viewSuffix:'');
 		}	
 
 		return new URLParser(url);
@@ -842,11 +836,8 @@ var A = (function($){
    	
    	util.isCrossDomain = function(url){
     	if(!url||url.indexOf(':')<0) return false;
-
     	var urlOpts = util.parseURL(url);
-
     	if(!urlOpts.getProtocol()) return false;
-
     	return !((location.protocol.replace(':','')+location.host)==(urlOpts.getProtocol()+urlOpts.getHost()+':'+urlOpts.getPort()));
     };
 
@@ -1217,7 +1208,6 @@ var A = (function($){
 			scrollY: false,
 			momentum: false,
 			snap: true,
-			snapSpeed: 400,
 			keyBindings: true,
 			bounceEasing : 'circular'
 		};
@@ -1398,8 +1388,7 @@ var A = (function($){
         left : ['slideRightIn','slideLeftOut'],
         right : ['slideLeftIn','slideRightOut']           
 	};
-        
-        
+ 
     var Popup = function(opts){
     	var _index = _popMap.index++;  
     	var options = {
@@ -1431,9 +1420,8 @@ var A = (function($){
 		this.popup = $popup;
 		this.mask = $mask;
 		this._event = {};
-    };
-    
-    Popup.prototype.on = function(eType, callback){
+    };    
+	Popup.prototype.on = function(eType, callback){
     	if(this._event[eType]){
     		this._event[eType].push(callback);
     	}else{
@@ -1804,18 +1792,34 @@ var A = (function($){
 		$(document).on('swipeLeft','[data-aside-right]', function(){$(this).trigger('swipeleft');});
 		$(document).on('swipeRight','[data-aside-left]',function(){$(this).trigger('swiperight');});
 	};
-	
-	/**
-     * 初始化相关组件
-     */
-	_events.initComponents = function(){
-		$(document).on(A.options.agileReadyEvent, function(){
+	/*
+	 * 初始化agilestart事件
+	 * */
+	_events.agileStart = function(){
+		var flag = true;
+		var _initSection = function(){
 			//初始化section
 			var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
 			var $section = $(sectionSelecor+'.active').first();
 			if($section.length==0) $section = $(sectionSelecor).first();
 			A.Controller.section('#'+$section.attr('id'));
-		});		
+		};
+		$(document).on(A.options.agileReadyEvent, function(){
+			_initSection();
+		});
+		$(document).on(A.options.agileStartEvent, function(){
+			if(flag) {
+				flag = false;
+				return;	
+			}
+			_initSection();
+		});
+	};
+	
+	/**
+     * 初始化相关组件
+     */
+	_events.initComponents = function(){
 		$(document).on('sectionshow', 'section', function(){
 			//初始化article
 			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
@@ -1828,15 +1832,13 @@ var A = (function($){
 			var id = $(this).attr('id');
 			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
-	};
-	
+	};	
 	/**
      * @param {Object} 添加的事件对象 {key:function(){}}
      */
 	event.add = function(obj){
 		$.extend(_events, obj||{});
 	};
-	
 	/**
      * 启动event
      */
@@ -1845,12 +1847,10 @@ var A = (function($){
 			_events[k]();
 		}
 	};
-	
 	A.register('event', event);
 })(A.$);
 
 (function($){
-	
 	var Template = function(selecotr){
 		this.$el = $(selecotr);
 	};
@@ -1906,7 +1906,6 @@ var A = (function($){
 					}
 				});
 			}else{
-				
 				var render = template.compile(tmpl);
                 html = render(data);
                 cb&&cb(html, tmpl, data);
