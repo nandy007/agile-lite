@@ -20,7 +20,7 @@ var $native = (function(){
 	};
 	
 	_native.confirm = function(str, okcb, cancelcb){
-		ExMobiWindow.alert(str, function(){
+		ExMobiWindow.confirm(str, function(){
 			okcb&&okcb();
 		},function(){
 			cancelcb&&cancelcb();
@@ -267,7 +267,7 @@ var $native = (function(){
 		if(arguments.length==2){
 			v = arguments[1]||'';
 			try{
-				CacheUtil.setCache(k, JSON.stringify(v));
+				CacheUtil.setCache(k, A.JSON.stringify(v));
 				//return true;
 			}catch(e){
 				CacheUtil.setCache(k, v.toString());
@@ -275,7 +275,7 @@ var $native = (function(){
 			}
 		}else{
 			try{
-				return JSON.parse(CacheUtil.getCache(k));
+				return A.JSON.parse(CacheUtil.getCache(k));
 			}catch(e){
 				return CacheUtil.getCache(k);
 			}
