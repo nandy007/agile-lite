@@ -1,5 +1,7 @@
 #Agile Lite
 Agile Lite 是一个基于HTML5+CSS3+JS的移动应用开发框架，同时支持单页和多页模式，并提供无关UI和可扩展的框架结构
+<br>
+Agile Lite支持jQuery和Zepto双引擎，但是同时仅可以使用其中之一，建议使用jQuery
 <br><br>
 Agile移动应用前端框架既解决了前端UI层的显示，耦合了高性能的UI展示效果，也提供了一整套完善的页面切换和交互效果，并融入了数据注入的理念，使界面和数据分离，代码维护难度降低，重用性高。整体运行效率接近于原生应用。
 <br>
@@ -33,4 +35,5 @@ Agile Lite框架采用了众多开源资源，但为了适应更多场景均有�
 3、jQuery V2.1.3，<http://jquery.com/><br>
 4、jQuery Mobile V1.4.5，<http://jquerymobile.com/><br>
 5、artTemplate V3.0的native语法(template-native.js)，<http://aui.github.io/artTemplate/><br>
+6、Zepto V1.0rc1，<http://www.zeptojs.cn/><br>
 在此，一并感谢上述开源框架的作者和团队，也希望有更多的开发者加入开源行列，对Agile Lite框架提出建议或者bug。

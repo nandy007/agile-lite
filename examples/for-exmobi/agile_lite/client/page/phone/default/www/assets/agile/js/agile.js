@@ -1,8 +1,8 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.2 beta
+*	Version	:	1.1.3 beta
 *	Author	:	nandy007
-*   License MIT @ http://www.exmobi.cn/agile-lite/index.html
+*   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
 var A = (function($){
 	var Agile = function(){
@@ -148,6 +148,7 @@ var A = (function($){
 						}
 						$target = $(html);
 						$container.append($target);
+						$target = $(hashObj.tag);
 						_next();
 					});
 				}else{
@@ -639,7 +640,7 @@ var A = (function($){
      */
 	anim.run = function($el, cls, cb){
 		var $el = $($el);
-
+		var eName = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		if($el.length==0){
 			cb&&cb();
 			return;
@@ -649,9 +650,10 @@ var A = (function($){
 			return;
 		}
 		cls = (cls||'empty')+' anim';
-		$el.addClass(cls).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',function(){			
+		$el.addClass(cls).one(eName,function(){			
 			$el.removeClass(cls);
 			cb&&cb();
+			$el.unbind(eName);
 		});
 	};
 	
@@ -978,31 +980,17 @@ var A = (function($){
             }
                       		
 			A.Component.lazyload($el);//初始化懒人加载
-		});
-		
+		});		
 		_index_key_[eId] = $scroll;
-
-		$scroll.on('destroy', function(){
-			delete _index_key_[eId];
-		});
-
+		$scroll.on('destroy', function(){ delete _index_key_[eId]; });
 		$el.trigger('scrollInit');//自定义scroll初始化事件
-		
-
 		return _index_key_[eId];
 	};
-
-  	
-    
     A.register('Scroll', scroll);
-	
-	
 })(A.$);
 
-(function($){
-	
-	var _index_key_ = {};
-	
+(function($){	
+	var _index_key_ = {};	
 	/*
      * refresh上拉下拉刷新
      * @param selector，scroll容器的id选择器
@@ -1010,7 +998,6 @@ var A = (function($){
      * 
      * */
     function refresh(selector, opts) {
-
     	var $el = $(selector);
     	var eId = $el.attr('id'); 	
     	if(_index_key_[eId]) return _index_key_[eId];
@@ -1143,6 +1130,8 @@ var A = (function($){
 
         _index_key_[eId] = myScroll;
         
+        myScroll.on('destroy', function(){ delete _index_key_[eId]; });
+        
         $el.trigger('refreshInit');
         
         return _index_key_[eId];
@@ -1210,10 +1199,8 @@ var A = (function($){
 			snap: true,
 			keyBindings: true,
 			bounceEasing : 'circular'
-		};
-		
-		var myScroll = A.Scroll('#'+eId, options);
-		
+		};		
+		var myScroll = A.Scroll('#'+eId, options);		
 		var index = 0,outerSlider;
 		myScroll.on('beforeScrollStart', function(){
 			var $outerSlider = $el.parent().closest('[data-role="slider"]');
@@ -1258,6 +1245,8 @@ var A = (function($){
 		}
 		
 		_index_key_[eId] = myScroll;
+		
+		myScroll.on('destroy', function(){ delete _index_key_[eId]; });
 		
 		return _index_key_[eId];
 	};
@@ -1760,7 +1749,10 @@ var A = (function($){
 			eName.push(k+'hide');
 		}
 		$(document).on(eName.join(' '), '[data-cache="false"]', function(){
-			$(this).remove();
+			var $el = $(this);
+			if($el.data('scroll')) A.Scroll($el).destroy();
+			$el.find('[data-scroll]').each(function(){ A.Scroll(this).destroy(); });
+			$el.remove();
 		});
 	};
 	
@@ -1960,7 +1952,6 @@ var A = (function($){
  * */
 (function(){
 	var JSON = {};
-
 	JSON.parse = function(str){
 		try{
 			return eval("("+str+")");
