@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 1.1
+ * for Agile Lite 1.4
  * */
 /*******************alige框架样式-start*******************/
 
@@ -282,7 +282,12 @@ aside[data-position][data-transition="reveal"]{
     transform:translateX(0);
 }
 
-
+[data-role="view"]{
+	display: none !important;
+}
+[data-role="view"].active{
+	display: block !important;
+}
 
 /*通用转动动画*/
 @-webkit-keyframes spinner {

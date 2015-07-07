@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.3 beta
+*	Version	:	1.1.4 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.2',
+			version : '1.1.4',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -173,7 +173,7 @@ var A = (function($){
 				var _add2History = function(hash,noState){
 			    	var hashObj = A.util.parseURL(hash).getHashobject();
 			    	var _history = _controllers.section.history;
-			    	if(_history.length==0||(_history.length>0&&$(_history[0].tag).length==0)){
+			    	if(_history.length==0||(_history.length>1&&$(_history[0].tag).data('cache')==false||$(_history[0].tag).data('cache')=='false')){
 			    		noState = true;
 			    	}
 			        if(noState){//不添加浏览器历史记录
@@ -290,7 +290,7 @@ var A = (function($){
 				$(document).on(A.options.clickEvent, _controllers[k]['selector'], function(){
 					var k = $(this).data('toggle');
 					var hash = $(this).attr('href')||'#';
-					controller[k](hash, $(this));
+					(controller[k]||controller['default'])(hash, $(this));
 					return false;
 				});
 			})(k);
@@ -313,7 +313,7 @@ var A = (function($){
 	
 	var _components = {
 		default : {
-			selector : '[data-role="component"]',
+			selector : '[data-role="view"]',
 			handler : function(el, roleType){				
 				var $el = $(el);
 				roleType = roleType=='default'?$el.data('role'):roleType;
@@ -471,7 +471,6 @@ var A = (function($){
 			event : 'articleload',
 			handler : function(el, roleType){
 				var $el = $(el);
-
 		    	var _doLazyload = function($el){
 		    		var placeholder = $el.attr('placeholder')||A.options.lazyloadPlaceholder;
 			    	if(!$el.attr('src')&&placeholder) $el.attr('src', placeholder);
@@ -514,11 +513,11 @@ var A = (function($){
 		    				A.anim.run($el,'fadeIn', function(){
 		    					$el.css('opacity', '1');
 		    					A.Component.scroll($el.closest('[data-scroll]'));
-		    					$el.removeAttr('data-source');
 		    				});
 		        		};
 		        		$el.attr('src', data);	
 		    		});
+		    		$el.removeAttr('data-source');
 		    	};
 
 		    	if($el.data('source')){
@@ -970,7 +969,7 @@ var A = (function($){
 		};
 		$.extend(options, $el.data('scroll-options')||{});
 		$.extend(options, opts||{});
-
+		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
@@ -1437,25 +1436,25 @@ var A = (function($){
         if(options.pos == 'center') $popup.css('margin-top','-'+popHeight/2+'px');
         var transition = transitionMap[options.pos];
         if(transition) A.anim.run($popup,transition[0]);
-		this.trigger('popupopen', callback);
+		this.trigger('popupopen');callback&&callback.call(this);
 		A.pop.hasPop = $popup;
 		return this;
     };
     
-    var _finish = function($popup, $mask){
-    	$popup.remove();$mask.remove();
+    var _finish = function(){   	
+    	var $popup=this.popup, $mask=this.mask, callback=this.callback;
+    	$popup.remove();$mask.remove();this.trigger('popupclose');setTimeout(function(){ callback&&callback(); }, 200);
     	$last = $('body').children('.popup-mask').last().addClass('active');
     	A.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
     };
     
     Popup.prototype.close = function(callback){
-    	var $popup=this.popup, $mask=this.mask, options=this.options;
-    	this.trigger('popupclose', callback);
+    	var _this=this,$popup=this.popup, $mask=this.mask, options=this.options;
         var transition = transitionMap[options.pos];
         if(transition){
-            A.anim.run($popup,transition[1],function(){ _finish($popup, $mask); });
+            A.anim.run($popup,transition[1],function(){ _finish.call(_this); });
         }else{
-            _finish($popup, $mask);
+            _finish.call(_this);
         }
         delete _popMap[options.id];
         //return this;
@@ -1469,9 +1468,9 @@ var A = (function($){
     	return new Popup(opts).open();
     };
     
-    _ext.closePopup = function(){
+    _ext.closePopup = function(callback){
     	var _id = A.pop.hasPop.attr('id');
-    	if(_popMap[_id]) _popMap[_id].close();
+    	if(_popMap[_id]) _popMap[_id].close(callback);
     };
     
     /**
@@ -1751,7 +1750,7 @@ var A = (function($){
 		$(document).on(eName.join(' '), '[data-cache="false"]', function(){
 			var $el = $(this);
 			if($el.data('scroll')) A.Scroll($el).destroy();
-			$el.find('[data-scroll]').each(function(){ A.Scroll(this).destroy(); });
+			$el.find('[data-scroll],[data-role="slider"]').each(function(){ A.Scroll(this).destroy(); });
 			$el.remove();
 		});
 	};
@@ -1787,15 +1786,16 @@ var A = (function($){
 	/*
 	 * 初始化agilestart事件
 	 * */
+	var _initSection = function(){
+		//初始化section
+		var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
+		var $section = $(sectionSelecor+'.active').first();
+		if($section.length==0) $section = $(sectionSelecor).first();
+		A.Controller.section('#'+$section.attr('id'));
+	};
 	_events.agileStart = function(){
 		var flag = true;
-		var _initSection = function(){
-			//初始化section
-			var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
-			var $section = $(sectionSelecor+'.active').first();
-			if($section.length==0) $section = $(sectionSelecor).first();
-			A.Controller.section('#'+$section.attr('id'));
-		};
+		_initSection();
 		$(document).on(A.options.agileReadyEvent, function(){
 			_initSection();
 		});
@@ -1824,6 +1824,13 @@ var A = (function($){
 			var id = $(this).attr('id');
 			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
+		$(document).on('renderEnd', 'script', function(e,h){
+			A.Component.lazyload(h);
+		});
+		$(document).on('modalhide', 'div.modal', function(e,h){
+			_initSection();
+		});
+		
 	};	
 	/**
      * @param {Object} 添加的事件对象 {key:function(){}}
@@ -1923,10 +1930,8 @@ var A = (function($){
 			}
 
 			var $html = $(html).attr('__inject_dependence__',tag);
-			$referObj.after($html);
-			
+			$referObj.after($html);			
 			cb&&cb($html, tmpl, data);
-			
 			$el.trigger('renderEnd', [$html]);
 		});
 	};
