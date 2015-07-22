@@ -7,7 +7,7 @@ Agile移动应用前端框架既解决了前端UI层的显示，耦合了高性�
 <br>
 效果可扫描二维码查看：
 <br>
-<img src="http://bbs.exmobi.cn/data/attachment/forum/201505/11/111717bbllmuz1waka0z4r.png">
+<img src="http://www.exmobi.cn/images/agile_demo.gif">
 
 
 #参考文档
