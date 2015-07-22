@@ -65,11 +65,11 @@
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
 		(function(){
-			$('#btn_alert').tap(function(){
+			$('#btn_alert').on(A.options.clickEvent, function(e){
 				A.alert('提示','这是一个Alert');
 				return false;
 			});
-			$('#btn_confirm').tap(function(){
+			$('#btn_confirm').on(A.options.clickEvent, function(){
 			    A.confirm('提示','这是一个Confirm！',
 			    	function(){
 			    		A.showToast('你选择了“确定”');
@@ -79,7 +79,7 @@
 			    	});
 			    return false;
 			});
-			$('#btn_loading').tap(function(){
+			$('#btn_loading').on(A.options.clickEvent, function(){
 			    A.showMask(function(){
 			    	A.showToast('您已关闭请求');
 			    });
@@ -88,7 +88,7 @@
 			    }, 2000);
 			    return false;
 			});
-			$('#btn_center').tap(function(){
+			$('#btn_center').on(A.options.clickEvent, function(){
 				var $popup = A.popup({
 			   		html: $('#login_template').html(),
 			        css : {width:'auto'},
@@ -101,7 +101,7 @@
 			    });
 			    return false;
 			});
-			$('#btn_t_top').tap(function(){
+			$('#btn_t_top').on(A.options.clickEvent, function(){
 			    var $popup = new A.Popup({
 			    	html: '这是一个来自顶部的弹出框',
 			        pos : 'top',
@@ -118,30 +118,30 @@
 					//手动关闭弹出窗
 					$popup.close();
 				}, 2000);
-			    return false;
+				return false;
 			});
-			$('#btn_t_bottom').tap(function(){
+			$('#btn_t_bottom').on(A.options.clickEvent, function(){
 			    A.popup({
 			    	html: '这是一个来自底部弹出框',
 			        pos : 'bottom',
 			    });
 			    return false;
 			});
-			$('#btn_t_left').tap(function(){
+			$('#btn_t_left').on(A.options.clickEvent, function(){
 			    A.popup({
 			    	html: '这是一个来自左边的弹出框',
 			        pos : 'left',
 			    });
 			    return false;
 			});
-			$('#btn_t_right').tap(function(){
+			$('#btn_t_right').on(A.options.clickEvent, function(){
 			    A.popup({
 			    	html: '这是一个来自右边的弹出框',
 			        pos : 'right',
 			    });
 			    return false;
 			});
-			$('#btn_actionsheet').tap(function(){
+			$('#btn_actionsheet').on(A.options.clickEvent, function(){
 			    A.actionsheet([{
 					text : '这是第一个菜单',
 			        handler : function(){
@@ -156,7 +156,7 @@
 				return false;
 			});
 			
-			$('#btn_popover').tap(function(){
+			$('#btn_popover').on(A.options.clickEvent, function(){
 				A.popover([{
 					text : '这是第一个菜单',
 			        handler : function(){
@@ -168,6 +168,7 @@
 			        	A.showToast('这是第二个菜单！');
 			        }
 				}], this);
+				return false;
 			});
 		})();
 		

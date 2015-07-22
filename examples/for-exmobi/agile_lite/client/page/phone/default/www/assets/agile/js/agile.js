@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.4 beta
+*	Version	:	1.1.5 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.4',
+			version : '1.1.5',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -42,7 +42,7 @@ var A = (function($){
 		}
 	};
 	var _doLaunch = function(){
-		for(var k in _launchMap){ _launchMap[k](); }
+		for(var k in _launchMap){ try{ _launchMap[k](); }catch(e){ console.log(e);} }
 		A.options.complete = true;
 		$(document).trigger(A.options.agileReadyEvent);
 	};
@@ -408,7 +408,7 @@ var A = (function($){
 				
 				var _doInit = function($el){
 					$el.on(A.options.clickEvent, function(e){
-						if(e.target.tagName.toLowerCase()=='input'){
+						if(e.target.tagName.toLowerCase()=='input'||e.target.tagName.toLowerCase()=='label'){
 							return true;
 						}
 			    		try{
@@ -500,7 +500,6 @@ var A = (function($){
 			    				_injectImg($el, source);
 			    				img = null;
 			        		};
-			
 			    	    }
 			    	}
 		    	};
@@ -585,11 +584,10 @@ var A = (function($){
 				};
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
-				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){	
-								
+				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){
 					var curr = _components[k].handler?k:'default';				
-					_components[curr].handler(this, k);			
-					return false;		
+					_components[curr].handler(this, k);
+					return false;
 				});
 				
 			})(k);
@@ -946,6 +944,7 @@ var A = (function($){
 
 (function($){	
 	var _index_key_ = {};	
+	
 	var scroll = function(selector, opts){		
 		var $el = $(selector);
 		var eId = $el.attr('id');
@@ -961,11 +960,12 @@ var A = (function($){
 			scrollTop : 'scrollTop',
 			scrollBottom : 'scrollBottom'
 		};
-		
+
 		var options = {
 			mouseWheel: true,
 			scrollbars : 'custom',
-			fadeScrollbars : true
+			fadeScrollbars : true,
+			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/ }
 		};
 		$.extend(options, $el.data('scroll-options')||{});
 		$.extend(options, opts||{});
@@ -977,7 +977,6 @@ var A = (function($){
             }else if(this.y==this.maxScrollY){
             	this._execEvent(costomOpts.scrollBottom);//自定义事件滑动到底部
             }
-                      		
 			A.Component.lazyload($el);//初始化懒人加载
 		});		
 		_index_key_[eId] = $scroll;
@@ -1059,7 +1058,7 @@ var A = (function($){
             click: true ,// 允许点击事件  
             keyBindings:true,//允许使用按键控制  
             momentum:true// 允许有惯性滑动  
-        });  
+        });
 
         if(!myScroll) return null;
         //滚动时  
@@ -1777,11 +1776,12 @@ var A = (function($){
 		});
 	};
 	
-	_events.zepto = function(){
-		if($!=window.Zepto) return;
-		$(document).on('click', 'a[data-toggle]', function(){return false; });
-		$(document).on('swipeLeft','[data-aside-right]', function(){$(this).trigger('swipeleft');});
-		$(document).on('swipeRight','[data-aside-left]',function(){$(this).trigger('swiperight');});
+	_events.zepto = function(){	
+		if($==window.Zepto){
+			$(document).on('click', 'a[data-toggle]', function(){return false; });
+			$(document).on('swipeLeft','[data-aside-right],[data-role="calendar"],.swipe_block', function(){$(this).trigger('swipeleft');});
+			$(document).on('swipeRight','[data-aside-left],[data-role="calendar"],.swipe_block',function(){$(this).trigger('swiperight');});
+		}	
 	};
 	/*
 	 * 初始化agilestart事件
@@ -1830,7 +1830,6 @@ var A = (function($){
 		$(document).on('modalhide', 'div.modal', function(e,h){
 			_initSection();
 		});
-		
 	};	
 	/**
      * @param {Object} 添加的事件对象 {key:function(){}}
