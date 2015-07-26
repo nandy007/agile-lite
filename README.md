@@ -21,7 +21,7 @@ ExMobi是由烽火星空推出的移动应用平台，除了封装了丰富的�
 <br><br>
 另外，整个论坛（<http://bbs.exmobi.cn>）都是关于移动应用开发的，包括使用ExMobi跨平台开发、Android原生开发、iOS原生开发等，欢迎开发者加入。
 <br><br>
-或者，开发者也可以加入到ExMobi开发者交流群（321316202）中，与Q友共同学习。
+或者，开发者也可以加入到ExMobi开发者交流群（276906159）中，与Q友共同学习。
 #License
 The MIT license.
 <br>
