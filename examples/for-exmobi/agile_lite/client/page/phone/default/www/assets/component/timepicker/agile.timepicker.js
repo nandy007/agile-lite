@@ -1,5 +1,6 @@
 //时间选择
 (function($) {
+	
 	function addZero(number) {
 		return (number < 10 ? '0' + number : number);
 	}
@@ -74,7 +75,7 @@
 			if (option.hasSecond) {
 				_this.secondScroll.destroy();
 			}
-		}
+		};
 
 		if (typeof option.onSelected == 'function') {
 			_this.onSelected(option.onSelected);
@@ -174,21 +175,24 @@
 
 			_this.hourScroll.on('scrollEnd', function(e) {
 				$('.hourli').removeClass('selectedli');
-				var _hour = Math.round(_this.hourScroll.y / (-41));
+				//var _hour = Math.round(_this.hourScroll.y / (-41));
+				var _hour = _this.hourScroll.currentPage.pageY;
 				_this.hourSelected = _hour;
 				$('#hourli' + _hour).addClass('selectedli');
 			});
 
 			_this.minuteScroll.on('scrollEnd', function(e) {
 				$('.minuteli').removeClass('selectedli');
-				var _minute = Math.round(_this.minuteScroll.y / (-41));
+				//var _minute = Math.round(_this.minuteScroll.y / (-41));
+				var _minute = _this.minuteScroll.currentPage.pageY;
 				_this.minuteSelected = _minute;
 				$('#minuteli' + _minute).addClass('selectedli');
 			});
 			if (option.hasSecond) {
 				_this.secondScroll.on('scrollEnd', function(e) {
 					$('.secondli').removeClass('selectedli');
-					var _second = Math.round(_this.secondScroll.y / (-41));
+					//var _second = Math.round(_this.secondScroll.y / (-41));
+					var _second = _this.secondScroll.currentPage.pageY;
 					_this.secondSelected = _second;
 					$('#secondli' + _second).addClass('selectedli');
 				});
@@ -197,15 +201,14 @@
 
 			$('#confirm_date_picker').on(A.options.clickEvent, function() {
 				var _full_date = new Date(_selected_date.getFullYear(), _selected_date.getMonth(), _selected_date.getDate(), _this.hourSelected, _this.minuteSelected, option.hasSecond ? _this.secondSelected : 0),
-					_full_string = _full_date.getFullYear() + '-' + (_full_date.getMonth() + 1) + '-' + _full_date.getDate() + ' ' + addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds()),
-					_date_string = _full_date.getFullYear() + '-' + (_full_date.getMonth() + 1) + '-' + _full_date.getDate(),
+					_full_string = _full_date.getFullYear() + '-' + addZero(_full_date.getMonth() + 1) + '-' + addZero(_full_date.getDate()) + ' ' + addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds()),
+					_date_string = _full_date.getFullYear() + '-' + addZero(_full_date.getMonth() + 1) + '-' + addZero(_full_date.getDate()),
 					_time_string = '';
 				if (option.hasSecond) {
 					_time_string = addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds());
 				} else {
 					_time_string = addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes());
 				}
-
 				if (typeof callback == 'function') {
 					callback({
 						date: _full_date,
@@ -321,7 +324,7 @@
 			_this.yearScroll.destroy();
 			_this.monthScroll.destroy();
 			_this.dayScroll.destroy();
-		}
+		};
 
 		if (typeof option.onSelected == 'function') {
 			_this.onSelected(option.onSelected);
@@ -411,9 +414,9 @@
 			console.log(_this.yearScroll);
 
 			_this.yearScroll.on('scrollEnd', function(e) {
-				console.log(_this.yearScroll);
 				$('.yearli').removeClass('selectedli');
-				var _year = Math.round(_this.yearScroll.y / (-41) + 1900);
+				//var _year = Math.round(_this.yearScroll.y / (-41) + 1900);
+				var _year = _this.yearScroll.currentPage.pageY + 1900;
 				_this.yearSelected = _year;
 				$('#yearli' + _year).addClass('selectedli');
 				_this.reCountDay();
@@ -421,7 +424,8 @@
 
 			_this.monthScroll.on('scrollEnd', function(e) {
 				$('.monthli').removeClass('selectedli');
-				var _month = Math.round(_this.monthScroll.y / (-41) + 1);
+				//var _month = Math.round(_this.monthScroll.y / (-41) + 1);
+				var _month = _this.monthScroll.currentPage.pageY + 1;
 				_this.monthSelected = _month;
 				$('#monthli' + _month).addClass('selectedli');
 				_this.reCountDay();
@@ -429,7 +433,8 @@
 
 			_this.dayScroll.on('scrollEnd', function(e) {
 				$('.dayli').removeClass('selectedli');
-				var _day = Math.round(_this.dayScroll.y / (-41) + 1);
+				//var _day = Math.round(_this.dayScroll.y / (-41) + 1);
+				var _day = _this.dayScroll.currentPage.pageY + 1;
 				_this.daySelected = _day;
 				$('#dayli' + _day).addClass('selectedli');
 			});
@@ -438,8 +443,8 @@
 
 			$('#confirm_date_picker').on(A.options.clickEvent, function() {
 				var _full_date = new Date(_this.yearSelected, _this.monthSelected - 1, _this.daySelected, _selected_date.getHours(), _selected_date.getMinutes(), _selected_date.getSeconds()),
-					_full_string = _full_date.getFullYear() + '-' + (_full_date.getMonth() + 1) + '-' + _full_date.getDate() + ' ' + addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds()),
-					_date_string = _full_date.getFullYear() + '-' + (_full_date.getMonth() + 1) + '-' + _full_date.getDate(),
+					_full_string = _full_date.getFullYear() + '-' + addZero(_full_date.getMonth() + 1) + '-' + addZero(_full_date.getDate()) + ' ' + addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds()),
+					_date_string = _full_date.getFullYear() + '-' + addZero(_full_date.getMonth() + 1) + '-' + addZero(_full_date.getDate()),
 					_time_string = addZero(_full_date.getHours()) + ':' + addZero(_full_date.getMinutes()) + ':' + addZero(_full_date.getSeconds());
 
 				if (typeof callback == 'function') {
