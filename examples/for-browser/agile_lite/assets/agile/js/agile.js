@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.6 beta
+*	Version	:	1.1.7 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.6',
+			version : '1.1.7',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -965,10 +965,11 @@ var A = (function($){
 			mouseWheel: true,
 			scrollbars : 'custom',
 			fadeScrollbars : true,
+			click : false,
 			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/ }
 		};
-		$.extend(options, $el.data('scroll-options')||{});
 		$.extend(options, opts||{});
+		$.extend(options, $el.data('scroll-options')||{});
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
 		$scroll.on('scrollEnd' , function(){
@@ -1052,12 +1053,6 @@ var A = (function($){
 
         myScroll = A.Scroll('#'+eId, {  
 			probeType: 2,//probeType：1对性能没有影响。在滚动事件被触发时，滚动轴是不是忙着做它的东西。probeType：2总执行滚动，除了势头，反弹过程中的事件。这类似于原生的onscroll事件。probeType：3发出的滚动事件与到的像素精度。注意，滚动被迫requestAnimationFrame（即：useTransition：假）。  
-            bounce:true,//边界反弹  
-            interactiveScrollbars:true,//滚动条可以拖动  
-            shrinkScrollbars:'scale',// 当滚动边界之外的滚动条是由少量的收缩。'clip' or 'scale'.  
-            click: true ,// 允许点击事件  
-            keyBindings:true,//允许使用按键控制  
-            momentum:true// 允许有惯性滑动  
         });
 
         if(!myScroll) return null;

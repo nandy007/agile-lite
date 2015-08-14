@@ -226,10 +226,12 @@
 					});
 				}
 				_date_picker_popup.close();
+				return false;
 			});
 
 			$('#cancel_date_picker').on(A.options.clickEvent, function() {
 				_date_picker_popup.close();
+				return false;
 			});
 
 
@@ -238,6 +240,7 @@
 					_this._customLeftButtonCallback();
 				}
 				_date_picker_popup.close();
+				return false;
 			});
 
 			_date_picker_popup.on('popupclose', function() {
@@ -411,7 +414,6 @@
 			$('#monthli' + (_selected_date.getMonth() + 1)).addClass('selectedli');
 			_this.dayScroll.scrollToElement('#dayli' + (_selected_date.getDate() - 1), 0);
 			$('#dayli' + _selected_date.getDate()).addClass('selectedli');
-			console.log(_this.yearScroll);
 
 			_this.yearScroll.on('scrollEnd', function(e) {
 				$('.yearli').removeClass('selectedli');
@@ -464,10 +466,13 @@
 					});
 				}
 				_date_picker_popup.close();
+				
+				return false;
 			});
 
 			$('#cancel_date_picker').on(A.options.clickEvent, function() {
 				_date_picker_popup.close();
+				return false;
 			});
 
 			$('#clear_date_picker').on(A.options.clickEvent, function() {
@@ -475,6 +480,7 @@
 					_this._customLeftButtonCallback();
 				}
 				_date_picker_popup.close();
+				return false;
 			});
 
 			_date_picker_popup.on('popupclose', function() {
