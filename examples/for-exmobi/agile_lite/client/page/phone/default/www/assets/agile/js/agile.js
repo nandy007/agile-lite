@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.7 beta
+*	Version	:	1.1.8 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.7',
+			version : '1.1.8',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -1170,7 +1170,7 @@ var A = (function($){
 			$el.height()?$scroller.height($el.height()):$el.height($scroller.height());
 		};
 		
-		var createDots = function(){			
+		var createDots = function(){
 			$el.children('.dots').remove();			
 			var arr = [];
 			arr.push('<div class="dots">');
@@ -1212,10 +1212,9 @@ var A = (function($){
 			index = this.currentPage.pageX;
 			var curSlide = $($slide.get(index));
 			var curDots = $($dots.get(index));
-			
 			if(!curSlide.hasClass('active')){
 				sliderOpts.change&&sliderOpts.change.call(this, index);
-				curSlide.addClass('active').trigger('slidershow').siblings('.active').removeClass('active').trigger('sliderhide');
+				curSlide.addClass('active').trigger('slidershow', curSlide[0]).siblings('.active').removeClass('active').trigger('sliderhide');
 				curDots.addClass('active').siblings('.active').removeClass('active');
 			}
 		});		
@@ -1229,9 +1228,9 @@ var A = (function($){
 			myScroll._execEvent('scrollEnd');
 		};
 		myScroll.goToPage(index, 0, options.snapSpeed);
-
+		var _auto;
 		if(sliderOpts.auto){
-			window.setInterval(function(){
+			_auto = setInterval(function(){
 				index = index==slideNum?0:index+1;
 				myScroll.goToPage(index, 0, options.snapSpeed);
 			}, typeof sliderOpts.auto=='boolean'?5000:sliderOpts.auto);
@@ -1239,7 +1238,7 @@ var A = (function($){
 		
 		_index_key_[eId] = myScroll;
 		
-		myScroll.on('destroy', function(){ delete _index_key_[eId]; });
+		myScroll.on('destroy', function(){ $dots.remove(); delete _index_key_[eId]; clearInterval(_auto); });
 		
 		return _index_key_[eId];
 	};
@@ -1821,8 +1820,9 @@ var A = (function($){
 			//初始化article
 			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});
-		$(document).on('slidershow', '[data-role="page"]', function(){
-			var id = $(this).attr('id');
+		$(document).on('slidershow', '[data-role="page"]', function(e, el){		
+			if(el!=this) return;	
+			var id = $(this).attr('id');			
 			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
 		$(document).on('renderEnd', 'script', function(e,h){

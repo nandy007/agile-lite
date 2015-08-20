@@ -82,11 +82,17 @@
 							mode : $el.data('role'),
 							val : $input.val(),
 							callback : function(str){
-								if(str&&($input.val()!=str)&&$el.data('change')){
-									eval($el.data('change'));
+								if($input.val()!=str){
+									$label.html(str?str:placeholder);
+									$input.val(str||'');
+									var _changeFunc = $el.data('change');
+									if(!_changeFunc) return;
+									var _replace = function(){
+										try{ eval(_changeFunc);}catch(e){ console.log(e); };
+									};
+									_replace.apply($input[0]);
 								}
-								$label.html(str?str:placeholder);
-								$input.val(str||'');
+								
 							}
 						});
 						return false;

@@ -30,8 +30,25 @@ A.Component.add({
 					});
 					*/
 					function _clear() {
-						$label.html(placeholder);
-						$input.val('');
+						triggerChange({
+							date : '',
+							str : ''
+						});
+					}
+					
+					function triggerChange(data){
+						var _date = data.date,
+						_date_string = data.str;
+						if($input.val()!=_date_string){
+							$label.html(_date_string?_date_string:placeholder);
+							$input.val(_date_string||'');
+							var _changeFunc = $el.data('change');
+							if(!_changeFunc) return;
+							var _replace = function(){
+								try{ eval(_changeFunc);}catch(e){ console.log(e); };
+							};
+							_replace.apply($input[0]);
+						}
 					}
 
 					function timepicker_callback(e) {
@@ -45,12 +62,14 @@ A.Component.add({
 							_date = today;
 						}
 
-						return picker.select(_date, function(data) {
-							var _date = data.date,
-								_date_string = data.timeString;
-							$label.html(_date_string ? _date_string : placeholder);
-							$input.val(_date_string);
+						picker.select(_date, function(data) {
+							triggerChange({
+								date : data.date,
+								str : data.timeString
+							});
 						});
+
+						return false;
 					}
 
 					function datepicker_callback() {
@@ -64,10 +83,10 @@ A.Component.add({
 						}
 
 						return picker.select(_date, function(data) {
-							var _date = data.date,
-								_date_string = data.dateString;
-							$label.html(_date_string ? _date_string : placeholder);
-							$input.val(_date_string);
+							triggerChange({
+								date : data.date,
+								str : data.dateString
+							});
 						});
 					}
 
