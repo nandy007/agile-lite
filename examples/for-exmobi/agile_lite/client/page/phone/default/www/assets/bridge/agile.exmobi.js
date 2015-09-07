@@ -73,10 +73,23 @@
 			event : 'articleload',
 			handler : function(el, roleType){
 				var $el = $(el);		
-				var _work = function($el){			
+				var _work = function($el){
+					var returnObj = {
+						open : function(){
+							$el.trigger(A.options.clickEvent);
+						},
+						clear : function(){
+							$el.find('label').html($el.data('placeholder'));
+							$el.find('input').val('');
+						}
+					};
+					if(A.Component.isInit($el)){
+						return returnObj;
+					}
 					var $label = $el.find('label');
 					var $input = $el.find('input');
-					var placeholder = $label.html();
+					var placeholder = $label.html();$el.data('placeholder', placeholder||'');
+					
 					$el.on(A.options.clickEvent, function(e){
 						$native.openDateTimeSelector({
 							mode : $el.data('role'),
@@ -98,10 +111,11 @@
 						return false;
 					});
 					$label.html($input.val()||placeholder);
+					return returnObj;
 				};
 	
 				if($el.data('role')=='date'||$el.data('role')=='time'){
-					_work($el);
+					return _work($el);
 				}else{
 					var components = $el.find('[data-role="date"],[data-role="time"]');
 					for(var i=0;i<components.length;i++){

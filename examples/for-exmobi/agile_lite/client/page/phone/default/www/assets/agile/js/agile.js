@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.8 beta
+*	Version	:	1.1.9 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.8',
+			version : '1.1.9',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -240,8 +240,9 @@ var A = (function($){
 			selector : '[data-toggle="page"]',
 			handler : function(el){
 				var $el = $(el);
-				var _index = $el.index();
-				var $parent = $el.parent().parent();
+				var $scroll = $el.parent();
+				var $parent = $scroll.parent();
+				var _index = $scroll.children('[data-role]').index($el);
 				var slider = A.Slider($parent);
 				slider.index(_index);
 			}
@@ -433,23 +434,27 @@ var A = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
-				var $el = $(el);
-				var _doToggle = function($el){					
-					if($el.find('div.toggle-handle').length>0){//已经初始化
+				var $el = $(el);			
+			    var _getVal = function(isActive, $el){
+			    	var onValue = $el.data('on-value');
+				    var offValue = $el.data('off-value');
+				    var val = isActive?onValue:offValue;
+				    return typeof val=='undefined'?'':val;
+			    };
+				var _doToggle = function($el){	
+					var isActive = $el.hasClass('active');	
+					if($el.find('div.toggle-handle').length>0){//已经初始化	
+						console.log(111);
+						$el[isActive?'removeClass':'addClass']('active');
+				    	$el.find('input[data-com-refer="toggle"]').val(_getVal(isActive?false:true, $el));
 			            return;
 			        }
 			        var name = $el.attr('name');
-			        var onValue = $el.data('on-value');
-			        onValue = typeof onValue=='undefined'?'':onValue;
-			        var offValue = $el.data('off-value');
-			        offValue = typeof offValue=='undefined'?'':offValue;
 			        //添加隐藏域，方便获取值
-			        if(name){
-			            $el.append('<input type="hidden" name="'+name+'" value="'+($el.hasClass('active')?onValue:offValue)+'"/>');
-			        }
+			        $el.append('<input type="hidden" data-com-refer="toggle" '+(name?'name="'+name+'" ':'')+' value="'+_getVal(isActive, $el)+'"/>');
 			        $el.append('<div class="toggle-handle"></div>');
 			        $el.on(A.options.clickEvent, function(){
-			            var $t = $(this),v = $t.hasClass('active')?offValue:onValue;
+			            var $t = $(this),v = _getVal($el.hasClass('active')?false:true, $el);
 			            $t.toggleClass('active').trigger('toggle',[v]);//定义toggle事件
 			            $t.find('input').val(v);
 			            return false;
@@ -580,7 +585,7 @@ var A = (function($){
 				component[k] = function(hash){
 					var roleType = k;
 					var curr = _components[roleType]?(_components[roleType].handler?roleType:'default'):'default';
-					_components[curr].handler(hash, roleType);
+					return _components[curr].handler(hash, roleType);
 				};
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
@@ -599,6 +604,18 @@ var A = (function($){
      */
 	component.params = function(hash){
 		return A.JSON.parse($(hash).data('params'))||{};
+	};
+	
+	/**
+     * 设置并返回原始初始化状态
+     */
+	component.isInit = function($el){
+		if($el.data('com-init')){
+			return true;
+		}else{
+			$el.data('com-init','init');
+			return false;
+		}
 	};
 	
 	//启动组件
@@ -960,18 +977,30 @@ var A = (function($){
 			scrollTop : 'scrollTop',
 			scrollBottom : 'scrollBottom'
 		};
-
+		
 		var options = {
 			mouseWheel: true,
 			scrollbars : 'custom',
 			fadeScrollbars : true,
-			click : false,
-			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/ }
+			click : true
+			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|VIDEO)$/ }
 		};
 		$.extend(options, opts||{});
 		$.extend(options, $el.data('scroll-options')||{});
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
+		$el.on('touchmove', 'textarea', function(){
+			$scroll._execEvent('__setdiabled');
+		});
+		$el.on('touchend', 'textarea', function(){
+			$scroll._execEvent('__setenabled');
+		});
+		$scroll.on('__setdiabled', function(){
+			this.enabled = false;
+		});
+		$scroll.on('__setenabled', function(){
+			this.enabled = true;
+		});
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
@@ -1201,12 +1230,6 @@ var A = (function($){
 			outerSlider = A.Slider($outerSlider[0]);
 			outerSlider._execEvent('__setdiabled');
 		});
-		myScroll.on('__setdiabled', function(){
-			this.enabled = false;
-		});
-		myScroll.on('__setenabled', function(){
-			this.enabled = true;
-		});
 		myScroll.on('scrollEnd', function(){
 			if(outerSlider) outerSlider._execEvent('__setenabled');
 			index = this.currentPage.pageX;
@@ -1214,7 +1237,7 @@ var A = (function($){
 			var curDots = $($dots.get(index));
 			if(!curSlide.hasClass('active')){
 				sliderOpts.change&&sliderOpts.change.call(this, index);
-				curSlide.addClass('active').trigger('slidershow', curSlide[0]).siblings('.active').removeClass('active').trigger('sliderhide');
+				curSlide.addClass('active').trigger('slidershow').siblings('.active').removeClass('active').trigger('sliderhide');
 				curDots.addClass('active').siblings('.active').removeClass('active');
 			}
 		});		
@@ -1820,8 +1843,7 @@ var A = (function($){
 			//初始化article
 			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});
-		$(document).on('slidershow', '[data-role="page"]', function(e, el){		
-			if(el!=this) return;	
+		$(document).on('slidershow', '[data-role="page"].active', function(e, el){		
 			var id = $(this).attr('id');			
 			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});

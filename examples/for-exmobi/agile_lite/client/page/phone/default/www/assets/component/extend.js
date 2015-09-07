@@ -6,6 +6,18 @@ A.Component.add({
 		handler: function(el, roleType) {
 			var $el = $(el);
 			var _work = function($el) {
+				var returnObj = {
+					open : function(){
+						$el.trigger(A.options.clickEvent);
+					},
+					clear : function(){
+						$el.find('label').html($el.data('placeholder')||'');
+						$el.find('input').val('');
+					}
+				};
+				if(A.Component.isInit($el)){
+					return returnObj;
+				}
 				var $label = $el.find('label'),$input,placeholder;
 				if($label.length==1){
 					$input = $el.find('input');
@@ -14,21 +26,8 @@ A.Component.add({
 					$input = $el;
 					placeholder = '';
 				}
-				
+				$el.data('placeholder', placeholder);
 				$el.on(A.options.clickEvent, function(e) {
-					/*
-					$native.openDateTimeSelector({
-						mode: $el.data('role'),
-						val: $input.val(),
-						callback: function(str) {
-							if (str && ($input.val() != str) && $el.data('change')) {
-								eval($el.data('change'));
-							}
-							$label.html(str ? str : placeholder);
-							$input.val(str || '');
-						}
-					});
-					*/
 					function _clear() {
 						triggerChange({
 							date : '',
@@ -115,10 +114,11 @@ A.Component.add({
 					return false;
 				});
 				$label.html($input.val() || placeholder);
+				return returnObj;
 			};
 
 			if ($el.data('role') == 'date' || $el.data('role') == 'time' || $el.attr('type') == 'date' || $el.attr('type') == 'time') {
-				_work($el);
+				return _work($el);
 			} else {
 				var components = $el.find('[data-role="date"],[data-role="time"],input[type="date"],input[type="time"]');
 				for (var i = 0; i < components.length; i++) {
