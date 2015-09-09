@@ -176,10 +176,16 @@ input[type="checkbox"]:after,input[type="radio"]:after{
 .ios.toggle.active .toggle-handle {
 	border-color:#3779d0;
 }
-
+[data-role="select"]{
+	position:relative;
+	z-index:20;
+}
 [data-role="select"] select{
+	width:100%;
+	position:absolute;
 	color:#aaa;
 	background-color:transparent;
+	z-index:20;
 }
 [data-role="file"]:active,
 [data-role="date"]:active,

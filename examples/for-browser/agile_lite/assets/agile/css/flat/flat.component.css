@@ -803,6 +803,7 @@ input[type="radio"]:checked::after{
 }
 [data-role="select"]:after{
 	content: "\e216";
+	z-index: 1;
 }
 [data-role="file"]:after{
 	content: "\e209";

@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	1.1.9 beta
+*	Version	:	2.0.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '1.1.9',
+			version : '2.0.0',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -18,7 +18,8 @@ var A = (function($){
 			crossDomainHandler : null, //跨域请求的处理类
 			showPageLoading : false, //ajax默认是否有loading界面
 			viewSuffix : '.html', //加载静态文件的默认后缀
-			lazyloadPlaceholder : '' //懒人加载默认图片
+			lazyloadPlaceholder : '', //懒人加载默认图片
+			usePageParam : true
 		};
 		
 		this.pop = {
@@ -35,7 +36,6 @@ var A = (function($){
      * @param {Object} 任意可操作的对象，建议面向对象方式返回的对象
      */
 	Agile.prototype.register = function(key, obj){
-		//if(this[key]) return false;
 		this[key] = obj;
 		if(obj.launch){
 			_launchMap[key] = obj.launch;
@@ -53,6 +53,7 @@ var A = (function($){
      */
 	Agile.prototype.launch = function(opts){
 		if(A.options.complete==true) return;
+		_initPageInfo.apply(this);
 		$.extend(this.options, opts);
 		var _this = this;
 		if(!this.options.readyEvent){
@@ -63,6 +64,14 @@ var A = (function($){
 			$(document).on(this.options.readyEvent, _doLaunch);
 		}
 	};
+	
+	var _initPageInfo = function(){
+		var urlObj = A.util.parseURL(location.href);
+		var params = A.JSON.stringify(urlObj.getQueryobject());
+		var hash = location.hash.replace('#','');
+		this.pageInfo = A.Base64.decode(hash);
+	};
+	
 	return new Agile();
 })(window.Zepto||jQuery);
 
@@ -84,8 +93,7 @@ var A = (function($){
 				var controllerObj = _controllers[toggleType]||{};				
 				var $target = $(hashObj.tag);
 				var $container = $(controllerObj.container);				
-				function _event($target, $current){				
-					if(urlObj.getQueryobject()) $target.data('params', A.JSON.stringify(urlObj.getQueryobject()));					
+				function _event($target, $current){									
 					var targetRole = $target.data('role')||'';					
 					var show = function($el){
 						if(!$el.hasClass('active')) $el.addClass('active');					
@@ -122,6 +130,8 @@ var A = (function($){
 				function _next(){														
 					var targetRole = $target.data('role');
 					var toggleSelector = targetRole?'[data-role="'+targetRole+'"].active':'.active';
+					$target.data('url', urlObj.getURL());
+					if(urlObj.getQueryobject()) $target.data('params', A.JSON.stringify(urlObj.getQueryobject()));
 					if($target.hasClass('active')){
 						_event($target);
 						controllerObj.complete&&controllerObj.complete($target, {result:'thesame'});
@@ -176,11 +186,21 @@ var A = (function($){
 			    	if(_history.length==0||(_history.length>1&&$(_history[0].tag).data('cache')==false||$(_history[0].tag).data('cache')=='false')){
 			    		noState = true;
 			    	}
+			    	var encodeHash = hash;
+			    	if(A.options.usePageParam){
+			    		var encodeHashObj = {
+				    		params : A.Component.params(hash),
+				    		hash : hash.replace('#', ''),
+				    		url : $(hash).data('url')
+				    	};
+				    	encodeHash = '#'+A.Base64.encode(A.JSON.stringify(encodeHashObj));
+			    	}
+
 			        if(noState){//不添加浏览器历史记录
 			            _history.shift(hashObj);
-			            window.history.replaceState(hashObj,'',hash);
+			            window.history.replaceState(hashObj,'',encodeHash);
 			        }else{
-			            window.history.pushState(hashObj,'',hash);
+			            window.history.pushState(hashObj,'',encodeHash);
 			        }
 			        _history.unshift(hashObj);
 			    };
@@ -223,9 +243,11 @@ var A = (function($){
 				}
 				var _history = _controllers.section.history;				
 				var locationObj = A.util.parseURL(location.href);
-				if('#'+locationObj.getFragment()==_history[0].tag){
+				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.Base64.decode(locationObj.getFragment())):{hash:location.hash};
+				if(!codeHashObject||('#'+codeHashObject.hash==_history[0].tag)){
 					return;
 				}
+				
 				if(_history.length<2) return;
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
@@ -405,13 +427,9 @@ var A = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
-				var $el = $(el);
-				
-				var _doInit = function($el){
+				var $el = $(el);				
+				var _doInit = function($el){					
 					$el.on(A.options.clickEvent, function(e){
-						if(e.target.tagName.toLowerCase()=='input'||e.target.tagName.toLowerCase()=='label'){
-							return true;
-						}
 			    		try{
 			        		var checkObj = $el.find('input')[0];
 			        		checkObj.checked = !checkObj.checked;
@@ -420,10 +438,10 @@ var A = (function($){
 			    	});
 				};
 				
-				if($el.data('role')=='select'||$el.data('role')=='checkbox'||$el.data('role')=='radio'){
+				if($el.data('role')=='checkbox'||$el.data('role')=='radio'){
 					_doInit($el);
 				}else{
-					var els = $el.find('[data-role="select"],[data-role="checkbox"],[data-role="radio"]');
+					var els = $el.find('[data-role="checkbox"],[data-role="radio"]');
 					for(var i=0;i<els.length;i++){
 						_doInit($(els[i]));
 					}
@@ -616,6 +634,24 @@ var A = (function($){
 			$el.data('com-init','init');
 			return false;
 		}
+	};
+	/**
+     * type组件的名称，hash组件的#id
+     */
+	component.getObject = function(type, hash){
+		var $el = $(hash);
+		var returnObj = {};
+		var comObj = component.get(type);
+		if(!comObj||!comObj.extend) return returnObj;
+		var _extend = comObj.extend;
+		for(var k in _extend){
+			(function(k){
+				returnObj[k] = function(){
+					return _extend[k].apply($el, arguments);
+				};
+			})(k);
+		}
+		return returnObj;
 	};
 	
 	//启动组件
@@ -983,7 +1019,7 @@ var A = (function($){
 			scrollbars : 'custom',
 			fadeScrollbars : true,
 			click : true
-			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|VIDEO)$/ }
+			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/ }
 		};
 		$.extend(options, opts||{});
 		$.extend(options, $el.data('scroll-options')||{});
@@ -1247,7 +1283,7 @@ var A = (function($){
 		});
 		myScroll.index = function(){
 			if(arguments.length==0) return index;
-			myScroll.goToPage(arguments[0], 0, options.snapSpeed);
+			myScroll.goToPage(arguments[0], 0, arguments[1]||options.snapSpeed);
 			myScroll._execEvent('scrollEnd');
 		};
 		myScroll.goToPage(index, 0, options.snapSpeed);
@@ -1814,11 +1850,21 @@ var A = (function($){
 		var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
 		var $section = $(sectionSelecor+'.active').first();
 		if($section.length==0) $section = $(sectionSelecor).first();
+		if(A.options.usePageParam){
+			$section.children('article.active').on('articleload', function(){
+				var pageInfo = A.JSON.parse(A.pageInfo);
+				if(!pageInfo||$section.attr('id')==pageInfo.hash) return;
+				var url = pageInfo.url||(pageInfo.hash+'.html?'+A.JSON.toParams(pageInfo.params));
+				setTimeout(function(){
+					A.Controller.section(url);
+				},1000);
+				
+			});
+		}
 		A.Controller.section('#'+$section.attr('id'));
 	};
 	_events.agileStart = function(){
 		var flag = true;
-		_initSection();
 		$(document).on(A.options.agileReadyEvent, function(){
 			_initSection();
 		});
@@ -1950,7 +1996,6 @@ var A = (function($){
 			}else if(type=='before'){
 				//$referObj = $el;
 			}
-
 			var $html = $(html).attr('__inject_dependence__',tag);
 			$referObj.after($html);			
 			cb&&cb($html, tmpl, data);
@@ -1978,32 +2023,19 @@ var A = (function($){
  * 扩展JSON:A.JSON.stringify和A.JSON.parse，用法你懂
  * */
 (function(){
-	var JSON = {};
-	JSON.parse = function(str){
-		try{
-			return eval("("+str+")");
-		}catch(e){
-			return null;
-		}
-	};
-	JSON.stringify = function(o){
-		var r = [];
-		if(typeof o =="string") return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\"";
-		if(typeof o =="undefined") return "";
-		if(typeof o != "object") return o.toString();
-		if(o===null) return null;
-		if(o instanceof Array){
-			for(var i =0;i<o.length;i++){
-		        r.push(this.stringify(o[i]));
-		    }
-		    r="["+r.join()+"]";
-		}else{
-			for(var i in o){
-			   r.push('"'+i+'":'+this.stringify(o[i]));
-		    }
-		    r="{"+r.join()+"}";
-		}
-		return r;
-	};
+	var JSON={};JSON.parse=function(str){try{return eval("("+str+")")}catch(e){return null}};JSON.stringify=function(o){var r=[];if(typeof o=="string"){return'"'+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+'"'}if(typeof o=="undefined"){return""}if(typeof o!="object"){return o.toString()}if(o===null){return null}if(o instanceof Array){for(var i=0;i<o.length;i++){r.push(this.stringify(o[i]))}r="["+r.join()+"]"}else{for(var i in o){r.push('"'+i+'":'+this.stringify(o[i]))}r="{"+r.join()+"}"}return r};JSON.toParams=function(json){var str=[];for(var k in json){var v=json[k];v=json[k] instanceof Array?json[k]:[json[k]];for(var i=0;i<v.length;i++){str.push(v[i])}}return str.join("&")};
 	A.register('JSON', JSON);
+})();
+
+(function(){
+	var Base64={table:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/"],UTF16ToUTF8:function(str){var res=[],len=str.length;for(var i=0;i<len;i++){var code=str.charCodeAt(i);if(code>0&&code<=127){res.push(str.charAt(i))}else{if(code>=128&&code<=2047){var byte1=192|((code>>6)&31);var byte2=128|(code&63);res.push(String.fromCharCode(byte1),String.fromCharCode(byte2))}else{if(code>=2048&&code<=65535){var byte1=224|((code>>12)&15);var byte2=128|((code>>6)&63);var byte3=128|(code&63);res.push(String.fromCharCode(byte1),String.fromCharCode(byte2),String.fromCharCode(byte3))}else{if(code>=65536&&code<=2097151){}else{if(code>=2097152&&code<=67108863){}else{}}}}}}return res.join("")},UTF8ToUTF16:function(str){var res=[],len=str.length;var i=0;for(var i=0;i<len;i++){var code=str.charCodeAt(i);if(((code>>7)&255)==0){res.push(str.charAt(i))}else{if(((code>>5)&255)==6){var code2=str.charCodeAt(++i);var byte1=(code&31)<<6;var byte2=code2&63;var utf16=byte1|byte2;res.push(Sting.fromCharCode(utf16))}else{if(((code>>4)&255)==14){var code2=str.charCodeAt(++i);var code3=str.charCodeAt(++i);var byte1=(code<<4)|((code2>>2)&15);var byte2=((code2&3)<<6)|(code3&63);utf16=((byte1&255)<<8)|byte2;res.push(String.fromCharCode(utf16))}else{if(((code>>3)&255)==30){}else{if(((code>>2)&255)==62){}else{}}}}}}return res.join("")},encode:function(str){if(!str){return""}var utf8=this.UTF16ToUTF8(str);var i=0;var len=utf8.length;var res=[];while(i<len){var c1=utf8.charCodeAt(i++)&255;res.push(this.table[c1>>2]);if(i==len){res.push(this.table[(c1&3)<<4]);res.push("==");break}var c2=utf8.charCodeAt(i++);if(i==len){res.push(this.table[((c1&3)<<4)|((c2>>4)&15)]);res.push(this.table[(c2&15)<<2]);res.push("=");break}var c3=utf8.charCodeAt(i++);res.push(this.table[((c1&3)<<4)|((c2>>4)&15)]);res.push(this.table[((c2&15)<<2)|((c3&192)>>6)]);res.push(this.table[c3&63])}return res.join("")},decode:function(str){if(!str){return""}var len=str.length;var i=0;var res=[];while(i<len){code1=this.table.indexOf(str.charAt(i++));code2=this.table.indexOf(str.charAt(i++));code3=this.table.indexOf(str.charAt(i++));code4=this.table.indexOf(str.charAt(i++));c1=(code1<<2)|(code2>>4);c2=((code2&15)<<4)|(code3>>2);c3=((code3&3)<<6)|code4;res.push(String.fromCharCode(c1));if(code3!=64){res.push(String.fromCharCode(c2))}if(code4!=64){res.push(String.fromCharCode(c3))}}return this.UTF8ToUTF16(res.join(""))}};
+	A.register('Base64', {
+		encode : function(str){
+			try{ return Base64.encode(str); }catch(e){ return ''; }
+			
+		},
+		decode : function(str){
+			try{ return Base64.decode(str); }catch(e){ return ''; }
+		}
+	});
 })();

@@ -126,6 +126,16 @@ A.Component.add({
 				}
 			}
 
+		},
+		extend : {
+			open : function(){
+				this.trigger(A.options.clickEvent);
+			},
+			clear : function(){
+				var $el = this;
+				$el.find('label').html($el.data('placeholder')||'');
+				$el.find('input').val('');
+			}
 		}
 	}
 });
