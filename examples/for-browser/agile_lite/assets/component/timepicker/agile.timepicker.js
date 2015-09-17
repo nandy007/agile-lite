@@ -4,6 +4,14 @@
 	function addZero(number) {
 		return (number < 10 ? '0' + number : number);
 	}
+	
+	function getPage($el){
+		$el = $el.first().prev();
+		var height = $el.height();
+		var eTop = $el.offset().top;
+		var pTop = $el.closest('.agile-popup').offset().top;
+		return Math.round((pTop - eTop)/height);
+	};
 
 	function solarDays(y, m) {
 		var solarMonth = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -164,19 +172,22 @@
 				});
 			}
 
-			_this.hourScroll.scrollToElement('#hourli' + (_selected_date.getHours() - 1), 0);
+			//_this.hourScroll.scrollToElement('#hourli' + (_selected_date.getHours() - 1), 0);
+			_this.hourScroll.goToPage(0, _selected_date.getHours(), 0);
 			$('#hourli' + _selected_date.getHours()).addClass('selectedli');
-			_this.minuteScroll.scrollToElement('#minuteli' + (_selected_date.getMinutes() - 1), 0);
+			//_this.minuteScroll.scrollToElement('#minuteli' + (_selected_date.getMinutes() - 1), 0);
+			_this.minuteScroll.goToPage(0, _selected_date.getMinutes(), 0);
 			$('#minuteli' + _selected_date.getMinutes()).addClass('selectedli');
 			if (option.hasSecond) {
-				_this.secondScroll.scrollToElement('#secondli' + (_selected_date.getSeconds() - 1), 0);
+				//_this.secondScroll.scrollToElement('#secondli' + (_selected_date.getSeconds() - 1), 0);
+				_this.secondScroll.goToPage(0, _selected_date.getSeconds(), 0);
 				$('#secondli' + _selected_date.getSeconds()).addClass('selectedli');
 			}
 
 			_this.hourScroll.on('scrollEnd', function(e) {
 				$('.hourli').removeClass('selectedli');
 				//var _hour = Math.round(_this.hourScroll.y / (-41));
-				var _hour = _this.hourScroll.currentPage.pageY;
+				var _hour = getPage($('.hourli'));
 				_this.hourSelected = _hour;
 				$('#hourli' + _hour).addClass('selectedli');
 			});
@@ -184,7 +195,7 @@
 			_this.minuteScroll.on('scrollEnd', function(e) {
 				$('.minuteli').removeClass('selectedli');
 				//var _minute = Math.round(_this.minuteScroll.y / (-41));
-				var _minute = _this.minuteScroll.currentPage.pageY;
+				var _minute = getPage($('.minuteli'));
 				_this.minuteSelected = _minute;
 				$('#minuteli' + _minute).addClass('selectedli');
 			});
@@ -192,7 +203,7 @@
 				_this.secondScroll.on('scrollEnd', function(e) {
 					$('.secondli').removeClass('selectedli');
 					//var _second = Math.round(_this.secondScroll.y / (-41));
-					var _second = _this.secondScroll.currentPage.pageY;
+					var _second = getPage($('.secondli'));
 					_this.secondSelected = _second;
 					$('#secondli' + _second).addClass('selectedli');
 				});
@@ -305,11 +316,13 @@
 				snap: 'li'
 			});
 			if (_this.daySelected > number_of_day) {
-				_this.dayScroll.scrollToElement('#dayli' + (number_of_day - 1), 0);
+				//_this.dayScroll.scrollToElement('#dayli' + (number_of_day - 1), 0);
+				_this.dayScroll.goToPage(0, number_of_day-1, 0);
 				$('#dayli' + number_of_day).addClass('selectedli');
 				_this.daySelected = number_of_day;
 			} else {
-				_this.dayScroll.scrollToElement('#dayli' + (parseInt(_this.daySelected) - 1), 0);
+				//_this.dayScroll.scrollToElement('#dayli' + (parseInt(_this.daySelected) - 1), 0);
+				_this.dayScroll.goToPage(0, (parseInt(_this.daySelected) - 1), 0);
 				$('#dayli' + parseInt(_this.daySelected)).addClass('selectedli');
 			}
 
@@ -407,18 +420,21 @@
 				scrollbars: false,
 				snap: 'li'
 			});
-
-			_this.yearScroll.scrollToElement('#yearli' + (_selected_date.getFullYear() - 1), 0);
+			var _yGap = 1900,_mGap = _dGap = 1;
+			//_this.yearScroll.scrollToElement('#yearli' + (_selected_date.getFullYear() - 1), 0);
+			_this.yearScroll.goToPage(0, _selected_date.getFullYear()-_yGap, 0);
 			$('#yearli' + _selected_date.getFullYear()).addClass('selectedli');
-			_this.monthScroll.scrollToElement('#monthli' + _selected_date.getMonth(), 0);
+			//_this.monthScroll.scrollToElement('#monthli' + _selected_date.getMonth(), 0);
+			_this.monthScroll.goToPage(0, _selected_date.getMonth()+1-_mGap, 0);
 			$('#monthli' + (_selected_date.getMonth() + 1)).addClass('selectedli');
-			_this.dayScroll.scrollToElement('#dayli' + (_selected_date.getDate() - 1), 0);
+			//_this.dayScroll.scrollToElement('#dayli' + (_selected_date.getDate() - 1), 0);
+			_this.dayScroll.goToPage(0, _selected_date.getDate()-_dGap, 0);
 			$('#dayli' + _selected_date.getDate()).addClass('selectedli');
 
 			_this.yearScroll.on('scrollEnd', function(e) {
 				$('.yearli').removeClass('selectedli');
 				//var _year = Math.round(_this.yearScroll.y / (-41) + 1900);
-				var _year = _this.yearScroll.currentPage.pageY + 1900;
+				var _year = getPage($('.yearli')) + _yGap;
 				_this.yearSelected = _year;
 				$('#yearli' + _year).addClass('selectedli');
 				_this.reCountDay();
@@ -427,7 +443,7 @@
 			_this.monthScroll.on('scrollEnd', function(e) {
 				$('.monthli').removeClass('selectedli');
 				//var _month = Math.round(_this.monthScroll.y / (-41) + 1);
-				var _month = _this.monthScroll.currentPage.pageY + 1;
+				var _month = getPage($('.monthli')) + _mGap;
 				_this.monthSelected = _month;
 				$('#monthli' + _month).addClass('selectedli');
 				_this.reCountDay();
@@ -436,7 +452,7 @@
 			_this.dayScroll.on('scrollEnd', function(e) {
 				$('.dayli').removeClass('selectedli');
 				//var _day = Math.round(_this.dayScroll.y / (-41) + 1);
-				var _day = _this.dayScroll.currentPage.pageY + 1;
+				var _day = getPage($('.dayli')) + _dGap;
 				_this.daySelected = _day;
 				$('#dayli' + _day).addClass('selectedli');
 			});

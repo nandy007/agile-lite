@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.0.0 beta
+*	Version	:	2.1.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.0.0',
+			version : '2.1.0',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -242,8 +242,7 @@ var A = (function($){
 					return;
 				}
 				var _history = _controllers.section.history;				
-				var locationObj = A.util.parseURL(location.href);
-				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.Base64.decode(locationObj.getFragment())):{hash:location.hash};
+				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.Base64.decode(location.hash.replace('#', ''))):{hash:location.hash};
 				if(!codeHashObject||('#'+codeHashObject.hash==_history[0].tag)){
 					return;
 				}
@@ -431,8 +430,10 @@ var A = (function($){
 				var _doInit = function($el){					
 					$el.on(A.options.clickEvent, function(e){
 			    		try{
-			        		var checkObj = $el.find('input')[0];
+			    			$input = $el.find('input').first();
+			        		var checkObj = $input[0];
 			        		checkObj.checked = !checkObj.checked;
+			        		$input.trigger('change');
 			    		}catch(e){}
 			    		return false;
 			    	});
@@ -1028,7 +1029,7 @@ var A = (function($){
 		$el.on('touchmove', 'textarea', function(){
 			$scroll._execEvent('__setdiabled');
 		});
-		$el.on('touchend', 'textarea', function(){
+		$el.on('touchend blur', 'textarea', function(){
 			$scroll._execEvent('__setenabled');
 		});
 		$scroll.on('__setdiabled', function(){
@@ -1794,17 +1795,19 @@ var A = (function($){
      * @private
      */
 	_events.removeCache = function(){
-		var controller = A.Controller.get();
-		var eName = [];
-		for(var k in controller){
-			eName.push(k+'hide');
-		}
-		$(document).on(eName.join(' '), '[data-cache="false"]', function(){
+		var handler = function(){
 			var $el = $(this);
 			if($el.data('scroll')) A.Scroll($el).destroy();
 			$el.find('[data-scroll],[data-role="slider"]').each(function(){ A.Scroll(this).destroy(); });
 			$el.remove();
-		});
+		};
+		var controller = A.Controller.get();
+		var eName = [];
+		var $doc = $(document);
+		for(var k in controller){
+			k = k=='default'?'view':k;
+			$doc.on(k+'hide', '[data-cache="false"][data-role="'+k+'"]', handler);
+		}
 	};
 	
 	/**
