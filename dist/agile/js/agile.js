@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.1.0 beta
+*	Version	:	2.2.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -1019,8 +1019,8 @@ var A = (function($){
 			mouseWheel: true,
 			scrollbars : 'custom',
 			fadeScrollbars : true,
-			click : true
-			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/ }
+			click : true,
+			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
 		};
 		$.extend(options, opts||{});
 		$.extend(options, $el.data('scroll-options')||{});
@@ -1833,8 +1833,8 @@ var A = (function($){
 	};
 	
 	_events.zepto = function(){	
+		$(document).on('click', 'a[data-toggle]', function(){return false; });
 		if($==window.Zepto){
-			$(document).on('click', 'a[data-toggle]', function(){return false; });
 			$(document).on('swipeLeft','[data-aside-right],[data-role="calendar"],.swipe_block', function(){$(this).trigger('swipeleft');});
 			$(document).on('swipeRight','[data-aside-left],[data-role="calendar"],.swipe_block',function(){$(this).trigger('swiperight');});
 		}	
@@ -1844,7 +1844,7 @@ var A = (function($){
 	 * */
 	var _initSection = function(){
 		$(document).on('sectionload', 'section', function(){
-			var $childred = $(this).children(':first-child,:last-child').not('[data-scroll], [data-boundary="false"]');
+			var $childred = $(this).children(':last-child').not('[data-scroll], [data-boundary="false"]');
 			$childred.on('touchmove', function(e){
 				e.preventDefault();
 			});

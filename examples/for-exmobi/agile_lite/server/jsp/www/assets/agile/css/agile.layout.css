@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 1.1.8
+ * for Agile Lite 2.2.0 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -515,7 +515,7 @@ aside[data-position][data-transition="reveal"]{
 	display:inline-block;
 	width: 16px;
   	height: 16px;
-	position: fixed;
+	position: absolute;
 	z-index: -1;
 	background: #e8e8e8;
 	border-radius: 3px;
@@ -794,3 +794,6 @@ aside[data-position][data-transition="reveal"]{
 	display:inline-block;
 }
 /* scrollTop end */
+[data-role] input[type="checkbox"],[data-role] input[type="radio"]{
+	pointer-events:none;
+}
