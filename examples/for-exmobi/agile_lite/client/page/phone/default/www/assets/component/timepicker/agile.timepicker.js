@@ -1,22 +1,22 @@
 //时间选择
 (function($) {
-	
+
 	function addZero(number) {
 		return (number < 10 ? '0' + number : number);
 	}
-	
-	function getPage($el){
+
+	function getPage($el) {
 		$el = $el.first().prev();
-		var height = $el.height();
+		var height = $el.get(0).offsetHeight;//$el.height();
 		var eTop = $el.offset().top;
 		var pTop = $el.closest('.agile-popup').offset().top;
-		return Math.round((pTop - eTop)/height);
-	};
+		return Math.round((pTop - eTop) / height);
+	}
 
 	function solarDays(y, m) {
 		var solarMonth = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 		if (m == 1)
-			return (((y % 4 == 0) && (y % 100 != 0) || (y % 400 == 0)) ? 29 : 28);
+			return (((y % 4 === 0) && (y % 100 !== 0) || (y % 400 === 0)) ? 29 : 28);
 		else
 			return (solarMonth[m]);
 	}
@@ -135,15 +135,17 @@
 			_this.minuteSelected = _selected_date.getMinutes();
 			_this.secondSelected = _selected_date.getSeconds();
 
-			for (var i = 0; i < 24; i++) {
+			var i = 0;
+
+			for (i = 0; i < 24; i++) {
 				html_hour += '<li style="background-color: #E8E8E8;" class="hourli" id="hourli' + i + '">' + addZero(i) + '</li>';
 			}
 
-			for (var i = 0; i < 60; i++) {
+			for (i = 0; i < 60; i++) {
 				html_minute += '<li style="background-color: #E8E8E8;" class="minuteli" id="minuteli' + i + '">' + addZero(i) + '</li>';
 			}
 
-			for (var i = 0; i < 60; i++) {
+			for (i = 0; i < 60; i++) {
 				html_second += '<li style="background-color: #E8E8E8;" class="secondli" id="secondli' + i + '">' + addZero(i) + '</li>';
 			}
 
@@ -302,7 +304,7 @@
 		};
 
 		this.reCountDay = function() {
-			var number_of_day = parseInt(solarDays(_this.yearSelected, (parseInt(_this.monthSelected) - 1)));
+			var number_of_day = parseInt(solarDays(_this.yearSelected, (parseInt(_this.monthSelected, 10) - 1)), 10);
 			var html_day = '<li style="background-color: #E8E8E8;" id="dayli0">&nbsp;</li>';
 			for (var i = 1; i <= number_of_day; i++) {
 				html_day += '<li style="background-color: #E8E8E8;" class="dayli" id="dayli' + i + '">' + addZero(i) + '</li>';
@@ -317,13 +319,13 @@
 			});
 			if (_this.daySelected > number_of_day) {
 				//_this.dayScroll.scrollToElement('#dayli' + (number_of_day - 1), 0);
-				_this.dayScroll.goToPage(0, number_of_day-1, 0);
+				_this.dayScroll.goToPage(0, number_of_day - 1, 0);
 				$('#dayli' + number_of_day).addClass('selectedli');
 				_this.daySelected = number_of_day;
 			} else {
 				//_this.dayScroll.scrollToElement('#dayli' + (parseInt(_this.daySelected) - 1), 0);
-				_this.dayScroll.goToPage(0, (parseInt(_this.daySelected) - 1), 0);
-				$('#dayli' + parseInt(_this.daySelected)).addClass('selectedli');
+				_this.dayScroll.goToPage(0, (parseInt(_this.daySelected, 10) - 1), 0);
+				$('#dayli' + parseInt(_this.daySelected, 10)).addClass('selectedli');
 			}
 
 			_this.dayScroll.off('scrollEnd');
@@ -383,17 +385,19 @@
 			_this.monthSelected = _selected_date.getMonth() + 1;
 			_this.daySelected = _selected_date.getDate();
 
-			for (var i = 1900; i < 2050; i++) {
+			var i = 0;
+
+			for (i = 1900; i < 2050; i++) {
 				html_year += '<li style="background-color: #E8E8E8;" class="yearli" id="yearli' + i + '">' + i + '</li>';
 			}
 
-			for (var i = 1; i < 13; i++) {
+			for (i = 1; i < 13; i++) {
 				html_month += '<li style="background-color: #E8E8E8;" class="monthli" id="monthli' + i + '">' + i + '月</li>';
 			}
 
-			var number_of_day = solarDays(_this.yearSelected, (parseInt(_this.monthSelected) - 1));
+			var number_of_day = solarDays(_this.yearSelected, (parseInt(_this.monthSelected, 10) - 1));
 
-			for (var i = 1; i <= number_of_day; i++) {
+			for (i = 1; i <= number_of_day; i++) {
 				html_day += '<li style="background-color: #E8E8E8;" class="dayli" id="dayli' + i + '">' + addZero(i) + '</li>';
 			}
 
@@ -420,15 +424,17 @@
 				scrollbars: false,
 				snap: 'li'
 			});
-			var _yGap = 1900,_mGap = _dGap = 1;
+			var _yGap = 1900,
+				_mGap = 1,
+				_dGap = 1;
 			//_this.yearScroll.scrollToElement('#yearli' + (_selected_date.getFullYear() - 1), 0);
-			_this.yearScroll.goToPage(0, _selected_date.getFullYear()-_yGap, 0);
+			_this.yearScroll.goToPage(0, _selected_date.getFullYear() - _yGap, 0);
 			$('#yearli' + _selected_date.getFullYear()).addClass('selectedli');
 			//_this.monthScroll.scrollToElement('#monthli' + _selected_date.getMonth(), 0);
-			_this.monthScroll.goToPage(0, _selected_date.getMonth()+1-_mGap, 0);
+			_this.monthScroll.goToPage(0, _selected_date.getMonth() + 1 - _mGap, 0);
 			$('#monthli' + (_selected_date.getMonth() + 1)).addClass('selectedli');
 			//_this.dayScroll.scrollToElement('#dayli' + (_selected_date.getDate() - 1), 0);
-			_this.dayScroll.goToPage(0, _selected_date.getDate()-_dGap, 0);
+			_this.dayScroll.goToPage(0, _selected_date.getDate() - _dGap, 0);
 			$('#dayli' + _selected_date.getDate()).addClass('selectedli');
 
 			_this.yearScroll.on('scrollEnd', function(e) {
@@ -482,7 +488,7 @@
 					});
 				}
 				_date_picker_popup.close();
-				
+
 				return false;
 			});
 

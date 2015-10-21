@@ -558,6 +558,10 @@
 		return this.opts.marks[date_string] ? this.opts.marks[date_string] : null;
 	};
 
+	_Calendar.prototype.setMark = function(date_string, data) {
+		this.opts.marks[date_string] = data;
+	};
+
 	_Calendar.prototype.removeMarkAllData = function(date_string) {
 		if (this.opts.marks[date_string]) {
 			this.opts.marks[date_string].data = [];

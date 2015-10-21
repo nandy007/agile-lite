@@ -53,7 +53,7 @@
 		}
 
 		function fallback_swipeleft(e) {
-			$selector_li.animate({
+			$selector_li.parent().find('li').animate({
 				left: '0px'
 			}, 100);
 			status = status_code.normal;
@@ -63,14 +63,27 @@
 		function swipeleft(e) {
 			var _li_element = $(e.currentTarget);
 
+			fallback_swipeleft();
+
 			_li_element.animate({
 				left: '-' + swipe_option_width
 			}, 100);
 
 			$selector_li.parent().find('li').children(':not(.swipe_option)').off('tap', fallback_swipeleft).on('tap', fallback_swipeleft);
 
+			_li_element.off('swiperight', fallback_swipeleft).on('swiperight', fallback_swipeleft);
+
+			_li_element.children(':not(.swipe_option)').off('tap').on('tap', function() {
+				_li_element.animate({
+					left: '0px'
+				}, 100);
+				_li_element.children(':not(.swipe_option)').off('tap');
+				return false;
+			});
+
 			_li_element.children('.swipe_option').off('tap').on('tap', function(e) {
 				option.swipeOptionOnTap && option.swipeOptionOnTap(_li_element, $(e.target));
+				return false;
 			});
 
 			status = status_code.right;
@@ -102,7 +115,13 @@
 		return {
 			showLeft: _showLeft,
 			hideLeft: _hideLeft,
-			refresh: _refresh
+			refresh: _refresh,
+			hideOne: function(el) {
+				var _el = $(el);
+				_el.animate({
+					left: '0px'
+				}, 100);
+			}
 		};
 	}
 
