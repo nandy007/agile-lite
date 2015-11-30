@@ -327,7 +327,7 @@ var $util = (function(){
 		if(opts.data) ajaxData.data = opts.data;
 		ajaxData.successFunction = '$util._ajax_successFunction';
 		ajaxData.failFunction = '$util._ajax_errorFunction';
-		if(opts.headers) ajaxData.requestHeader = A.JSON.stringify(opts.headers);
+		if(opts.headers) ajaxData.requestHeader = opts.headers;
 		ajaxData.isBlock = opts.isBlock = opts.isBlock==true?true:false;
 		ajaxData.timeout = opts.timeout?(opts.timeout/1000):20;
 		ajaxData.reqCharset = opts.reqCharset||'utf-8';
