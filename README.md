@@ -11,7 +11,7 @@ Agile移动应用前端框架既解决了前端UI层的显示，耦合了高性�
 
 
 #参考文档
-Agile Lite框架的使用文档和案例发布于烽火星空的移动应用平台ExMobi官网上，大家可以通过访问<http://www.exmobi.cn/agile-lite/index.html>查看Agile Lite使用方法，包括：起步、组件、扩展等。
+Agile Lite框架的使用文档和案例发布于烽Agile Lite官网上，大家可以通过访问<http://www.agilelite.net>查看Agile Lite使用方法，包括：起步、组件、扩展等。
 #使用建议
 Agile Lite框架本身是基于标准HTML5开发的，但是由于移动应用中需要使用大量的本地能力而HTML5无法胜任，所以通常需要依赖一个宿主容器运行，并能调用容器里的本地能力。
 <br><br>
@@ -21,7 +21,7 @@ ExMobi是由烽火星空推出的移动应用平台，除了封装了丰富的�
 <br><br>
 另外，整个论坛（<http://bbs.exmobi.cn>）都是关于移动应用开发的，包括使用ExMobi跨平台开发、Android原生开发、iOS原生开发等，欢迎开发者加入。
 <br><br>
-或者，开发者也可以加入到ExMobi开发者交流群（276906159）中，与Q友共同学习。
+或者，开发者也可以加入到Agile Lite开发者交流群（498752673）中，与Q友共同学习。
 #License
 The MIT license.
 <br>
