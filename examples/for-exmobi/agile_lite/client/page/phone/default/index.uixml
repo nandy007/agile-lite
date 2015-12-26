@@ -4,11 +4,13 @@
 		<title show="false">Agile Lite</title>
 		<script>
 		<![CDATA[
-			
+			function aaa(){
+				console.log(222);
+			}
 		]]>
 		</script>
 	</head>
-	<body style="padding:0px;margin:0px;">
+	<body style="padding:0px;margin:0px;" onload="aaa()">
 		<webview id="browser" url="res:page/www/index.html" backmonitor="true"></webview>
 	</body>
 </html>

@@ -29,10 +29,10 @@
 			$selector_li.addClass('swipe_block');
 
 			$selector_li.each(function() {
-				if ($(this).find('.swipe_option').length == 0) {
+				if ($(this).find('.swipe_option').length === 0) {
 					$(this).append('<div class="swipe_option"></div>');
 				}
-				if ($(this).find('.exlist_left_div').length == 0) {
+				if ($(this).find('.exlist_left_div').length === 0) {
 					$(this).append('<div class="exlist_left_div"></div>');
 				}
 			});
@@ -128,7 +128,7 @@
 	ExList.liController = function($selector, opt) {
 		return (function($selector, opt) {
 			var option = {
-				leftContent: '<div style="width:100%;height:100%;padding: 12px;"><input class="exlist_checkbox" type="checkbox"/></div>',
+				leftContent: '<div style="width:100%;height:100%;padding: 12px;" data-role="checkbox"><input class="exlist_checkbox" type="checkbox"/></div>',
 				rightContent: '<div style="width:100%;height:100%;background-color: #FF2D2D;text-align: center;padding: 12px;color: #FFFFFF;">删除</div>'
 			};
 
@@ -146,7 +146,7 @@
 
 		return (function($selector, opt) {
 			var option = {
-				leftContent: '<div style="width:100%;height:100%;padding: 12px;"><input class="exlist_checkbox" type="checkbox"/></div>',
+				leftContent: '<div style="width:100%;height:100%;padding: 12px;" data-role="checkbox"><input class="exlist_checkbox" type="checkbox"/></div>',
 				rightContent: '<div style="width:100%;height:100%;background-color: #FF2D2D;text-align: center;padding: 12px;color: #FFFFFF;">删除</div>'
 			};
 

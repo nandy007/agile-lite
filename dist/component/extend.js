@@ -41,7 +41,7 @@ A.Component.add({
 						if($input.val()!=_date_string){
 							$label.html(_date_string?_date_string:placeholder);
 							$input.val(_date_string||'');
-							var _changeFunc = $el.data('change');
+							var _changeFunc = $el.trigger('datachange', [_date_string||'']).data('change');
 							if(!_changeFunc) return;
 							var _replace = function(){
 								try{ eval(_changeFunc);}catch(e){ console.log(e); };

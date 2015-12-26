@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 2.2.0 beta
+ * for Agile Lite 2.4.0 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -250,6 +250,9 @@ aside{
 aside.active{
     display: block;
 }
+
+[data-role="aside"]{}
+.comm_anim { transition:all 300ms linear; }
 
 #section_container_mask{
     position: absolute;

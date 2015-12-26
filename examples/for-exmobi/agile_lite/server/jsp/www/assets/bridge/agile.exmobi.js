@@ -136,11 +136,12 @@
 					var placeholder = $label.html();
 					$el.on(A.options.clickEvent, function(e){					
 						$native.openDecodeScan(function(str){
-							if(str&&($input.val()!=str)&&$el.data('change')){
-								eval($el.data('change'));
-							}
+							var _iptVal = $input.val();
 							$label.html(str?str:placeholder);
 							$input.val(str||'');
+							if(str&&(_iptVal!=str)&&$el.data('change')){
+								eval($el.data('change'));
+							}
 						});
 						return false;
 					});

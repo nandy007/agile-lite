@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.3.1 beta
+*	Version	:	2.4.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.3.1',
+			version : '2.4.0',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -474,7 +474,7 @@ var A = (function($){
 			        $el.append('<div class="toggle-handle"></div>');
 			        $el.on(A.options.clickEvent, function(){
 			            var $t = $(this),v = _getVal($el.hasClass('active')?false:true, $el);
-			            $t.toggleClass('active').trigger('toggle',[v]);//定义toggle事件
+			            $t.toggleClass('active').trigger('datachange', [v]);//定义toggle事件
 			            $t.find('input').val(v);
 			            return false;
 			        });
@@ -689,9 +689,10 @@ var A = (function($){
      * @param {Number} 动画时间
      * @param {Function} 动画结束的回调函数
      */
+    
 	anim.run = function($el, cls, cb){
 		var $el = $($el);
-		var eName = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+		var _eName = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		if($el.length==0){
 			cb&&cb();
 			return;
@@ -701,10 +702,20 @@ var A = (function($){
 			return;
 		}
 		cls = (cls||'empty')+' anim';
-		$el.addClass(cls).one(eName,function(){			
+		$el.addClass(cls).one(_eName,function(){			
 			$el.removeClass(cls);
 			cb&&cb();
-			$el.unbind(eName);
+			$el.unbind(_eName);
+		});
+	};
+	
+	anim.css3 = function($el, cssObj, cb){
+		$el = $($el);
+		var _eName = 'webkitTransitionEnd otransitionend transitionend';
+		$el.addClass('comm_anim').css(cssObj).one(_eName, function(){		
+			$el.removeClass('comm_anim');
+			cb&&cb();
+			$el.unbind(_eName);
 		});
 	};
 	
@@ -853,7 +864,7 @@ var A = (function($){
 	    return function() {
 	    	if(field=='Filename'){
 	    		var path = this._values['URL'];
-	    		return path.substring((path.lastIndexOf('/')||-1)+1,path.indexOf('.')||path.indexOf('?')||path.indexOf('#')||path.length);
+	    		return path.substring((path.lastIndexOf('/')||-1)+1,path.lastIndexOf('.')||path.indexOf('?')||path.indexOf('#')||path.length);
 	    	}else if(field=='Queryobject'){
 	    		var query = this._values['Querystring']||'';
 	            var seg = query.split('&');
@@ -1020,6 +1031,7 @@ var A = (function($){
 			scrollbars : 'custom',
 			fadeScrollbars : true,
 			click : true,
+			//preventDefault : false,
 			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
 		};
 		$.extend(options, opts||{});
@@ -1028,10 +1040,10 @@ var A = (function($){
 		$.extend(options, _attr_options||{});
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
-		$el.on('touchmove', 'textarea', function(){
+		$el.on('touchmove', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setdiabled');
 		});
-		$el.on('touchend blur', 'textarea', function(){
+		$el.on('touchend blur', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setenabled');
 		});
 		$scroll.on('__setdiabled', function(){
@@ -1364,29 +1376,37 @@ var A = (function($){
         	aside : {},
         	section : {}
         };
-        cssName.aside[position] = width+'px';
-        cssName.section['left'] = translateX;
+        var funcName = 'run';
+        
         var _finish = function(){
         	callback&&callback();$aside.trigger('asideshow');
         };
-        if(transition == 'overlay'){
-            A.anim.run($aside, cssName.aside, _finish);
-        }else if(transition == 'reveal'){
-            A.anim.run($sectionContainer, cssName.section, _finish);
-        }else{//默认为push
-            A.anim.run($aside, cssName.aside);
-            A.anim.run($sectionContainer, cssName.section, _finish);
+        
+        if($aside.data('role')=='aside'){
+        	var funcName = 'css3';
+        	cssName.aside['-webkit-transform'] = 'translateX(0%)';
+        	cssName.section['-webkit-transform'] = 'translateX('+translateX+')';
+        }else{
+        	cssName.aside[position] = width+'px';
+        	cssName.section['left'] = translateX;
         }
-
+        
+        if(transition == 'overlay'){
+            A.anim[funcName]($aside, cssName.aside, _finish);
+        }else if(transition == 'reveal'){
+        	A.anim[funcName]($sectionContainer, cssName.section, _finish);
+        }else{//默认为push
+        	A.anim[funcName]($aside, cssName.aside);
+        	A.anim[funcName]($sectionContainer, cssName.section, _finish);
+        }
         $('#section_container_mask').show();
         A.pop.hasAside = true;
 	};
-	
 	/**
      * 关闭侧边菜单
      * @param callback 动画完毕回调函数
      */
-    Aside.prototype.hide = function(callback){
+   Aside.prototype.hide = function(callback){
         var $aside = $('#aside_container aside.active'),
             transition = $aside.data('transition'),// push overlay  reveal
             position = $aside.data('position') || 'left',
@@ -1402,16 +1422,23 @@ var A = (function($){
         	aside : {},
         	section : {}
         };
-        cssName.aside[position] = 0;
-        cssName.section['left'] = 0;
+        var funcName = 'run';
+        if($aside.data('role')=='aside'){
+        	var funcName = 'css3';
+        	cssName.aside['-webkit-transform'] = 'translateX('+translateX+')';
+        	cssName.section['-webkit-transform'] = 'translateX(0%)';
+        }else{
+        	cssName.aside[position] = 0;
+        	cssName.section['left'] = 0;
+        }
         
         if(transition == 'overlay'){
-            A.anim.run($aside, cssName.aside, _finish);
+            A.anim[funcName]($aside, cssName.aside, _finish);
         }else if(transition == 'reveal'){
-            A.anim.run($sectionContainer, cssName.section, _finish);
+            A.anim[funcName]($sectionContainer, cssName.section, _finish);
         }else{//默认为push
-            A.anim.run($aside, cssName.aside);
-            A.anim.run($sectionContainer, cssName.section, _finish);
+            A.anim[funcName]($aside, cssName.aside);
+            A.anim[funcName]($sectionContainer, cssName.section, _finish);
         }
         $('#section_container_mask').hide();
     };
@@ -1781,6 +1808,19 @@ var A = (function($){
  * */
 (function($){
 	var event = {},_events = {};
+	
+	/**
+	 * 处理点击事件，默认阻止
+	 * @private
+	 */
+	_events.clickHandler = function(){
+		$(document).on(A.options.clickEvent, '[data-click]', function(){
+			var clickFunc = $(this).data('click');
+			if(clickFunc) eval(clickFunc);
+			return false;
+		});
+	};
+	
 	 /**
      * 处理浏览器的后退事件
      * @private
@@ -1900,6 +1940,8 @@ var A = (function($){
 		});
 		$(document).on('renderEnd', 'script', function(e,h){
 			A.Component.lazyload(h);
+			var $scroller = $(h).closest('[data-scroll]');
+			if($scroller.length==1) A.Scroll('#'+$scroller.attr('id')).refresh();
 		});
 		$(document).on('modalhide', 'div.modal', function(e,h){
 			_initSection();
