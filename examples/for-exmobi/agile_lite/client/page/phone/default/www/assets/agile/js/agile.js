@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.0 beta
+*	Version	:	2.4.1 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.0',
+			version : '2.4.1',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -150,8 +150,9 @@ var A = (function($){
 						controllerObj.complete&&controllerObj.complete($target, {result:'nocontainer'});
 						return;
 					};
-										
+					if(A.options.showPageLoading) A.showMask();				
 					A.util.getHTML(urlObj.getURL(), function(html){
+						if(A.options.showPageLoading) A.hideMask();
 						if(!html){
 							controllerObj.complete&&controllerObj.complete($target, {result:'requesterror'});
 							return;
@@ -463,7 +464,6 @@ var A = (function($){
 				var _doToggle = function($el){	
 					var isActive = $el.hasClass('active');	
 					if($el.find('div.toggle-handle').length>0){//已经初始化	
-						console.log(111);
 						$el[isActive?'removeClass':'addClass']('active');
 				    	$el.find('input[data-com-refer="toggle"]').val(_getVal(isActive?false:true, $el));
 			            return;
@@ -850,6 +850,10 @@ var A = (function($){
 	};
 
 	URLParser.prototype._parse = function(url) {
+		if(url.indexOf('/')==0){
+			var up = new URLParser(location.href);
+			url = up.getProtocol()+'://'+up.getHost()+(up.getPort()?(':'+up.getPort()):'')+url;
+		}
 	    this._initValues();
 	    var r = this._regex.exec(url);
 
@@ -933,7 +937,7 @@ var A = (function($){
     util.ajax = function(opts){
     	if(!opts||!opts.url) return;
     	opts.url = util.script(opts.url);
-    	var _isBlock = util.checkBoolean(opts.isBlock,A.options.showPageLoading);
+    	//var _isBlock = util.checkBoolean(opts.isBlock,A.options.showPageLoading);
 
     	opts.dataType = (opts.dataType||'text').toLowerCase();
     	var ajaxData = {
@@ -1674,7 +1678,7 @@ var A = (function($){
     	if(typeof html=='object'){
     		markMap.push('<ul class="popover-items">');
     		for(var i=0;i<html.length;i++){
-    			markMap.push('<li data-toggle="popup">'+html[i].text+'</li>');
+    			markMap.push('<li data-toggle="popup" class="'+(html[i].css||'')+'">'+html[i].text+'</li>');
     		}
     		markMap.push('</ul>');
     	}else{

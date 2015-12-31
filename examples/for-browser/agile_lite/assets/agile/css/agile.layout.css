@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 2.4.0 beta
+ * for Agile Lite 2.4.1 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -763,6 +763,9 @@ aside[data-position][data-transition="reveal"]{
 	height:28px;
 	line-height:28px;
 	text-align: center;
+}
+[data-role="slider"] .dots.center{
+	-webkit-transform:none;
 }
 
 [data-role="slider"] .dots.right {
