@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.1 beta
+*	Version	:	2.4.2 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.1',
+			version : '2.4.2',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -938,7 +938,7 @@ var A = (function($){
     	if(!opts||!opts.url) return;
     	opts.url = util.script(opts.url);
     	//var _isBlock = util.checkBoolean(opts.isBlock,A.options.showPageLoading);
-
+		var _isBlock = opts.isBlock;
     	opts.dataType = (opts.dataType||'text').toLowerCase();
     	var ajaxData = {
         	url : opts.url,
