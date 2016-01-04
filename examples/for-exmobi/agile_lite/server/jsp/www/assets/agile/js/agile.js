@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.2 beta
+*	Version	:	2.4.3 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.2',
+			version : '2.4.3',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -848,16 +848,30 @@ var A = (function($){
 	        this._values[f] = '';
 	    }
 	};
+	
+	URLParser.prototype._path = function(url) {
+	    var up = new URLParser(location.href);
+	    var baseUrl = up.getProtocol()+'://'+up.getHost()+(up.getPort()?(':'+up.getPort()):'');
+		if(url.indexOf('/')==0){
+			return baseUrl + url;
+		}else{
+			var curPaths = up.getPathname().split('/');
+			curPaths.length -= url.split('../').length;
+			return baseUrl + curPaths.join('/') + '/' + url.replace(/[\.]{1,2}\//g,'');
+		}
+	};
 
 	URLParser.prototype._parse = function(url) {
-		if(url.indexOf('/')==0){
-			var up = new URLParser(location.href);
-			url = up.getProtocol()+'://'+up.getHost()+(up.getPort()?(':'+up.getPort()):'')+url;
-		}
 	    this._initValues();
 	    var r = this._regex.exec(url);
-
-	    if (!r) throw "DPURLParser::_parse -> Invalid URL";
+	    if (!r||!r[this._fields['Protocol']]){	    	
+	    	url = this._path(url);
+	    	r = this._regex.exec(url);
+	    	if(!r){
+	    		console.log('url invalid:'+url);
+	    		return;
+	    	}
+	    }
 
 	    for(var f in this._fields) if (typeof r[this._fields[f]] != 'undefined')
 	    {
@@ -867,8 +881,8 @@ var A = (function($){
 	URLParser.prototype._makeGetter = function(field) {
 	    return function() {
 	    	if(field=='Filename'){
-	    		var path = this._values['URL'];
-	    		return path.substring((path.lastIndexOf('/')||-1)+1,path.lastIndexOf('.')||path.indexOf('?')||path.indexOf('#')||path.length);
+	    		var path = (this._values['URL'].split('?')[0]).split('/');
+	    		return path[path.length-1].split('.')[0];
 	    	}else if(field=='Queryobject'){
 	    		var query = this._values['Querystring']||'';
 	            var seg = query.split('&');

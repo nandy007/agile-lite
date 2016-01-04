@@ -527,6 +527,7 @@ input[type="password"],
 input[type="email"],
 input[type="url"],
 input[type="number"],
+input[type="tel"],
 input[type="week"],
 input[type="month"],
 input[type="time"],
@@ -545,6 +546,7 @@ select{
 	outline: none;
 }
 input[type="number"],
+input[type="tel"],
 input[type="week"],
 input[type="month"],
 input[type="time"],
