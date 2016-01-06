@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.3 beta
+*	Version	:	2.4.4 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.3',
+			version : '2.4.4',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -849,9 +849,17 @@ var A = (function($){
 	    }
 	};
 	
+	var removeURLPre = function(url){
+		if(url.indexOf('file:')==0){
+			url = (url.replace(/file:\/*/,''));
+		}
+		return url;
+	};
+	
 	URLParser.prototype._path = function(url) {
-	    var up = new URLParser(location.href);
+	    var up = new URLParser(removeURLPre(location.href.split(/\?\#/)[0]));
 	    var baseUrl = up.getProtocol()+'://'+up.getHost()+(up.getPort()?(':'+up.getPort()):'');
+		url = removeURLPre(url);
 		if(url.indexOf('/')==0){
 			return baseUrl + url;
 		}else{
@@ -863,8 +871,9 @@ var A = (function($){
 
 	URLParser.prototype._parse = function(url) {
 	    this._initValues();
+	    url = removeURLPre(url);
 	    var r = this._regex.exec(url);
-	    if (!r||!r[this._fields['Protocol']]){	    	
+	    if (!r){	    	
 	    	url = this._path(url);
 	    	r = this._regex.exec(url);
 	    	if(!r){
