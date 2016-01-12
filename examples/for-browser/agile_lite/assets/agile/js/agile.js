@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.4 beta
+*	Version	:	2.4.5 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.4',
+			version : '2.4.5',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -251,6 +251,7 @@ var A = (function($){
 				if(_history.length<2) return;
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
+		    	$(document).trigger('sectiontransition');
 		        A.anim.change($current, $target, true, function(){		        			       	       	
 		        	var targetRole = $target.data('role');
 		        	$target.addClass('active').trigger(targetRole+'show');
@@ -427,16 +428,19 @@ var A = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
-				var $el = $(el);				
-				var _doInit = function($el){					
+				var $el = $(el);	
+				var _doInit = function($el){	
+					$el.removeAttr('href');					
 					$el.on(A.options.clickEvent, function(e){
-			    		try{
-			    			$input = $el.find('input').first();
-			        		var checkObj = $input[0];
-			        		checkObj.checked = !checkObj.checked;
-			        		$input.trigger('change');
-			    		}catch(e){}
-			    		return false;
+						var tag = e.target.tagName.toLowerCase();
+			    		if(tag!='input'&&tag!=='label'){
+			    			var checkObj = $el.find('input')[0];
+			    			if(checkObj.type=='radio'){
+			    				checkObj.checked = true;
+			    			}else{
+			    				checkObj.checked = !checkObj.checked;
+			    			}
+			    		}
 			    	});
 				};
 				
@@ -1057,9 +1061,8 @@ var A = (function($){
 			mouseWheel: true,
 			scrollbars : 'custom',
 			fadeScrollbars : true,
-			click : true,
-			//preventDefault : false,
-			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
+			//click : true,
+			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
 		};
 		$.extend(options, opts||{});
 		var _attr_options = $el.attr('data-scroll-options');
@@ -1558,6 +1561,7 @@ var A = (function($){
     };
     
     Popup.prototype.close = function(callback){
+    	this.trigger('popupbeforeclose');
     	var _this=this,$popup=this.popup, $mask=this.mask, options=this.options;
         var transition = transitionMap[options.pos];
         if(transition){
@@ -1837,6 +1841,30 @@ var A = (function($){
 	var event = {},_events = {};
 	
 	/**
+	 * 处理modal打开顺序
+	 * @private
+	 */
+	_events.modalCache = function(){
+		var _modalCollection = {};
+		$(document).on('modalshow', '[data-role="modal"]', function(){
+			_modalCollection[this.id] = this.id;
+		});
+		$(document).on('modalhide', '[data-role="modal"]', function(){
+			delete _modalCollection[this.id];
+			var k;
+			for(k in _modalCollection){}
+			if(k){
+				$('#'+k).trigger('modalshow');
+			}
+		});
+		$(document).on('modalback', function(){
+			var k;
+			for(k in _modalCollection){}
+			A.Controller.modal('#'+k);
+		});
+	};
+	
+	/**
 	 * 处理点击事件，默认阻止
 	 * @private
 	 */
@@ -1889,8 +1917,8 @@ var A = (function($){
 				if(A.pop.hasPop.data('block')==false){
 					A.closePopup();
 				}
-			}else if($('.modal.active').length>0){
-				A.Controller.modal('#'+$('.modal.active').first().attr('id'));
+			}else if($('[data-role="modal"].active').length>0){
+				$(document).trigger('modalback');
 			}else if(A.pop.hasAside){
 				A.Controller.aside();
 			}else if(A.Controller.get('section').history.length<2){	
@@ -1898,6 +1926,11 @@ var A = (function($){
 	    	}else{
 	    		window.history.go(-1);
 	    	}
+		});
+		$(document).on('sectiontransition', function(){
+			$('.agile-popup').each(function(){ (new A.Popup({ id : this.id})).close(); });
+			if(A.pop.hasAside){ A.Controller.aside(); }
+			$('[data-role="modal"].active').each(function(){ A.Controller.modal('#'+this.id); });
 		});
 	};
 	
@@ -2106,7 +2139,6 @@ var A = (function($){
 	A.register('Base64', {
 		encode : function(str){
 			try{ return Base64.encode(str); }catch(e){ return ''; }
-			
 		},
 		decode : function(str){
 			try{ return Base64.decode(str); }catch(e){ return ''; }

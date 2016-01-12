@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 2.4.1 beta
+ * for Agile Lite 2.4.5 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -801,5 +801,5 @@ aside[data-position][data-transition="reveal"]{
 }
 /* scrollTop end */
 [data-role] input[type="checkbox"],[data-role] input[type="radio"]{
-	pointer-events:none;
+	/*pointer-events:none;*/
 }
