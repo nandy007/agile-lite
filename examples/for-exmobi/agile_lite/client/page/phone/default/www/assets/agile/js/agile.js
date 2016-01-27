@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.5 beta
+*	Version	:	2.4.6 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.5',
+			version : '2.4.6',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -69,7 +69,7 @@ var A = (function($){
 		var urlObj = A.util.parseURL(location.href);
 		var params = A.JSON.stringify(urlObj.getQueryobject());
 		var hash = location.hash.replace('#','');
-		this.pageInfo = A.Base64.decode(hash);
+		this.pageInfo = A.util.decodeHash(hash);
 	};
 	
 	return new Agile();
@@ -194,7 +194,7 @@ var A = (function($){
 				    		hash : hash.replace('#', ''),
 				    		url : $(hash).data('url')
 				    	};
-				    	encodeHash = '#'+A.Base64.encode(A.JSON.stringify(encodeHashObj));
+				    	encodeHash = '#'+A.util.encodeHash(A.JSON.stringify(encodeHashObj));
 			    	}
 
 			        if(noState){//不添加浏览器历史记录
@@ -243,7 +243,7 @@ var A = (function($){
 					return;
 				}
 				var _history = _controllers.section.history;				
-				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.Base64.decode(location.hash.replace('#', ''))):{hash:location.hash};
+				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.util.decodeHash(location.hash.replace('#', ''))):{hash:location.hash};
 				if(!codeHashObject||('#'+codeHashObject.hash==_history[0].tag)){
 					return;
 				}
@@ -252,7 +252,7 @@ var A = (function($){
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
 		    	$(document).trigger('sectiontransition');
-		        A.anim.change($current, $target, true, function(){		        			       	       	
+		        A.anim.change($current, $target, true, function(){	        			       	       	
 		        	var targetRole = $target.data('role');
 		        	$target.addClass('active').trigger(targetRole+'show');
 					$current.removeClass('active').trigger(targetRole+'hide');
@@ -433,7 +433,7 @@ var A = (function($){
 					$el.removeAttr('href');					
 					$el.on(A.options.clickEvent, function(e){
 						var tag = e.target.tagName.toLowerCase();
-			    		if(tag!='input'&&tag!=='label'){
+			    		if(tag!='input'){
 			    			var checkObj = $el.find('input')[0];
 			    			if(checkObj.type=='radio'){
 			    				checkObj.checked = true;
@@ -539,6 +539,8 @@ var A = (function($){
 		    			$el[0].onload = function(){			
 		    				A.anim.run($el,'fadeIn', function(){
 		    					$el.css('opacity', '1');
+		    					var $sd = $el.closest('[data-role="slider"]');
+		    					if($sd.hasClass('active')) A.Slider($sd).refresh();
 		    					A.Component.scroll($el.closest('[data-scroll]'));
 		    				});
 		        		};
@@ -1034,6 +1036,15 @@ var A = (function($){
 		}
 		return _return;
 	};
+	
+	util.encodeHash = function(hash){
+		return encodeURIComponent(A.Base64.encode(hash));
+	};
+	
+	util.decodeHash = function(enHash){
+		return A.Base64.decode(decodeURIComponent(enHash));
+	};
+	
     A.register('util', util);
 
 })(A.$);
@@ -1062,7 +1073,7 @@ var A = (function($){
 			scrollbars : 'custom',
 			fadeScrollbars : true,
 			//click : true,
-			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
+			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
 		};
 		$.extend(options, opts||{});
 		var _attr_options = $el.attr('data-scroll-options');
@@ -1217,7 +1228,6 @@ var A = (function($){
         });  
         
         myScroll.on('refresh', function(){
-
         	if(refreshStep!=-1){
 	        	refreshStep = -1;	        	 
 	            if($pullDownEl){
@@ -1268,7 +1278,7 @@ var A = (function($){
 		$.extend(sliderOpts, opts);
 		
 		var $scroller,$slide,outWidth,slideNum,$dots;
-
+		var _initHeight = $el.height();
 		var init = function(){
 			if(!$el.hasClass('active')) $el.addClass('active');
 			$scroller = $el.children('.scroller');
@@ -1276,8 +1286,17 @@ var A = (function($){
 			outWidth = $el.parent().width();
 			slideNum = $slide.length;
 			$scroller.width(outWidth*slideNum);
+			$scroller.css({height:'auto'});
 			$slide.width(outWidth);
-			$el.height()?$scroller.height($el.height()):$el.height($scroller.height());
+			if(!_initHeight){
+				if($slide.height()){
+					$el.height($slide.height());
+				}else{
+					$el.height('1px');
+				}	
+			}
+			$scroller.css({height:$el.height()});
+			
 		};
 		
 		var createDots = function(){
@@ -1343,7 +1362,7 @@ var A = (function($){
 		_index_key_[eId] = myScroll;
 		
 		myScroll.on('destroy', function(){ $dots.remove(); delete _index_key_[eId]; clearInterval(_auto); });
-		
+
 		return _index_key_[eId];
 	};
 	
@@ -1539,7 +1558,7 @@ var A = (function($){
     };
     
     Popup.prototype.open = function(callback){
-    	var $popup=this.popup, $mask=this.mask, options=this.options;
+    	var _this=this, $popup=this.popup, $mask=this.mask, options=this.options;
     	if($mask.hasClass('active')) return _popMap[options.id];
     	$('body').children('.popup-mask.active').removeClass('active');
     	$mask.addClass('active').show();
@@ -1547,7 +1566,14 @@ var A = (function($){
         var popHeight = $popup.height();
         if(options.pos == 'center') $popup.css('margin-top','-'+popHeight/2+'px');
         var transition = transitionMap[options.pos];
-        if(transition) A.anim.run($popup,transition[0]);
+        if(transition) {
+        	_this._status = 'opening';
+        	A.anim.run($popup,transition[0], function(){
+        		_this._status = 'opened';
+        	});
+        }else{
+        	_this._status = 'opened';
+        }
 		this.trigger('popupopen');callback&&callback.call(this);
 		A.pop.hasPop = $popup;
 		return this;
@@ -1561,6 +1587,7 @@ var A = (function($){
     };
     
     Popup.prototype.close = function(callback){
+    	if(this._status=='opening') return;
     	this.trigger('popupbeforeclose');
     	var _this=this,$popup=this.popup, $mask=this.mask, options=this.options;
         var transition = transitionMap[options.pos];
@@ -1578,6 +1605,7 @@ var A = (function($){
     var _ext = {};
     
     _ext.popup = function(opts){
+    	if(_popMap[opts.id]) return _popMap[opts.id];
     	return new Popup(opts).open();
     };
     
@@ -2005,6 +2033,9 @@ var A = (function($){
 		});
 		$(document).on('modalhide', 'div.modal', function(e,h){
 			_initSection();
+		});
+		$(document).on('scrollInit', '[data-scroll], [data-role="slider"]', function(){
+			A.Component.lazyload(this);
 		});
 	};	
 	/**

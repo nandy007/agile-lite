@@ -111,7 +111,8 @@ function swipeToDown(){
 	$phone.runFunction(eval(downStr));
 }
 function closewelcome(){
-	A.Controller.close&&A.Controller.close();
+	A.Controller.section('#follow_section');
+	//A.Controller.close&&A.Controller.close();
 }
 $("#welcome").mouseToUp({fun:swipeToUp});
 $("#welcome").mouseToDown({fun:swipeToDown});

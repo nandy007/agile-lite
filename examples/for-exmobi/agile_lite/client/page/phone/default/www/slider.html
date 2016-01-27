@@ -41,18 +41,18 @@
 						<div class="scroller">
 							<div id="page1" class="slide" data-role="page" data-scroll="pulldown">
 								<div class="scroller">
-									<div id="slide" data-role="slider" class="full" style="height: 230px;overflow: hidden;">
+									<div id="slide" data-role="slider" class="full" style="overflow: hidden;">
 										<div class="scroller">
 											<div class="slide">
-												<img src="assets/app/img/slide1.jpg" class="full-width"/>
+												<img data-source="assets/app/img/slide1.jpg" class="full-width"/>
 												<div class="slider_label">综合新闻</div>
 											</div>
 											<div class="slide">
-												<img src="assets/app/img/slide2.jpg" class="full-width"/>
+												<img data-source="assets/app/img/slide2.jpg" class="full-width"/>
 												<div class="slider_label">综合新闻</div>
 											</div>
 											<div class="slide">
-												<img src="assets/app/img/slide3.jpg" class="full-width"/>
+												<img data-source="assets/app/img/slide3.jpg" class="full-width"/>
 												<div class="slider_label">综合新闻</div>
 											</div>
 										</div>
@@ -164,6 +164,10 @@
 			A.Slider('#sliderPage', {
 				dots : 'hide'
 			});
+		});
+		$('#slide img').on(A.options.clickEvent, function(){
+			var $el = $(this);
+			A.showToast($el.siblings('.slider_label').html());
 		});
 		</script>
 		
