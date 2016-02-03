@@ -1,4 +1,7 @@
-﻿/*******************全局样式global-start*******************/
+﻿/*
+ * for Agile Lite 2.4.7 beta
+ * */
+/*******************全局样式global-start*******************/
 *{
 	margin:0;
 	padding:0;
@@ -803,12 +806,24 @@ input[type="radio"]:checked::after{
 	font-size:20px;
 	font-family:"iconform";
 }
+[data-role="file-native"]{
+	position:relative;
+}
+[data-role="file-native"] input[type="file"]{
+	-webkit-appearance: initial;
+    padding: initial;
+    background-color: initial;
+    border: initial;
+	width:100%;
+	height:100%;
+}
 [data-role="select"]:after{
 	content: "\e216";
 	z-index: 1;
 }
-[data-role="file"]:after{
+[data-role="file"]:after, [data-role="file-native"]:after{
 	content: "\e209";
+	pointer-events:none;
 }
 [data-role="date"]:after{
 	content: "\e201";

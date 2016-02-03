@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.6 beta
+*	Version	:	2.4.7 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.6',
+			version : '2.4.7',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -415,12 +415,21 @@ var A = (function($){
 				
 				var scrolls = $el.find('[data-scroll="verticle"],[data-scroll="horizontal"],[data-scroll="scroll"]');
 				for(var i=0;i<scrolls.length;i++){
-					_doScroll($(scrolls[i]));
+					(function($this){
+						setTimeout(function(){
+							_doScroll($this);
+						}, 100);
+					})($(scrolls[i]));
+					
 				}
 				
 				scrolls = $el.find('[data-scroll="pulldown"],[data-scroll="pullup"],[data-scroll="pull"]');
 				for(var i=0;i<scrolls.length;i++){
-					_doRefresh($(scrolls[i]));
+					(function($this){
+						setTimeout(function(){
+							_doRefresh($this);
+						}, 100);
+					})($(scrolls[i]));
 				}
 			}
 		},
@@ -428,12 +437,18 @@ var A = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
+				
 				var $el = $(el);	
 				var _doInit = function($el){	
 					$el.removeAttr('href');					
 					$el.on(A.options.clickEvent, function(e){
+						var isInScroll = $el.data('__isinscroll__');
+						if(typeof isInScroll=='undefined'){
+							isInScroll = $el.closest('[data-scroll]').length==0?false:true;
+							$el.data('__isinscroll__', isInScroll);
+						}
 						var tag = e.target.tagName.toLowerCase();
-			    		if(tag!='input'){
+			    		if((isInScroll&&tag!='input')||(!isInScroll&&tag!='input'&&tag!='label')){
 			    			var checkObj = $el.find('input')[0];
 			    			if(checkObj.type=='radio'){
 			    				checkObj.checked = true;
@@ -526,6 +541,10 @@ var A = (function($){
 			    	    }else{
 			    	    	img.onload = function(){
 			    				_injectImg($el, source);
+			    				img = null;
+			        		};
+			        		img.onerror = function(){
+			    				_injectImg($el, placeholder||'');
 			    				img = null;
 			        		};
 			    	    }
@@ -1093,6 +1112,26 @@ var A = (function($){
 		$scroll.on('__setenabled', function(){
 			this.enabled = true;
 		});
+		/*//处理软键盘被盖住
+		var _focusProcess;
+		$el.on('focus', 'input[type="url"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="text"], textarea', function(){		
+			var _this = this;
+			if($el.height() - $(this).offset().top < 100){
+				_focusProcess = setTimeout(function(){
+					$scroll.scrollToElement(_this);
+					clearTimeout(_focusProcess);
+					_focusProcess = null;
+				}, 500);
+			}
+			
+		});
+		$scroll.on('beforeScrollStart', function(){
+			$el.find('input:focus, textarea:focus').blur();
+			if(_focusProcess){
+				clearTimeout(_focusProcess);
+				_focusProcess = null;
+			}			
+		});*/
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
@@ -1300,6 +1339,7 @@ var A = (function($){
 		};
 		
 		var createDots = function(){
+			var _index = $scroller.index($slide.filter('.active'));_index = _index<0?0:_index;
 			$el.children('.dots').remove();			
 			var arr = [];
 			arr.push('<div class="dots">');
@@ -1308,6 +1348,7 @@ var A = (function($){
 			}
 			arr.push('</div>');
 			$dots = $(arr.join('')).appendTo($el).addClass(sliderOpts.dots).find('.dotty');
+			$($dots.get(_index)).addClass('active');
 		};
 		
 		init();//第一步初始化
@@ -1974,7 +2015,7 @@ var A = (function($){
 	 * */
 	var _initSection = function(){
 		$(document).on('sectionload', 'section', function(){
-			var $childred = $(this).children(':last-child').not('[data-scroll], [data-boundary="false"]');
+			var $childred = $(this).children(':first-child, :last-child').not('[data-role="article"], [data-boundary="false"]');
 			$childred.on('touchmove', function(e){
 				e.preventDefault();
 			});
