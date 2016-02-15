@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.7 beta
+*	Version	:	2.4.8 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.7',
+			version : '2.4.8',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -251,12 +251,7 @@ var A = (function($){
 				if(_history.length<2) return;
 				var $current = $(_history.shift().tag);
 		    	var $target = $(_history[0].tag);	
-		    	$(document).trigger('sectiontransition');
-		        A.anim.change($current, $target, true, function(){	        			       	       	
-		        	var targetRole = $target.data('role');
-		        	$target.addClass('active').trigger(targetRole+'show');
-					$current.removeClass('active').trigger(targetRole+'hide');
-		        });
+		    	$(document).trigger('sectiontransition', [$current, $target]);
 			}
 		},
 		page : {
@@ -1840,7 +1835,7 @@ var A = (function($){
  * Toast提示框
  * */
 (function($){
-    var _toastMap= {index:0};
+    var _toastMap = {index:0, process: [], map: {}};
     var Toast = function(opts){
     	var _index = _toastMap.index++;
     	var options = {
@@ -1852,15 +1847,19 @@ var A = (function($){
     	};
     	$.extend(options, opts);
     	if(_toastMap[options.id]) return this;
-    	var _this = _toastMap[options.id] = this;
+    	var _this = _toastMap.map[options.id] = this;
     	var $toast = this.toast = $('<div id="'+options.id+'" class="agile-toast"><a>'+options.text+'</a></div>').appendTo('body');
     	$toast.addClass('class', options.css);
     	this.options = options;
+    	_toastMap.process.push(this);
     };
     Toast.prototype.show = function(){
-    	var $toast = this.toast, options = this.options;
-        $toast.show();
+    	var $toast = this.toast, options = this.options;        
         var _this = this;
+        if(_toastMap.process.length>0&&_toastMap.process[0]!=this){
+        	return this;
+        }
+        $toast.show();
         A.anim.run($toast,'scaleIn', function(){
         	if(options.isBlock==false) setTimeout(function(){ _this.hide();}, options.duration);
         });
@@ -1870,7 +1869,9 @@ var A = (function($){
     	var $toast = this.toast, options = this.options;
     	A.anim.run($toast,'scaleOut',function(){
         	$toast.remove();
-        	delete _toastMap[options.id];
+        	delete _toastMap.map[options.id];
+        	_toastMap.process.shift();
+        	if(_toastMap.process.length>0) _toastMap.process[0].show();
         });
         return this;
     };
@@ -1895,6 +1896,14 @@ var A = (function($){
         	duration : duration,
         	css : 'alarm'
         }).show();
+    };
+    _ext.clearToast = function(){
+        $('.agile-toast').remove();
+        _toastMap.map = {};
+        _toastMap.process = [];
+    };
+    _ext.getAllToasts = function(){
+        return _toastMap.process;
     };
     
     for(var k in _ext){
@@ -1996,10 +2005,24 @@ var A = (function($){
 	    		window.history.go(-1);
 	    	}
 		});
-		$(document).on('sectiontransition', function(){
+		var _sectionMap = [],_doTransition = function(){
+			if(_sectionMap.length!=1) return;
+			var $current = _sectionMap[0][0];
+			var $target = _sectionMap[0][1];
+			A.anim.change($current, $target, true, function(){	  
+				_sectionMap.shift();     			       	       	
+		       	var targetRole = $target.data('role');
+		        $target.addClass('active').trigger(targetRole+'show');
+				$current.removeClass('active').trigger(targetRole+'hide');
+				setTimeout(_doTransition, 100);
+		    });
+		};
+		$(document).on('sectiontransition', function(e, $current, $target){
 			$('.agile-popup').each(function(){ (new A.Popup({ id : this.id})).close(); });
 			if(A.pop.hasAside){ A.Controller.aside(); }
 			$('[data-role="modal"].active').each(function(){ A.Controller.modal('#'+this.id); });
+			_sectionMap.push([$current, $target]);
+			_doTransition();
 		});
 	};
 	
