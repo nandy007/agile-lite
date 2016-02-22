@@ -13,6 +13,7 @@
   <services>
   	<http-service>
   		<forward pattern="/render" path="render.jsp"/>
+  		<forward pattern="/merge" path="merge.jsp"/>
   	</http-service>
   </services>
 </maxml>

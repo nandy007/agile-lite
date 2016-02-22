@@ -17,8 +17,10 @@
 			"useBglocationLog":false
 		},
 		"asMap":{
+			"baidunavigationAppkey":"",
 			"mapkey":"",
-			"maptype":"基础版"
+			"maptype":"基础版",
+			"useBaidunavigation":false
 		},
 		"asNetwork":{
 			"connectTimeout":"",
@@ -36,6 +38,7 @@
 			"useAlertWindowIOS":false,
 			"useHwcard":false,
 			"useMechat":false,
+			"useMplus":false,
 			"useProhibitscreenshot":false,
 			"useXhsuaa":false,
 			"xhsuaaAppid":"",
@@ -81,8 +84,8 @@
 		"useCustomProgressbar":false
 	},
 	"packBasicInfo":{
-		"padClientid":"",
-		"phoneClientid":""
+		"padClientid":"133776",
+		"phoneClientid":"133775"
 	},
 	"packParameters":{
 		"androidAccess":{

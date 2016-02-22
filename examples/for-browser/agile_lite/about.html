@@ -78,16 +78,16 @@
     	<article id="follow_article" data-role="article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
     		<div class="scroller">
     			<div style="text-align:center;padding:20px 0px;">
-    				<a data-toggle="html" href="http://www.agilelite.net">
+    				<a data-href="http://www.agilelite.net">
     					<img src="assets/app/img/allogo.png"></img>
     				</a>
-    				<p>官网:<a data-toggle="html" href="http://www.agilelite.net">www.agilelite.net</a></p>
+    				<p>官网:<a data-href="http://www.agilelite.net">www.agilelite.net</a></p>
     			</div>
     			<div style="text-align:center;padding:20px 0px;">
-    				<a data-toggle="html" href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
+    				<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
     					<img src="assets/app/img/qrcode.png"></img>
     				</a>
-    				<p>QQ群号：<a data-toggle="html" href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">498752673</a></p>
+    				<p>QQ群号：<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">498752673</a></p>
     			</div>
     		</div>
     		
@@ -108,6 +108,18 @@
 	<script type="text/javascript" src="assets/app/js/h5.base.js"></script>
 	<script type="text/javascript" src="assets/app/js/about.js"></script>
     <script type="text/javascript" src="assets/app/js/app.js"></script>
-
+	<script>
+		$('a[data-href]').on(A.options.clickEvent, function(){
+			var href = $(this).data('href');
+			try{
+				NativeUtil.browser(href);
+			}catch(e){
+				location.href = href;
+			}
+		});
+		$('#about_section').on('touchmove', function(e){
+			e.preventDefault();
+		});
+	</script>
 </body>
 </html>

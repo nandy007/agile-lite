@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.8 beta
+*	Version	:	2.4.9 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.8',
+			version : '2.4.9',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -1087,7 +1087,7 @@ var A = (function($){
 			scrollbars : 'custom',
 			fadeScrollbars : true,
 			//click : true,
-			//preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A|IMG)$/ }
+			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|IMG)$/ }
 		};
 		$.extend(options, opts||{});
 		var _attr_options = $el.attr('data-scroll-options');
@@ -1615,22 +1615,26 @@ var A = (function($){
 		return this;
     };
     
-    var _finish = function(){   	
-    	var $popup=this.popup, $mask=this.mask, callback=this.callback;
+    var _finish = function(callback){   	
+    	var $popup=this.popup, $mask=this.mask;
     	$popup.remove();$mask.remove();this.trigger('popupclose');setTimeout(function(){ callback&&callback(); }, 200);
     	$last = $('body').children('.popup-mask').last().addClass('active');
     	A.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
     };
     
     Popup.prototype.close = function(callback){
+    	var _this = this; setTimeout(function(){ _this._close(callback); }, 100);
+    };
+    
+    Popup.prototype._close = function(callback){
     	if(this._status=='opening') return;
     	this.trigger('popupbeforeclose');
     	var _this=this,$popup=this.popup, $mask=this.mask, options=this.options;
         var transition = transitionMap[options.pos];
         if(transition){
-            A.anim.run($popup,transition[1],function(){ _finish.call(_this); });
+            A.anim.run($popup,transition[1],function(){ _finish.call(_this, callback); });
         }else{
-            _finish.call(_this);
+            _finish.call(_this, callback);
         }
         delete _popMap[options.id];
         //return this;
@@ -1688,17 +1692,20 @@ var A = (function($){
     		content = title;
     		title = '提示';
     	}
+    	var clickBtn = okCallback;
         return new Popup({
             html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
             pos : 'center',
             isBlock : true
+        }).on('popupclose', function(){       	
+        	clickBtn&&clickBtn.call(this);
         }).open(function(){    	
         	var $popup = $(this.popup), _this=this;
         	$popup.find('.popup-handler-ok').on(A.options.clickEvent, function(){
-	            okCallback&&okCallback.call(this);
+	            clickBtn = okCallback;
 	        });
 	        $popup.find('.popup-handler-cancel').on(A.options.clickEvent, function(){
-	            cancelCallback&&cancelCallback.call(this);
+	            clickBtn = cancelCallback;
 	        });
         });        
     };
@@ -1854,11 +1861,11 @@ var A = (function($){
     	_toastMap.process.push(this);
     };
     Toast.prototype.show = function(){
-    	var $toast = this.toast, options = this.options;        
-        var _this = this;
         if(_toastMap.process.length>0&&_toastMap.process[0]!=this){
         	return this;
         }
+        var $toast = this.toast, options = this.options;        
+        var _this = this;
         $toast.show();
         A.anim.run($toast,'scaleIn', function(){
         	if(options.isBlock==false) setTimeout(function(){ _this.hide();}, options.duration);
@@ -2014,6 +2021,7 @@ var A = (function($){
 		       	var targetRole = $target.data('role');
 		        $target.addClass('active').trigger(targetRole+'show');
 				$current.removeClass('active').trigger(targetRole+'hide');
+				$current.find(':focus').blur();//解决编辑状态切换页面的问题
 				setTimeout(_doTransition, 100);
 		    });
 		};

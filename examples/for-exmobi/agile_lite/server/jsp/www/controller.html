@@ -1,0 +1,314 @@
+<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Agile Lite</title>
+		<link rel="stylesheet" href="assets/agile/css/agile.layout.css">
+		<link rel="stylesheet" href="assets/agile/css/ratchet/css/ratchet.min.css">
+		<link rel="stylesheet" href="assets/app/css/app.css">
+		<style>
+		section ul, section li {padding:0px;margin:0px;list-style:none; }
+		.my_header { z-index:2;width:100%; margin:0px;}
+		.my_tab_container { z-index:2;position:absolute;top:44px; height:44px;width:100%; clear:both; border-bottom:1px solid #e7e7e7; background:#fff;}
+		.my_tab_container li { float:left; width:25%; line-height:44px; text-align:center; font-size:12px; }
+		.my_tab_container li span:after { color:#95a5a6;font-family: Ratchicons;}
+		.my_tab_container li span:after{ content: '\e814'; }
+		.my_tab_container li.active span:after{ content: '\e81f'; -webkit-animation: spinner 0.1s 2 linear;animation: spinner 0.1s 2 linear;}
+		.my_tab_container li i { float:right; color:#ECF0F1;}
+		
+		.my_view_conatiner{ top:88px; bottom:0px; width:100%;}
+		.my_view.active { z-index:1; position:absolute; display:block; width:100%; height:100%; background:rgba(0,0,0,0.2);}
+		
+		.my_view.active .my_view_content { -webkit-animation: slideDownIn 1s; height:80%; background:#fff;}
+		
+		.my_c{width:50%;height:100%; float:left; overflow:scroll; -webkit-overflow-scrolling: touch;background:#efefef;}
+		.my_c li { height:40px; padding:12px 20px; font-size:12px;}
+		.my_c li.active{ background:#fff;}
+		.my_c2.active{ width:48%;height:100%; float:right; overflow:scroll; -webkit-overflow-scrolling: touch;}
+		.my_c2.active li {height:40px; padding:12px 20px; font-size:12px;border-bottom:1px solid #efefef;}
+		
+		
+		article ul img { width:100px;}
+		.money { font-size:18px;}
+		.money:before { content:'￥'; font-size:12px;}
+		</style>
+	</head>
+	<body>
+		<div id="section_container">
+			<section id="controller_section" data-role="section" class="active">
+				<header class="my_header bar bar-nav">
+				  	<a class="icon icon-left-nav pull-left" data-toggle="back" href="#"></a>
+				  	<a class="icon icon-info pull-right"data-toggle="section" href="#readme_section"></a>
+				  	<h1 class="title">默认控制器使用</h1>
+				</header>
+				<ul class="my_tab_container">
+				  	<li data-role="tab" data-toggle="view" href="#fujin"><span>附近</span><i>|</i></li>
+					<li data-role="tab" data-toggle="view" href="#meishi"><span>美食</span><i>|</i></li>
+					<li data-role="tab" data-toggle="view" href="#paixu"><span>智能排序</span><i>|</i></li>
+					<li data-role="tab" data-toggle="view" href="#shaixuan"><span>筛选</span></li>
+				</ul>
+				<div class="my_view_conatiner">
+					<div id="fujin" class="my_view" data-role="view">
+    					<div class="my_view_content">
+    						<ul class="my_c">
+    							<li class="active" data-toggle="view" href="#fujin1" data-role="tab">附近</li>
+    							<li data-toggle="view" href="#fujin2" data-role="tab">热门商区</li>
+    							<li data-toggle="view" href="#fujin3" data-role="tab">秦淮区</li>
+    							<li>鼓楼区</li>
+    							<li>江宁区</li>
+    							<li>建邺区</li>
+    							<li>玄武区</li>
+    							<li>栖霞区</li>
+    							<li>浦口区</li>
+    							<li>雨花台区</li>
+    							<li>下关区</li>
+    							<li>六合区</li>
+    							<li>溧水区</li>
+    							<li>高淳区</li>
+    						</ul>
+    						<ul id="fujin1" data-role="view" class="my_c2 active">
+    							<li>附近（智能范围）</li>
+    							<li>500m</li>
+    							<li>1000m</li>
+    							<li>2000m</li>
+    							<li>3000m</li>
+    						</ul>
+    						<ul id="fujin2" data-role="view" class="my_c2">
+    							<li>全部商区</li>
+    							<li>新街口地区</li>
+    							<li>湖南路</li>
+    							<li>东山镇</li>
+    							<li>江宁万达</li>
+    							<li>建邺万达</li>
+    							<li>珠江路沿线</li>
+    							<li>开发区</li>
+    							<li>胜太路</li>
+    							<li>莫愁湖/水西门</li>
+    							<li>同曦/瑞都商业圈</li>
+    						</ul>
+    						<ul id="fujin3" data-role="view" class="my_c2">
+    							<li>全部秦淮区</li>
+    							<li>新街口地区</li>
+    							<li>夫子庙地区</li>
+    							<li>常府街/长白街</li>
+    							<li>升州路、集庆路</li>
+    							<li>瑞金路沿线</li>
+    							<li>苜蓿园</li>
+    							<li>秦虹村/中华门</li>
+    						</ul>
+    					</div>
+    				</div>
+    				<div id="meishi" class="my_view" data-role="view">
+    					<div class="my_view_content">
+    						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
+    					</div>
+    				</div>
+    				<div id="paixu" class="my_view" data-role="view">
+    					<div class="my_view_content">
+    						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
+    					</div>
+    				</div>
+    				<div id="shaixuan" class="my_view" data-role="view">
+    					<div class="my_view_content">
+    						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
+    					</div>
+    				</div>
+    			</div>
+				<article data-role="article" id="controller_article" data-scroll="verticle" class="active" style="top:88px;bottom:0px;">
+					<div class="scroller">
+						<ul class="table-view">
+
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li><li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+							<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	<li class="table-view-cell media" style="padding:4px; width:100%;">
+						    	<a style="margin:0px;">
+						      		<img class="media-object pull-left" data-source="http://i2.s2.dpfile.com/pc/mc/c8f91ecbdead9fdb0629a11d37fb192f(160c100)/thumb.jpg">
+						      		<div class="media-body asbestos">
+						       		 	单人豪华自助午餐
+						        		<div style="line-height:40px;">
+						        			<span class="money pumpkin">219</span>
+						        			<span class="sale pull-right sliver">已售2161</span>
+						        		</div>
+						      		</div>
+						    	</a>
+						  	</li>
+						  	
+						
+						</ul>
+    				</div>
+				</article>
+			</section>
+			<section id="readme_section" data-role="section">
+				<header class="bar bar-nav">
+				  	<a class="icon icon-left-nav pull-left" data-toggle="back" href="#"></a>
+				  	<h1 class="title">默认控制器介绍</h1>
+				</header>
+				<article id="readme_article" data-role="article" data-scroll="verticle" class="active" style="top:44px;bottom:0px;">
+					<div class="scroller padded">
+						<h5>默认控制器的定义</h5>
+						<p>默认控制器即具有data-toggle="view"属性的元素。而默认控制器对应控制的组件为具有data-role="view"属性的元素。</p>
+						<h5>默认控制器的扩展</h5>
+						<p>默认控制器的扩展是指通过CSS样式对控制器进行UI渲染，使得默认控制器的使用场景更丰富。</p>
+						<h5>扩展默认控制器的方法</h5>
+						<p>Agile Lite的控制器和组件工作基本原理可以知道：当前被触发的控制器会具有active样式，而同组的其他控制器不具有active样式；处于激活状态的组件具有active样式，同组的其他组件不具有active样式。</p>
+						<p>所以，对默认控制的扩展，可以根据控制器和组件是否具有active样式实现。</p>
+						<p>比如本页的例子，顶部第二排的过滤器按钮其实就是控制器，他们的特点就是当点击某个控制器的时候箭头的方向会改变，所以我们可以给具有active样式的控制器设置箭头向上的样式，不具有active样式的控制器设置箭头向下的样式。</p>
+						<p>同样的，点击过滤按钮控制器会向下弹出对应的组件，而向下弹出的动画效果可以加到具有active的组件中，而不具有active样式的组件设置隐藏即可。</p>
+						<h5>扩展默认控制器的使用总结</h5>
+						<p>Agile Lite默认内置了很多常用组件，当不够用的时候就可以通过扩展默认控制器实现部分效果。当默认控制器的UI渲染仍然无法达到预定的效果时再考虑控制器的扩展，自己开发一个全新的控制器实现逻辑。</p>
+					</div>
+					
+				</article>
+			</section>
+		</div>
+		
+		<!--- third -->
+		<!--<script src="assets/third/zepto/zepto.min.js"></script>
+		<script src="assets/third/iscroll/iscroll-probe.js"></script>
+		<script src="assets/third/arttemplate/template-native.js"></script>-->	
+		<!--  merge合并了jquery-2.1.3.min.js、jquery.mobile.custom.min.js（zepto.min.js）、iscroll-probe.js、template-native.js-->
+		<script type="text/javascript" src="../merge"></script>
+		<!---  agile -->
+		<script type="text/javascript" src="assets/agile/js/agile.js"></script>			
+		<!-- app -->
+		<script type="text/javascript" src="assets/app/js/app.js"></script>
+		<script>
+		(function(){
+			$('.my_view_conatiner .my_view').on('touchmove', function(e){
+				if($(e.target).hasClass('my_view')){
+					e.preventDefault();
+				}
+			});
+			
+			var resetView = function(){
+				setTimeout(function(){
+					$('.my_tab_container li, .my_view_conatiner .my_view').removeClass('active');
+				}, 100);
+			};
+			$('.my_c2 li').on(A.options.clickEvent, function(){
+				A.showToast('你点击了'+this.innerHTML);
+				resetView();
+			});
+			$('.my_view_conatiner .my_view').on(A.options.clickEvent, function(e){
+				if($(e.target).hasClass('my_view')){
+					resetView();
+				}
+			});
+			
+			$('#controller_section').on('sectionhide', function(){
+				resetView();
+			});
+			
+			
+		})();
+		
+		</script>
+	</body>
+</html>

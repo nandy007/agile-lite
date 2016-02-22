@@ -40,6 +40,12 @@
 						        	<p>控制器与组件的工作原理</p>
 						    	</a>
 						  	</li>
+						  	<li class="table-view-cell media">
+						    	<a href="#controller" data-toggle="html" class="navigate-right">      		
+						        	默认控制器的使用
+						        	<p>丰富默认控制器使用场景</p>
+						    	</a>
+						  	</li>
 						  	
 						  	<li class="table-view-cell table-view-divider">Components</li>
 						  	<li class="table-view-cell media">
@@ -252,16 +258,16 @@
 						<h3>扩展</h2>
 						<p>Agile Lite支持对控制器（data-toggle）和组件（data-role）的扩展</p>-->
 						<div style="text-align:center;padding:10px 0px;">
-		    				<a data-toggle="html" href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
+		    				<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
 		    					<img src="assets/app/img/allogo.png" style="width:200px;height:200px;"></img>
 		    				</a>
-		    				<p>官网:<a data-toggle="html" href="http://www.agilelite.net">www.agilelite.net</a></p>
+		    				<p>官网:<a data-href="http://www.agilelite.net">www.agilelite.net</a></p>
 		    			</div>
 		    			<div style="text-align:center;padding:10px 0px;">
-		    				<a data-toggle="html" href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
+		    				<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
 		    					<img src="assets/app/img/qrcode.png" style="width:200px;height:200px;"></img>
 		    				</a>
-		    				<p>QQ群号：<a data-toggle="html" href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">498752673</a></p>
+		    				<p>QQ群号：<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">498752673</a></p>
 		    			</div>
 					</div>
 				</article>
@@ -298,5 +304,15 @@
 		<script type="text/javascript" src="assets/bridge/agile.exmobi.js"></script>
 		<!-- app -->
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
+		<script>
+		$('a[data-href]').on(A.options.clickEvent, function(){
+			var href = $(this).data('href');
+			try{
+				NativeUtil.browser(href);
+			}catch(e){
+				location.href = href;
+			}
+		});
+		</script>
 	</body>
 </html>
