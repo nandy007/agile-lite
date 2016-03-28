@@ -1,3 +1,4 @@
 此示例代码为Agile Lite的ExMobi版本，所以需要在ExMobi中运行
 开发调试请在MBuilder中进行，可到此下载http://www.exmobi.cn/get-start.html
 Agile Lite使用请访问http://www.exmobi.cn/agile-lite/index.html
+如果不在MBuilder中使用，可以拷贝client\page\phone\default\www下的代码出去运行在任意web容器中既可以查看效果

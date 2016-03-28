@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.4.9 beta
+*	Version	:	2.5.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.4.9',
+			version : '2.5.0',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -19,7 +19,8 @@ var A = (function($){
 			showPageLoading : false, //ajax默认是否有loading界面
 			viewSuffix : '.html', //加载静态文件的默认后缀
 			lazyloadPlaceholder : '', //懒人加载默认图片
-			usePageParam : true
+			usePageParam : true,
+			autoInitCom : true
 		};
 		
 		this.pop = {
@@ -307,6 +308,7 @@ var A = (function($){
 				};
 				//定义点击触发事件
 				$(document).on(A.options.clickEvent, _controllers[k]['selector'], function(){
+					$('input:focus,textarea:focus').blur();
 					var k = $(this).data('toggle');
 					var hash = $(this).attr('href')||'#';
 					(controller[k]||controller['default'])(hash, $(this));
@@ -361,7 +363,7 @@ var A = (function($){
 			handler : function(el, roleType){
 				var $el = $(el);
 				var toggleType = $el.data('toggle');
-				if(toggleType=='section'||toggleType=='modal'||toggleType=='html'){
+				if((!toggleType)||toggleType=='section'||toggleType=='modal'||toggleType=='html'){
 					return;
 				}
 				_components['default'].handler(el, roleType);
@@ -594,6 +596,55 @@ var A = (function($){
 					}
 				}
 			}
+		},
+		pictureShow : {
+			type : 'function',
+			handler : function(opts){
+				var id = opts.id;
+				var index = opts.index||0;
+				var list = opts.list;
+				var htmlArr = [];
+				htmlArr.push('<section id="'+id+'" data-role="section" data-cache="false" style="background:#000;">');
+				htmlArr.push('<header class="picture_show_header">');
+				htmlArr.push(opts.header||'<a data-toggle="back" href="#" style="float:right;color:#fff;text-align:center; padding:8px; font-size:18px;">X</a>');
+				htmlArr.push('</header>');
+				htmlArr.push('<article id="'+id+'_article" data-role="article" class="active" style="overflow:hidden;background:rgba(255, 255, 255, 0.1) none repeat scroll 0 0 !important;">');
+				htmlArr.push('<div id="'+id+'_slide" data-role="slider" class="full" style="overflow: hidden;"><div class="scroller">');
+				for(var i=0;i<list.length;i++){
+					htmlArr.push('<div class="slide" style="padding-top:100px;">');
+					htmlArr.push('<img data-source="'+list[i].imgURL+'" class="full-width"/>');
+					htmlArr.push('</div>');
+				}
+				htmlArr.push('</div></div>');
+				
+				htmlArr.push('</article>');
+				
+				htmlArr.push('<div class="picture_show_footer" style="position:relative;bottom:0px;left:0px;width:100%;padding:8px;color:#fff;min-height:140px;background:#111;">');
+				htmlArr.push('<div><span style="float:left;font-size:20px;">'+opts.title+'</span><a class="picture_show_num" style="float:right;"></a></div>');
+				htmlArr.push('<div style="clear:both;line-height:20px;"><span class="picture_show_content"></span></div>');
+				htmlArr.push('</div>');
+
+				htmlArr.push('</section>');
+				$('#section_container').append(htmlArr.join(''));
+				A.Controller.section('#'+id);
+				var $num = $('#'+id+' .picture_show_num');
+				var $content = $('#'+id+' .picture_show_content');
+				var $header = $('#'+id+' .picture_show_header');
+				var $footer = $('#'+id+' .picture_show_footer');
+				var $slider = A.Slider('#'+id+'_slide', {
+					dots : 'hide',
+					change : function(i){
+						$num.html('<span style="font-size:18px;">'+(i+1)+'</span>/'+list.length);
+						$content.html(list[i].content||opts.title);
+					}
+				});
+				$slider.index(index);
+				$('#'+id+'_article').on(A.options.clickEvent, function(){
+					$header.toggle();
+					$footer.toggle();
+					return false;
+				});
+			}
 		}
 	};
 	
@@ -614,11 +665,28 @@ var A = (function($){
 	};
 	
 	/**
+     * 获取全部组件
+     * @param 要初始化的组件选择器，可以是$对象
+     */
+	component.initComponents = function(selector){
+		var $el = $(selector);
+		for(var k in _components){
+			if(_components[k].type=='function'||k=='default') continue;
+			A.Component[k]($el);
+		}
+	};
+	
+	
+	/**
      * 初始化组件
      * @private 仅能调用一次
      */
 	_makeHandler = function(){		
-		for(var k in _components){		
+		for(var k in _components){	
+			if(_components[k].type=='function'){
+				component[k] = _components[k].handler;
+				continue;
+			}	
 			(function(k){	
 				//定义JS调用函数
 				component[k] = function(hash){
@@ -656,6 +724,7 @@ var A = (function($){
 			return false;
 		}
 	};
+	
 	/**
      * type组件的名称，hash组件的#id
      */
@@ -1095,6 +1164,7 @@ var A = (function($){
 		$.extend(options, _attr_options||{});
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
+		$el.attr('__com_iscroll__', true);
 		$el.on('touchmove', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setdiabled');
 		});
@@ -1612,6 +1682,7 @@ var A = (function($){
         }
 		this.trigger('popupopen');callback&&callback.call(this);
 		A.pop.hasPop = $popup;
+		if(A.options.autoInitCom) A.Component.initComponents($popup);
 		return this;
     };
     
@@ -2099,7 +2170,7 @@ var A = (function($){
 			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
 		$(document).on('renderEnd', 'script', function(e,h){
-			A.Component.lazyload(h);
+			if(A.options.autoInitCom) A.Component.initComponents(h);
 			var $scroller = $(h).closest('[data-scroll]');
 			if($scroller.length==1) A.Scroll('#'+$scroller.attr('id')).refresh();
 		});
@@ -2109,7 +2180,11 @@ var A = (function($){
 		$(document).on('scrollInit', '[data-scroll], [data-role="slider"]', function(){
 			A.Component.lazyload(this);
 		});
+		$(document).on('touchstart', '[data-readonly="true"]', function(){
+			return false;
+		});
 	};	
+	
 	/**
      * @param {Object} 添加的事件对象 {key:function(){}}
      */

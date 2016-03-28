@@ -11,28 +11,30 @@
 		<style>
 		section ul, section li {padding:0px;margin:0px;list-style:none; }
 		.my_header { z-index:2;width:100%; margin:0px;}
-		.my_tab_container { z-index:2;position:absolute;top:44px; height:44px;width:100%; clear:both; border-bottom:1px solid #e7e7e7; background:#fff;}
-		.my_tab_container li { float:left; width:25%; line-height:44px; text-align:center; font-size:12px; }
-		.my_tab_container li span:after { color:#95a5a6;font-family: Ratchicons;}
-		.my_tab_container li span:after{ content: '\e814'; }
-		.my_tab_container li.active span:after{ content: '\e81f'; -webkit-animation: spinner 0.1s 2 linear;animation: spinner 0.1s 2 linear;}
-		.my_tab_container li i { float:right; color:#ECF0F1;}
+		.my_filter_controller { z-index:2;position:absolute;top:44px; height:44px;width:100%; clear:both; border-bottom:1px solid #e7e7e7; background:#fff;}
+		.my_filter_controller li { float:left; width:25%; line-height:44px; text-align:center; font-size:12px; }
+		.my_filter_controller li span:after { color:#95a5a6;font-family: Ratchicons;}
+		.my_filter_controller li span:after{ content: '\e814'; }
+		.my_filter_controller li.active span:after{ content: '\e81f'; -webkit-animation: spinner 0.1s 2 linear;animation: spinner 0.1s 2 linear;}
+		.my_filter_controller li i { float:right; color:#ECF0F1;}
 		
-		.my_view_conatiner{ top:88px; bottom:0px; width:100%;}
-		.my_view.active { z-index:1; position:absolute; display:block; width:100%; height:100%; background:rgba(0,0,0,0.2);}
+		.my_filter_conatiner{ top:88px; bottom:0px; width:100%;}
+		.my_filter_component.active { z-index:1; position:absolute; display:block; width:100%; height:100%; background:rgba(0,0,0,0.2);}
 		
-		.my_view.active .my_view_content { -webkit-animation: slideDownIn 1s; height:80%; background:#fff;}
+		.my_filter_component.active .my_filter_component_content { -webkit-animation: slideDownIn 1s; height:80%; background:#fff;}
 		
-		.my_c{width:50%;height:100%; float:left; overflow:scroll; -webkit-overflow-scrolling: touch;background:#efefef;}
-		.my_c li { height:40px; padding:12px 20px; font-size:12px;}
-		.my_c li.active{ background:#fff;}
-		.my_c2.active{ width:48%;height:100%; float:right; overflow:scroll; -webkit-overflow-scrolling: touch;}
-		.my_c2.active li {height:40px; padding:12px 20px; font-size:12px;border-bottom:1px solid #efefef;}
+		.my_filter_c1{width:50%;height:100%; float:left; overflow-y:scroll; -webkit-overflow-scrolling: touch;background:#efefef;}
+		.my_filter_c1 li { height:40px; padding:12px 20px; font-size:12px;}
+		.my_filter_c1 li.active{ background:#fff;}
+		.my_filter_c2.active{ width:48%;height:100%; float:right; overflow-y:scroll; -webkit-overflow-scrolling: touch;}
+		.my_filter_c2.active li {height:40px; padding:12px 20px; font-size:12px;border-bottom:1px solid #efefef;}
 		
 		
 		article ul img { width:100px;}
 		.money { font-size:18px;}
 		.money:before { content:'￥'; font-size:12px;}
+		
+		.media img{ width:100px; height:60px;}
 		</style>
 	</head>
 	<body>
@@ -43,16 +45,16 @@
 				  	<a class="icon icon-info pull-right"data-toggle="section" href="#readme_section"></a>
 				  	<h1 class="title">默认控制器使用</h1>
 				</header>
-				<ul class="my_tab_container">
+				<ul class="my_filter_controller">
 				  	<li data-role="tab" data-toggle="view" href="#fujin"><span>附近</span><i>|</i></li>
 					<li data-role="tab" data-toggle="view" href="#meishi"><span>美食</span><i>|</i></li>
 					<li data-role="tab" data-toggle="view" href="#paixu"><span>智能排序</span><i>|</i></li>
 					<li data-role="tab" data-toggle="view" href="#shaixuan"><span>筛选</span></li>
 				</ul>
-				<div class="my_view_conatiner">
-					<div id="fujin" class="my_view" data-role="view">
-    					<div class="my_view_content">
-    						<ul class="my_c">
+				<div class="my_filter_conatiner">
+					<div id="fujin" class="my_filter_component" data-role="view">
+    					<div class="my_filter_component_content">
+    						<ul class="my_filter_c1">
     							<li class="active" data-toggle="view" href="#fujin1" data-role="tab">附近</li>
     							<li data-toggle="view" href="#fujin2" data-role="tab">热门商区</li>
     							<li data-toggle="view" href="#fujin3" data-role="tab">秦淮区</li>
@@ -68,14 +70,14 @@
     							<li>溧水区</li>
     							<li>高淳区</li>
     						</ul>
-    						<ul id="fujin1" data-role="view" class="my_c2 active">
+    						<ul id="fujin1" data-role="view" class="my_filter_c2 active">
     							<li>附近（智能范围）</li>
     							<li>500m</li>
     							<li>1000m</li>
     							<li>2000m</li>
     							<li>3000m</li>
     						</ul>
-    						<ul id="fujin2" data-role="view" class="my_c2">
+    						<ul id="fujin2" data-role="view" class="my_filter_c2">
     							<li>全部商区</li>
     							<li>新街口地区</li>
     							<li>湖南路</li>
@@ -88,7 +90,7 @@
     							<li>莫愁湖/水西门</li>
     							<li>同曦/瑞都商业圈</li>
     						</ul>
-    						<ul id="fujin3" data-role="view" class="my_c2">
+    						<ul id="fujin3" data-role="view" class="my_filter_c2">
     							<li>全部秦淮区</li>
     							<li>新街口地区</li>
     							<li>夫子庙地区</li>
@@ -100,18 +102,18 @@
     						</ul>
     					</div>
     				</div>
-    				<div id="meishi" class="my_view" data-role="view">
-    					<div class="my_view_content">
+    				<div id="meishi" class="my_filter_component" data-role="view">
+    					<div class="my_filter_component_content">
     						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
     					</div>
     				</div>
-    				<div id="paixu" class="my_view" data-role="view">
-    					<div class="my_view_content">
+    				<div id="paixu" class="my_filter_component" data-role="view">
+    					<div class="my_filter_component_content">
     						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
     					</div>
     				</div>
-    				<div id="shaixuan" class="my_view" data-role="view">
-    					<div class="my_view_content">
+    				<div id="shaixuan" class="my_filter_component" data-role="view">
+    					<div class="my_filter_component_content">
     						<div style="text-align:center;padding:20px 0px;">在这里自定义你的内容吧</div>
     					</div>
     				</div>
@@ -281,29 +283,33 @@
 		<script type="text/javascript" src="assets/app/js/app.js"></script>
 		<script>
 		(function(){
-			$('.my_view_conatiner .my_view').on('touchmove', function(e){
-				if($(e.target).hasClass('my_view')){
+			$('.my_filter_conatiner .my_filter_component').on('touchmove', function(e){
+				if($(e.target).hasClass('my_filter_component')){
 					e.preventDefault();
 				}
 			});
 			
 			var resetView = function(){
 				setTimeout(function(){
-					$('.my_tab_container li, .my_view_conatiner .my_view').removeClass('active');
+					$('.my_filter_controller li, .my_filter_conatiner .my_filter_component').removeClass('active');
 				}, 100);
 			};
-			$('.my_c2 li').on(A.options.clickEvent, function(){
+			$('.my_filter_c2 li').on(A.options.clickEvent, function(){
 				A.showToast('你点击了'+this.innerHTML);
 				resetView();
 			});
-			$('.my_view_conatiner .my_view').on(A.options.clickEvent, function(e){
-				if($(e.target).hasClass('my_view')){
+			$('.my_filter_conatiner .my_filter_component').on(A.options.clickEvent, function(e){
+				if($(e.target).hasClass('my_filter_component')){
 					resetView();
 				}
 			});
 			
 			$('#controller_section').on('sectionhide', function(){
 				resetView();
+			});
+			
+			$('.my_filter_controller li').on(A.options.clickEvent, function(){
+				if($(this).hasClass('active')) resetView();
 			});
 			
 			

@@ -8,16 +8,6 @@ var $config = {
 			$(document).on('beforeunload', function(){
 				A.Controller.close();
 			});
-		},
-		renderEnd : function(){
-			$(document).on('renderEnd', 'script', function(e, el){			
-				var $el = el;
-				A.Component.toggle($el);
-				A.Component.formcheck($el);
-				if(A.Component.datetime) A.Component.datetime($el);
-				if(A.Component.scanning) A.Component.scanning($el);
-				if(A.Component.file)A.Component.file($el);
-			});
 		}
 	});
 	

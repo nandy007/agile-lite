@@ -166,8 +166,27 @@
 			});
 		});
 		$('#slide img').on(A.options.clickEvent, function(){
-			var $el = $(this);
-			A.showToast($el.siblings('.slider_label').html());
+			//var $el = $(this);
+			//A.showToast($el.siblings('.slider_label').html());
+			A.Component.pictureShow({
+				id : 'picture',
+				index : $("#slide .slide").index($("#slide .slide.active")),
+				title : '这是默认标题',
+				list : [
+					{
+						imgURL : 'res:page/www/assets/app/img/slide1.jpg',
+						content : '这是第一条新闻'
+					},
+					{
+						imgURL : 'res:page/www/assets/app/img/slide2.jpg',
+						content : '这是第二条新闻'
+					},
+					{
+						imgURL : 'res:page/www/assets/app/img/slide3.jpg',
+						content : '这是第三条新闻'
+					}
+				]
+			});
 		});
 		</script>
 		
