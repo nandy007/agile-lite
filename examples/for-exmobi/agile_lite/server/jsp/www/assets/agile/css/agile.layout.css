@@ -239,7 +239,7 @@ article.active{
 
 
 aside{
-	display: none;
+	display: none !important;
     position: absolute;
     width: 264px;
     top:0;
@@ -249,7 +249,7 @@ aside{
     color:#fff;
 }
 aside.active{
-    display: block;
+    display: block !important;
 }
 
 [data-role="aside"]{}
