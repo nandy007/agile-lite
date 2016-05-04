@@ -6,244 +6,201 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Agile Lite</title>
 		<link rel="stylesheet" href="assets/agile/css/agile.layout.css">
-		<link rel="stylesheet" href="assets/agile/css/ratchet/css/ratchet.min.css">
-		<link rel="stylesheet" href="assets/app/css/app.css">
+		<link rel="stylesheet" href="assets/third/seedsui/plugin/seedsui/seedsui.min.css">
 	</head>
 	<body>
 		<div id="section_container">
 			<section id="index_section" data-role="section" class="active">
-				<header class="bar bar-nav">
-				  	<a class="icon icon-left-nav pull-left" data-toggle="back" href="#"></a>
-				  	<a class="icon icon-info pull-right"data-toggle="html" href="#about" data-transition="slidedown"></a>
-				  	<h1 class="title">Agile Lite</h1>
-				</header>
-				<article data-role="article" id="flat_article" data-scroll="verticle" class="active" style="top:44px;bottom:50px;">
+				<header>
+		            <div class="titlebar">
+		                <h1 class="text-center">Agile Lite</h1>
+		                <a class="right" data-toggle="html" href="#about">
+		                    <i class="icon icon-rdoinfo"></i>
+		                </a>
+		            </div>
+		        </header>
+				<article data-role="article" id="index_article" class="active" style="top:44px;bottom:54px;">
 					<div class="scroller">
-						<ul class="table-view">
-							<li class="table-view-cell table-view-divider">Controllers</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#single" data-toggle="html" class="navigate-right">						      		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	单页模式
-						        	<p>支持的单页模式控制器，如：section、article、modal、aside等</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#multi" data-toggle="html" class="navigate-right">      		
-						        	多页模式
-						        	<p>支持的多页模式控制器，比如html</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#work" data-toggle="html" class="navigate-right">      		
-						        	控制器原理
-						        	<p>控制器与组件的工作原理</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#controller" data-toggle="html" class="navigate-right">      		
-						        	默认控制器的使用
-						        	<p>丰富默认控制器使用场景</p>
-						    	</a>
-						  	</li>
-						  	
-						  	<li class="table-view-cell table-view-divider">Components</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#button" data-toggle="html" class="navigate-right">						      		
-						        	按钮组件
-						        	<p>button和toggle按钮组件</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#menu" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	菜单组件
-					            	<p>tabbar、menubar和grid菜单</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#list" data-toggle="html" class="navigate-right">     		
-						        	列表组件
-					            	<p>单行/多行列表以及其他列表模板</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#list_more" data-toggle="html" class="navigate-right">     		
-						        	复杂列表
-					            	<p>邮件列表和下载列表</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#list_edit" data-toggle="html" class="navigate-right">     		
-						        	列表滑动与编辑
-					            	<p>滑动删除与批量处理</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#form" data-toggle="html" class="navigate-right">     		
-						        	表单组件
-					            	<p>表单组件及其不同布局</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#popup" data-toggle="html" class="navigate-right">     		
-						      		<span class="badge bg-pomegranate white">HOT</span>
-						        	弹窗组件
-					            	<p>alert、confirm以及action sheet等</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#aside" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	侧边栏组件
-					            	<p>aside侧边栏组件、手势驱动</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#calendar" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	日历组件
-					            	<p>万年历、日程管理</p>
-						    	</a>
-						  	</li>
-
-						  	
-						  	<li class="table-view-cell table-view-divider">Scroll &amp; Lazyload</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#scroll" data-toggle="html" class="navigate-right">     		
-						        	滚动组件
-					            	<p>横向和垂直滚动组件</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#refresh" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	刷新组件
-					            	<p>refresh上拉和下拉刷新组件</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#slider" data-toggle="html" class="navigate-right">     		
-						        	滑动组件
-					            	<p>slider与slider page滑动页</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#lazyload" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	懒人加载
-					            	<p>懒人加载延迟加载图片</p>
-						    	</a>
-						  	</li>
-						  	
-						  	<li class="table-view-cell table-view-divider">Base</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#color" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	颜色样式
-					            	<p>可选的文字颜色和背景颜色</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#icon" data-toggle="html" class="navigate-right">     		
-						        	常用字体
-					            	<p>各种类型的字体图</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#icon_form" data-toggle="html" class="navigate-right">     		
-						        	表单字体
-					            	<p>用于表单的字体图</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#icon_logo" data-toggle="html" class="navigate-right">     		
-						        	Logo字体
-					            	<p>部分企业logo的字体图</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#animate" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	CSS3动画
-					            	<p>各种风格的CSS3动画</p>
-						    	</a>
-						  	</li>
-						  	
-						  	<li class="table-view-cell table-view-divider">Template</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#arttemplate" data-toggle="html" class="navigate-right">     		
-						        	artTemplate模板
-					            	<p>artTemplate模板native语法示例</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="#agiletemplate" data-toggle="html" class="navigate-right">     		
-						        	<span class="badge bg-pomegranate white">HOT</span>
-						        	Agile模板注入
-					            	<p>Agile基于artTemplate封装的模板注入</p>
-						    	</a>
-						  	</li>
-						</ul>
-						
+						<details open>
+			                <summary class="sliver">Controllers</summary>
+			                <ul class="list">
+			                    <li href="core/single.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>单页模式</p>
+			                            <small>支持的单页模式控制器，如：section、article、modal、aside等</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/multi.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>多页模式</p>
+			                            <small>支持的多页模式控制器，比如html</small>
+			                        </div>
+			                    </li>
+			            		<li href="core/work.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>控制器原理</p>
+			                            <small>控制器与组件的工作原理</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/controller.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>默认控制器的使用</p>
+			                            <small>丰富默认控制器使用场景</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
+			            
+			            <details open>
+			                <summary class="sliver">Base Components</summary>
+			                <ul class="list">
+			                	<li href="core/color.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>颜色样式</p>
+			                            <small>可选的文字颜色和背景颜色</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/popup.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>弹窗组件</p>
+			                            <small>alert、confirm以及action sheet等</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/aside.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>侧边栏组件</p>
+			                            <small>aside侧边栏组件、手势驱动</small>
+			                        </div>
+			                    </li>
+			            		<li href="core/scroll.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>滚动组件</p>
+			                            <small>横向和垂直滚动组件</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/refresh.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>刷新组件</p>
+			                            <small>refresh上拉和下拉刷新组件</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/slider.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>滑动组件</p>
+			                            <small>slider与slider page滑动页</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/lazyload.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>懒人加载</p>
+			                            <small>懒人加载延迟加载图片</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
+			            
+			            <details open>
+			                <summary class="sliver">Render</summary>
+			                <ul class="list">
+			                    <li href="core/arttemplate.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>artTemplate模板</p>
+			                            <small>artTemplate模板native语法示例</small>
+			                        </div>
+			                    </li>
+			                    <li href="core/agiletemplate.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>Agile模板注入</p>
+			                            <small>Agile基于artTemplate封装的模板注入</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
     				</div>
-					<a data-role="scrollTop" data-toggle="scrollTop" href="#flat_article" style="bottom:56px;right:4px;">
+    				<a data-role="scrollTop" data-toggle="scrollTop" href="#index_article" style="bottom:60px;right:4px;">
 						<img src="assets/app/img/top.png" style="border: 1px solid #efefef;"></img>
 					</a>
 				</article>
 				
 				
 				
-				<article data-role="article" id="ratchet_article" data-scroll="verticle" style="top:44px;bottom:50px;">
+				<article data-role="article" id="ui_article" style="top:44px;bottom:54px;">
 					<div class="scroller">
-						<div class="card">
-							<ul class="table-view">
-								<li class="table-view-cell table-view-divider">Base</li>
-								<li class="table-view-cell"><a class="navigate-right" data-toggle="section" href="#ratchet_layout_section">基本布局</a></li>
-							    <li class="table-view-cell"><a class="navigate-right" data-toggle="section" href="ratchet_button_section.html">按钮组件</a></li>
-							    <li class="table-view-cell"><a class="navigate-right" data-toggle="section" href="#ratchet_list_section">列表组件</a></li>
-							    <li class="table-view-cell table-view-divider">Others</li>
-							    <li class="table-view-cell"><a class="navigate-right" data-toggle="section" href="#ratchet_form_section">表单样式</a></li>
-							    <li class="table-view-cell"><a class="navigate-right" data-toggle="section" href="#ratchet_icon_section">字体图</a></li>
-							</ul>
-						</div>
+						<p class="padded concrete">
+							Agile Lite是一个无关UI的框架，只要具有独立UI风格的样式都可以在Agile Lite中使用。
+						</p>
+						<details open>
+			                <summary class="sliver">烽火出品</summary>
+			                <ul class="list">
+			                    <li href="seedsui/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>SeedsUI</p>
+			                            <small>组件丰富，资源轻量，与ExMobi完美结合</small>
+			                        </div>
+			                    </li>
+			                    <li href="flatui/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>FlatUI</p>
+			                            <small>扁平化小清新模板</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
+			            <details open>
+			                <summary class="sliver">热门第三方</summary>
+			                <ul class="list">
+			                    <li href="ratchet/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>Ratchet</p>
+			                            <small>Bootstrap移动版，小巧易用</small>
+			                        </div>
+			                    </li>
+			                    <li href="weui/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>WeUI</p>
+			                            <small>微信官网主推UI风格组件</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
 					</div>
 				</article>
 				
-				<article data-role="article" id="case_article" data-scroll="verticle" style="top:44px;bottom:50px;">
+				<article data-role="article" id="case_article" style="top:44px;bottom:54px;">
 					<div class="scroller">
-						<ul class="table-view">
-							<li class="table-view-cell table-view-divider">Third UI</li>
-							<li class="table-view-cell media">
-						    	<a href="weui_index.html" data-toggle="html" class="navigate-right">     		
-						        	WeUI
-					            	<p>集成微信UI框架</p>
-						    	</a>
-						  	</li>
-							<li class="table-view-cell table-view-divider">Cases</li>
-						  	<li class="table-view-cell media">
-						    	<a href="http://demo.exmobi.cn/process/service/weixinlite/www/index.html" data-toggle="html" class="navigate-right">     		
-						        	微信JS SDK示例
-					            	<p>集成微信JS SDK，进行授权认证和支付</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="http://demo.exmobi.cn/process/service/ednlite/www/index.html" data-toggle="html" class="navigate-right">     		
-						        	论坛类示例
-					            	<p>ExMobi开发者论坛（discuz）APP</p>
-						    	</a>
-						  	</li>
-						  	<li class="table-view-cell media">
-						    	<a href="http://demo.exmobi.cn/process/service/p9line/index.html" data-toggle="html" class="navigate-right">     		
-						        	商城类示例
-					            	<p>微店、商城类的APP展示</p>
-						    	</a>
-						  	</li>
-						</ul>
+						<details open>
+			                <summary class="sliver">经典</summary>
+			                <ul class="list">
+			                    <li href="http://demo.exmobi.cn/process/service/ednlite/www/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>论坛类示例</p>
+			                            <small>ExMobi开发者论坛（discuz）APP</small>
+			                        </div>
+			                    </li>
+			                    <li href="http://demo.exmobi.cn/process/service/p9line/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>商城类示例</p>
+			                            <small>微店、商城类的APP展示</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
+			            
+						<details open>
+			                <summary class="sliver">微信</summary>
+			                <ul class="list">
+			                    <li href="http://demo.exmobi.cn/process/service/weixinlite/www/index.html" data-toggle="html">
+			                        <div class="justify-content">
+			                            <p>微信JS SDK示例</p>
+			                            <small>集成微信JS SDK，进行授权认证和支付</small>
+			                        </div>
+			                    </li>
+			                </ul>
+			            </details>
 					</div>
 				</article>
 				
-				<article data-role="article" id="info_article" data-scroll="verticle" style="top:44px;bottom:50px;">
+				<article data-role="article" id="info_article" style="top:44px;bottom:54px;">
 					<div class="scroller">
 						
 						<!--<h3>UI使用</h2>
@@ -263,7 +220,7 @@
 		    				</a>
 		    				<p>官网:<a data-href="http://www.agilelite.net">www.agilelite.net</a></p>
 		    			</div>
-		    			<div style="text-align:center;padding:10px 0px;">
+		    			<div style="text-align:center;padding:20px 0px;">
 		    				<a data-href="http://qm.qq.com/cgi-bin/qm/qr?k=eSLMOpIj7xpF6SGmd06KS5hy_V9wuO8C">
 		    					<img src="assets/app/img/qrcode.png" style="width:200px;height:200px;"></img>
 		    				</a>
@@ -272,37 +229,38 @@
 					</div>
 				</article>
 				
-				<nav class="bar bar-tab">
-				  	<a class="tab-item active" data-role="tab" data-toggle="article" href="#flat_article">
-				    	<span class="icon icon-pages"></span>
-				    	<span class="tab-label">FlatUI</span>
-				  	</a>
-				  	<a class="tab-item" data-role="tab" data-toggle="article" href="#ratchet_article">
-				    	<span class="icon icon-person"></span>
-				    	<span class="tab-label">Ratchet</span>
-				  	</a>
-				  	<a class="tab-item" data-role="tab" data-toggle="article" href="#case_article">
-				    	<span class="icon icon-pages"></span>
-				    	<span class="tab-label">案例</span>
-				  	</a>
-				  	<a class="tab-item" data-role="tab" data-toggle="article" href="#info_article">
-				    	<span class="icon icon-gear"></span>
-				    	<span class="tab-label">关于</span>
-				  	</a>
-				</nav>
+				<footer>
+					<ul class="menubar">
+		                <li class="tab active" data-role="tab" href="#index_article" data-toggle="article">
+		                    <i class="icon icon-home-fill"></i>
+		                    <label class="tab-label">基础</label>
+		                </li>
+		                <li class="tab" data-role="tab" href="#ui_article" data-toggle="article">
+		                    <i class="icon icon-chattip"></i>
+		                    <label class="tab-label">组件</label>
+		                </li>
+		                <li class="tab" data-role="tab" href="#case_article" data-toggle="article">
+		                    <i class="icon icon-contact"></i>
+		                    <label class="tab-label">示例</label>
+		                </li>
+		                <li class="tab" data-role="tab" href="#info_article" data-toggle="article">
+		                    <i class="icon icon-app"></i>
+		                    <label class="tab-label">关于</label>
+		                </li>
+		            </ul>
+				</footer>
+				
+				
 			</section>
 		</div>
 		
 		<!--- third -->
-		<!--<script src="assets/third/zepto/zepto.min.js"></script>
-		<script src="assets/third/iscroll/iscroll-probe.js"></script>
-		<script src="assets/third/arttemplate/template-native.js"></script>-->	
-		<!--  merge合并了jquery-2.1.3.min.js、jquery.mobile.custom.min.js（zepto.min.js）、iscroll-probe.js、template-native.js-->
-		<script type="text/javascript" src="../merge"></script>
+		<script src="assets/third/jquery/jquery-2.1.3.min.js"></script>
+		<script src="assets/third/jquery/jquery.mobile.custom.min.js"></script>
 		<!---  agile -->
 		<script type="text/javascript" src="assets/agile/js/agile.js"></script>			
 		<!-- app -->
-		<script type="text/javascript" src="assets/app/js/app.js"></script>
+		<script type="text/javascript" src="assets/app/js/app.seedsui.js"></script>
 		<script>
 		$('a[data-href]').on(A.options.clickEvent, function(){
 			var href = $(this).data('href');

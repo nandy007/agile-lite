@@ -11,30 +11,6 @@ var $config = {
 		}
 	});
 	
-	A.Component.add({
-		pictureShow : {
-			type : 'function',
-			handler : function(opts){
-				var jsonData = {};
-				jsonData.config = {
-					type : 'news',
-					cache : 1,
-					index : opts.index
-				};
-				jsonData.data = [];
-				for(var i=0;i<opts.list.length;i++){
-					jsonData.data.push({
-						src : opts.list[i].imgURL,
-						title : opts.title,
-						content : opts.list[i].content
-					});
-				}
-				
-				ClientUtil.openImageList(jsonData);
-			}
-		}
-	});
-	
 	A.Controller.add({
 		close : {
 			selector : '[data-toggle="close"]',

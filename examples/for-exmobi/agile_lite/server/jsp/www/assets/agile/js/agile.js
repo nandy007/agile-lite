@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.0 beta
+*	Version	:	2.5.1 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.5.0',
+			version : '2.5.1',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -20,7 +20,9 @@ var A = (function($){
 			viewSuffix : '.html', //加载静态文件的默认后缀
 			lazyloadPlaceholder : '', //懒人加载默认图片
 			usePageParam : true,
-			autoInitCom : true
+			autoInitCom : true,
+			iScrollOptions : {},
+			classPre : 'agile-'
 		};
 		
 		this.pop = {
@@ -86,7 +88,7 @@ var A = (function($){
 	var _controllers = {
 		default : {//默认控制器
 			selector : '[data-toggle="view"]',
-			handler : function(hash, el){				
+			handler : function(hash, el){			
 				$el = $(el);				
 				var toggleType = $el.data('toggle');
 				var urlObj = A.util.parseURL(hash);
@@ -101,14 +103,14 @@ var A = (function($){
 						if(!$el.attr('__init_controller__')){												
 							$el.attr('__init_controller__', true);
 							$el.trigger(targetRole+'load');
-						}													
+						}			
 						$el.trigger(targetRole+'show');
 					};
 					
 					var hide = function($el){
 						$el.removeClass('active').trigger(targetRole+'hide');
 					};
-					if(controllerObj.isToggle){
+					if(controllerObj.isToggle||$el.data('isToggle')){
 						if($target.hasClass('active')){
 							hide($target);
 						}else{
@@ -151,6 +153,12 @@ var A = (function($){
 						controllerObj.complete&&controllerObj.complete($target, {result:'nocontainer'});
 						return;
 					};
+					if($el.attr('data-useTemplate')){
+						$target = $(controllerObj.template.replace('{id}', hashObj.tag.replace('#', '')));
+						$container.append($target);
+						_next();
+						return;
+					}
 					if(A.options.showPageLoading) A.showMask();				
 					A.util.getHTML(urlObj.getURL(), function(html){
 						if(A.options.showPageLoading) A.hideMask();
@@ -180,6 +188,7 @@ var A = (function($){
 			selector : '[data-toggle="section"]',
 			container : '#section_container',
 			transition : 'slide',
+			template : '<section id="{id}" data-role="section"></section>',
 			history : [],
 			complete : function($target, msg){
 				var _add2History = function(hash,noState){
@@ -217,11 +226,13 @@ var A = (function($){
 		},
 		article : {
 			selector : '[data-toggle="article"]',
-			container : '[data-role="section"].active'
+			container : '[data-role="section"].active',
+			template : '<article id="{id}" data-role="article"></article>'
 		},
 		modal : {
 			selector : '[data-toggle="modal"]',
 			container : 'body',
+			template : '<div id="{id}" data-role="modal" class="modal"></div>',
 			isToggle : true
 		},
 		aside : {
@@ -269,8 +280,14 @@ var A = (function($){
 		scrollTop : {
 			selector : '[data-toggle="scrollTop"]',
 			handler : function(el){
-				var scroll = A.Scroll(el);
-				scroll.scrollTo(0, 0, 1000, IScroll.utils.ease.circular);
+				var $el = $(el);
+				if($el.data('scroll')){
+					var scroll = A.Scroll(el);
+					scroll.scrollTo(0, 0, 1000, IScroll.utils.ease.circular);
+				}else{
+					$el.animate({ scrollTop: 0 }, 200);
+				}
+				
 			}
 		}
 	};	
@@ -300,7 +317,7 @@ var A = (function($){
 		for(var k in _controllers){			
 			(function(k){
 				//定义JS调用函数
-				controller[k] = function(hash, el){					
+				controller[k] = function(hash, el){				
 					var toggleType = k;
 					var $el = el?$(el):$('<a data-toggle="'+k+'" href="'+hash+'"></a>');
 					var curr = _controllers[toggleType]?(_controllers[toggleType].handler?toggleType:'default'):'default';
@@ -339,8 +356,7 @@ var A = (function($){
 				var $el = $(el);
 				roleType = roleType=='default'?$el.data('role'):roleType;
 				var componentObj = _components[roleType]||{};
-
-				if(componentObj.isToggle){
+				if(componentObj.isToggle||$el.data('isToggle')){
 					$el[$el.hasClass('active')?'removeClass':'addClass']('active');
 					return;
 				}else if($el.hasClass('active')){
@@ -581,10 +597,18 @@ var A = (function($){
 			handler : function(el, roleType){				
 				var _work = function($el){
 					$el.on(A.options.clickEvent, function(){ $el.removeClass('active');});
-					var scroll = A.Scroll($el.attr('href'));
-					scroll.on('scrollEnd', function(){
-						$el[this.y<-120?'addClass':'removeClass']('active');
-					});
+					if($el.data('scroll')){
+						var scroll = A.Scroll($el.attr('href'));
+						scroll.on('scrollEnd', function(){
+							$el[this.y<-120?'addClass':'removeClass']('active');
+						});
+					}else{
+						var scroll = $($el.attr('href'));
+						scroll.on('scrollEnd', function(){
+							$el[scroll.scrollTop()>120?'addClass':'removeClass']('active');
+						});
+						A.util.jquery.scrollEnd(scroll);
+					}
 				};
 				var $el = $(el);
 				if($el.data('role')=='scrollTop'){
@@ -619,8 +643,8 @@ var A = (function($){
 				
 				htmlArr.push('</article>');
 				
-				htmlArr.push('<div class="picture_show_footer" style="position:relative;bottom:0px;left:0px;width:100%;padding:8px;color:#fff;min-height:140px;background:#111;">');
-				htmlArr.push('<div><span style="float:left;font-size:20px;">'+opts.title+'</span><a class="picture_show_num" style="float:right;"></a></div>');
+				htmlArr.push('<div class="picture_show_footer" style="position:relative;bottom:0px;left:0px;right:0px;padding:8px;color:#fff;min-height:140px;background:#111;">');
+				htmlArr.push('<div><span style="float:left;font-size:20px;">'+opts.title+'</span><p class="picture_show_num" style="float:right;"></p></div>');
 				htmlArr.push('<div style="clear:both;line-height:20px;"><span class="picture_show_content"></span></div>');
 				htmlArr.push('</div>');
 
@@ -681,7 +705,7 @@ var A = (function($){
      * 初始化组件
      * @private 仅能调用一次
      */
-	_makeHandler = function(){		
+	_makeHandler = function(){
 		for(var k in _components){	
 			if(_components[k].type=='function'){
 				component[k] = _components[k].handler;
@@ -696,7 +720,7 @@ var A = (function($){
 				};
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
-				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){
+				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){					
 					var curr = _components[k].handler?k:'default';				
 					_components[curr].handler(this, k);
 					return false;
@@ -872,6 +896,20 @@ var A = (function($){
 (function($){
 	var util = {};
 	
+	util.jquery = {
+		scrollEnd : function($el){
+			var _step;
+			var _handler = function(){
+				if(_step) clearTimeout(_step); _step = null;
+				_step = setTimeout(function(){
+					clearTimeout(_step); _step = null;
+					$el.trigger('scrollEnd');
+				}, 100);
+			};
+			$el.off('scroll', _handler).on('scroll', _handler);
+		}
+	};
+	
 	util.script = function(str){	
 		str = (str||'').trim();
 		var tag = false;
@@ -1041,7 +1079,6 @@ var A = (function($){
     	return !((location.protocol.replace(':','')+location.host)==(urlOpts.getProtocol()+urlOpts.getHost()+':'+urlOpts.getPort()));
     };
     
-
     /*
      * $.ajax函数封装，判断是否有跨域，并且设置跨域处理函数
      * @param ajax json对象，进行简单统一处理，如果需要完整功能请使用$.ajax
@@ -1158,6 +1195,7 @@ var A = (function($){
 			//click : true,
 			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|IMG)$/ }
 		};
+		options = $.extend(options, A.options.iScrollOptions||{});
 		$.extend(options, opts||{});
 		var _attr_options = $el.attr('data-scroll-options');
 		_attr_options = typeof _attr_options!='object'?A.JSON.parse(_attr_options):_attr_options;
@@ -1478,43 +1516,33 @@ var A = (function($){
 //侧边栏
 (function($){
 	var $asideContainer=$('#aside_container'), $sectionContainer=$('#section_container'), $sectionMask=$('#section_container_mask');
-	
+	var _this;
 	var Aside = function(){	
+		_this = this;
+	};
+	
+	Aside.prototype.launch = function(){
 		if($asideContainer.length==0) $asideContainer = $('<div id="aside_container"></div>').appendTo('body');
         if($sectionContainer.length==0) $sectionContainer = $('<div id="section_container"></div>').appendTo('body');
         if($sectionMask.length==0) $sectionMask = $('<div id="section_container_mask"></div>').appendTo('#section_container');
-  		var _this = this;
   		$sectionMask.on(A.options.clickEvent, function(){
         	_this.hide();
         	return false;
         });
-		
 		$sectionMask.on('swipeleft', function(e){
 			var $activeAside = $('#aside_container aside.active');
 			if($activeAside.data('position') == 'left'){
 				_this.hide();
 			}
 		});
-		
 		$sectionMask.on('swiperight', function(e){
 			var $activeAside = $('#aside_container aside.active');
 			if($activeAside.data('position') == 'right'){
 				_this.hide();
 			}
 		});
-
-        $(document).on('swiperight','section.active[data-aside-left]',function(e){
-        	if($(e.target).closest('[data-role="slider"]').length==0){
-        		_this.show($(this).data('aside-left'));
-        	}
-        });
-        
-        $(document).on('swipeleft','section.active[data-aside-right]',function(e){
-        	if($(e.target).closest('[data-role="slider"]').length==0){
-        		_this.show($(this).data('aside-right'));
-        	}
-        });
 	};
+	
 	 /**
      * 打开侧边菜单
      * @param selector css选择器或element实例
@@ -1536,14 +1564,16 @@ var A = (function($){
         var _finish = function(){
         	callback&&callback();$aside.trigger('asideshow');
         };
-        
+
         if($aside.data('role')=='aside'){
-        	var funcName = 'css3';
+        	funcName = 'css3';
         	cssName.aside['-webkit-transform'] = 'translateX(0%)';
         	cssName.section['-webkit-transform'] = 'translateX('+translateX+')';
+        	$aside.css({'transition':'all 250ms'});$sectionContainer.css({'transition':'all 250ms'});
         }else{
         	cssName.aside[position] = width+'px';
         	cssName.section['left'] = translateX;
+        	$aside.css({'transition':'none'});$sectionContainer.css({'transition':'none'});
         }
         
         if(transition == 'overlay'){
@@ -1579,7 +1609,7 @@ var A = (function($){
         };
         var funcName = 'run';
         if($aside.data('role')=='aside'){
-        	var funcName = 'css3';
+        	funcName = 'css3';
         	cssName.aside['-webkit-transform'] = 'translateX('+translateX+')';
         	cssName.section['-webkit-transform'] = 'translateX(0%)';
         }else{
@@ -1626,11 +1656,11 @@ var A = (function($){
     	$.extend(options,opts);
     	if(_popMap[options.id]) return _popMap[options.id];
     	var _this = _popMap[options.id] = this;
-    	$('<div data-refer="'+options.id+'" class="popup-mask"></div><div id="'+options.id+'" class="agile-popup"></div>').appendTo('body');
+    	$('<div data-refer="'+options.id+'" class="'+A.options.classPre+'popup-mask"></div><div id="'+options.id+'" class="'+A.options.classPre+'popup"></div>').appendTo('body');
     	var $popup = $('#'+options.id), $mask = $('[data-refer="'+options.id+'"]');
     	$popup.data('block', options.isBlock);
     	$popup.css(options.css);
-    	$popup.addClass(options.pos);
+    	$popup.addClass(A.options.classPre+options.pos);
 		$popup.html(options.html);
 		$mask.on(A.options.clickEvent, function(){
         	if(options.isBlock) return false;
@@ -1666,7 +1696,7 @@ var A = (function($){
     Popup.prototype.open = function(callback){
     	var _this=this, $popup=this.popup, $mask=this.mask, options=this.options;
     	if($mask.hasClass('active')) return _popMap[options.id];
-    	$('body').children('.popup-mask.active').removeClass('active');
+    	$('body').children('.'+A.options.classPre+'popup-mask.active').removeClass('active');
     	$mask.addClass('active').show();
         $popup.show();
         var popHeight = $popup.height();
@@ -1689,7 +1719,7 @@ var A = (function($){
     var _finish = function(callback){   	
     	var $popup=this.popup, $mask=this.mask;
     	$popup.remove();$mask.remove();this.trigger('popupclose');setTimeout(function(){ callback&&callback(); }, 200);
-    	$last = $('body').children('.popup-mask').last().addClass('active');
+    	$last = $('body').children('.'+A.options.classPre+'popup-mask').last().addClass('active');
     	A.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
     };
     
@@ -1741,7 +1771,7 @@ var A = (function($){
     		title = '提示';
     	}
         return new Popup({
-            html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
+            html : A.util.provider('<div class="'+A.options.classPre+'popup-title">${title}</div><div class="'+A.options.classPre+'popup-content">${content}</div><div class="'+A.options.classPre+'popup-handler"><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
             pos : 'center',
             isBlock : true
         }).on('popupclose', function(){
@@ -1765,17 +1795,17 @@ var A = (function($){
     	}
     	var clickBtn = okCallback;
         return new Popup({
-            html : A.util.provider('<div class="popup-title">${title}</div><div class="popup-content">${content}</div><div class="popup-handler"><a data-toggle="popup" class="popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
+            html : A.util.provider('<div class="'+A.options.classPre+'popup-title">${title}</div><div class="'+A.options.classPre+'popup-content">${content}</div><div class="'+A.options.classPre+'popup-handler"><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
             pos : 'center',
             isBlock : true
         }).on('popupclose', function(){       	
         	clickBtn&&clickBtn.call(this);
         }).open(function(){    	
         	var $popup = $(this.popup), _this=this;
-        	$popup.find('.popup-handler-ok').on(A.options.clickEvent, function(){
+        	$popup.find('.'+A.options.classPre+'popup-handler-ok').on(A.options.clickEvent, function(){
 	            clickBtn = okCallback;
 	        });
-	        $popup.find('.popup-handler-cancel').on(A.options.clickEvent, function(){
+	        $popup.find('.'+A.options.classPre+'popup-handler-cancel').on(A.options.clickEvent, function(){
 	            clickBtn = cancelCallback;
 	        });
         });        
@@ -1793,7 +1823,7 @@ var A = (function($){
     	}
         return new Popup({
         	id : 'popup_loading',
-            html : A.util.provider('<i class="popup-spinner"></i><p>${title}</p>', {title : text||'加载中'}),
+            html : A.util.provider('<div><i class="'+A.options.classPre+'popup-spinner"></i><p>${title}</p></div>', {title : text||'加载中'}),
             pos : 'loading',
             isBlock : true
         }).on('popupclose', function(){
@@ -1811,9 +1841,9 @@ var A = (function($){
      * [{css:'red',text:'btn',handler:function(){}},{css:'red',text:'btn',handler:function(){}}]
      */
     _ext.actionsheet = function(buttons,showCancel){
-        var markMap = ['<div class="actionsheet"><div class="actionsheet-group">'];
-        var defaultCalssName = "popup-actionsheet-normal";
-        var defaultCancelCalssName = "popup-actionsheet-cancel";
+        var markMap = ['<div class="'+A.options.classPre+'actionsheet"><div class="'+A.options.classPre+'actionsheet-group">'];
+        var defaultCalssName = A.options.classPre+"popup-actionsheet-normal";
+        var defaultCancelCalssName = A.options.classPre+"popup-actionsheet-cancel";
         var showCancel = showCancel==false?false:(showCancel||true);
         $.each(buttons,function(i,n){
             markMap.push('<button data-toggle="popup" class="'+(n.css||defaultCalssName)+'">'+ n.text +'</button>');
@@ -1843,9 +1873,9 @@ var A = (function($){
      */
     _ext.popover = function(html,el){
     	var markMap = [];
-    	markMap.push('<div class="popover-angle"></div>');
+    	markMap.push('<div class="'+A.options.classPre+'popover-angle"></div>');
     	if(typeof html=='object'){
-    		markMap.push('<ul class="popover-items">');
+    		markMap.push('<ul class="'+A.options.classPre+'popover-items">');
     		for(var i=0;i<html.length;i++){
     			markMap.push('<li data-toggle="popup" class="'+(html[i].css||'')+'">'+html[i].text+'</li>');
     		}
@@ -1868,8 +1898,8 @@ var A = (function($){
 			var rLeft = $rel.offset().left;
 			var rCenter = rLeft+(rWidth/2);
 			
-			var $el = $(this.popup).addClass('popover');
-			var $angle = $($el.find('.popover-angle').get(0));
+			var $el = $(this.popup).addClass(A.options.classPre+'popover');
+			var $angle = $($el.find('.'+A.options.classPre+'popover-angle').get(0));
 			var gapH = $angle.height()/2;
 			var gapW = Math.ceil(($angle.width()-2)*Math.sqrt(2));			
 			var height = $el.height();
@@ -1893,7 +1923,7 @@ var A = (function($){
 			anCss.left = rCenter - elCss.left - gapW/2;
     		$el.css(elCss);
     		$angle.css(anCss);
-            $el.find('.popover-items li').each(function(i,button){             	
+            $el.find('.'+A.options.classPre+'popover-items li').each(function(i,button){             	
                 $(button).on(A.options.clickEvent,function(){
                     if(html[i] && html[i].handler){
                         html[i].handler.call(button);
@@ -2105,8 +2135,8 @@ var A = (function($){
 		});
 	};
 	
-	_events.zepto = function(){	
-		$(document).on('click', 'a[data-toggle]', function(){return false; });
+	_events.zepto = function(){
+		if(A.options.clickEvent!='click') $(document).on('click', 'a[data-toggle]', function(){return false; });
 		if($==window.Zepto){
 			$(document).on('swipeLeft','[data-aside-right],[data-role="calendar"],.swipe_block', function(){$(this).trigger('swipeleft');});
 			$(document).on('swipeRight','[data-aside-left],[data-role="calendar"],.swipe_block',function(){$(this).trigger('swiperight');});
@@ -2117,10 +2147,22 @@ var A = (function($){
 	 * */
 	var _initSection = function(){
 		$(document).on('sectionload', 'section', function(){
-			var $childred = $(this).children(':first-child, :last-child').not('[data-role="article"], [data-boundary="false"]');
+			var $el = $(this);
+			var $childred = $el.children(':first-child, :last-child').not('[data-role="article"], [data-boundary="false"]');
 			$childred.on('touchmove', function(e){
 				e.preventDefault();
 			});
+			//处理aside事件
+			if($el.data('aside-left')){
+				$el.on('swiperight', function(){
+					A.Controller.aside($el.data('aside-left'));
+				});
+			}
+			if($el.data('aside-right')){
+				$el.on('swipeleft', function(){
+					A.Controller.aside($el.data('aside-right'));
+				});
+			}
 		});
 		//初始化section
 		var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
@@ -2182,6 +2224,22 @@ var A = (function($){
 		});
 		$(document).on('touchstart', '[data-readonly="true"]', function(){
 			return false;
+		});
+		
+		$(document).on('articleload', 'article[data-role="article"]', function(){
+			var $el = $(this);
+			if($el.data('scroll')){
+				$el.on('click', 'summary', function(){			
+					setTimeout(function(){
+						A.Scroll($el).refresh();
+					}, 200);
+				});
+			}else{
+				$el.on('scrollEnd', function(){
+					A.Component.lazyload($el);
+				});
+				A.util.jquery.scrollEnd($el);
+			}
 		});
 	};	
 	
