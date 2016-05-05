@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.1 beta
+*	Version	:	2.5.2 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var A = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.5.1',
+			version : '2.5.2',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -597,13 +597,14 @@ var A = (function($){
 			handler : function(el, roleType){				
 				var _work = function($el){
 					$el.on(A.options.clickEvent, function(){ $el.removeClass('active');});
-					if($el.data('scroll')){
+					$target = $($el.attr('href'));
+					if($target.data('scroll')){
 						var scroll = A.Scroll($el.attr('href'));
 						scroll.on('scrollEnd', function(){
 							$el[this.y<-120?'addClass':'removeClass']('active');
 						});
 					}else{
-						var scroll = $($el.attr('href'));
+						var scroll = $target;
 						scroll.on('scrollEnd', function(){
 							$el[scroll.scrollTop()>120?'addClass':'removeClass']('active');
 						});
