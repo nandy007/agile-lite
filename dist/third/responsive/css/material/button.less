@@ -1,0 +1,284 @@
+
+button {
+  -webkit-animation-duration: 0.0001s;
+  animation-duration: 0.0001s;
+  -webkit-animation-name: material-node-inserted;
+  animation-name: material-node-inserted;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFF;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  height: 36px;
+  padding: 0 26px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  background-image: none;
+  text-align: center;
+  line-height: 36px;
+  vertical-align: middle;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover,button:focus,button:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+}
+
+button[disabled]:hover,button[disabled]:focus,button[disabled]:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFF;
+}
+
+button.flat {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: transparent;
+}
+
+button.flat:hover,button.flat:focus,button.flat:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f2f2f2;
+}
+
+button.flat[disabled]:hover,button.flat[disabled]:focus,button.flat[disabled]:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: transparent;
+}
+
+button:hover,button:focus,button:active {
+  outline: 0;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+button:hover,button:focus {
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  button:hover,button:focus {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+button:active {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  button:active {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+}
+
+button:disabled,button.is-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.60;
+  box-shadow: none;
+}
+/*
+button + button {
+  margin-left: 8px;
+}
+*/
+button.flat {
+  background-color: transparent;
+}
+
+button.flat:hover,button.flat:focus,button.flat:active {
+  box-shadow: none;
+  background-color: #f2f2f2;
+}
+
+button.raised,button.fab {
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+ button.raised,button.fab {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+button.raised:active,button.fab:active {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+ button.raised:active,button.fab:active {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+}
+
+button.fab {
+  position: relative;
+  padding: 0;
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+button.primary {
+  color: #FFF;
+  background-color: #2196F3;
+}
+
+button.primary:hover,button.primary:focus,button.primary:active {
+  color: #FFF;
+  background-color: #39a1f4;
+}
+
+button.primary[disabled]:hover,button.primary[disabled]:focus,button.primary[disabled]:active {
+  color: #FFF;
+  background-color: #2196F3;
+}
+
+button.primary.flat {
+  color: #2196F3;
+  background-color: transparent;
+}
+
+button.primary.flat:hover,button.primary.flat:focus,button.primary.flat:active {
+  color: #2196F3;
+  background-color: #f2f2f2;
+}
+
+button.primary.flat[disabled]:hover,button.primary.flat[disabled]:focus,button.primary.flat[disabled]:active {
+  color: #2196F3;
+  background-color: transparent;
+}
+
+button.dark {
+  color: #FFF;
+  background-color: #424242;
+}
+
+button.dark:hover,button.dark:focus,button.dark:active {
+  color: #FFF;
+  background-color: #4f4f4f;
+}
+
+button.dark[disabled]:hover,button.dark[disabled]:focus,button.dark[disabled]:active {
+  color: #FFF;
+  background-color: #424242;
+}
+
+button.dark.flat {
+  color: #424242;
+  background-color: transparent;
+}
+
+button.dark.flat:hover,button.dark.flat:focus,button.dark.flat:active {
+  color: #424242;
+  background-color: #f2f2f2;
+}
+
+button.dark.flat[disabled]:hover,button.dark.flat[disabled]:focus,button.dark.flat[disabled]:active {
+  color: #424242;
+  background-color: transparent;
+}
+
+button.danger {
+  color: #FFF;
+  background-color: #F44336;
+}
+
+button.danger:hover,button.danger:focus,button.danger:active {
+  color: #FFF;
+  background-color: #f55a4e;
+}
+
+button.danger[disabled]:hover,button.danger[disabled]:focus,button.danger[disabled]:active {
+  color: #FFF;
+  background-color: #F44336;
+}
+
+button.danger.flat {
+  color: #F44336;
+  background-color: transparent;
+}
+
+button.danger.flat:hover,button.danger.flat:focus,button.danger.flat:active {
+  color: #F44336;
+  background-color: #f2f2f2;
+}
+
+button.danger.flat[disabled]:hover,button.danger.flat[disabled]:focus,button.danger.flat[disabled]:active {
+  color: #F44336;
+  background-color: transparent;
+}
+
+button.accent {
+  color: #FFF;
+  background-color: #FF4081;
+}
+
+button.accent:hover,button.accent:focus,button.accent:active {
+  color: #FFF;
+  background-color: #ff5a92;
+}
+
+button.accent[disabled]:hover,button.accent[disabled]:focus,button.accent[disabled]:active {
+  color: #FFF;
+  background-color: #FF4081;
+}
+
+button.accent.flat {
+  color: #FF4081;
+  background-color: transparent;
+}
+
+button.accent.flat:hover,button.accent.flat:focus,button.accent.flat:active {
+  color: #FF4081;
+  background-color: #f2f2f2;
+}
+
+button.accent.flat[disabled]:hover,button.accent.flat[disabled]:focus,button.accent.flat[disabled]:active {
+  color: #FF4081;
+  background-color: transparent;
+}
+
+button.small {
+  height: 30.6px;
+  line-height: 30.6px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+button.large {
+  height: 54px;
+  line-height: 54px;
+  padding: 0 26px;
+  font-size: 14px;
+}
+
+button.fab.small {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
+button.fab.large {
+  width: 75px;
+  height: 75px;
+  line-height: 75px;
+}

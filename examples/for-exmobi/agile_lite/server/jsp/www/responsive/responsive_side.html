@@ -1,0 +1,117 @@
+<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>响应式侧边栏演示页</title>
+		<link rel="stylesheet" href="../assets/agile/css/agile.layout.css">
+		<link rel="stylesheet" href="../assets/third/responsive/css/responsive.css">
+		<link rel="stylesheet" href="../assets/third/responsive/css/awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="../assets/third/responsive/css/layout/side/side.css">
+	    <style type="text/css">
+	        .form-unit{
+	            margin: 1px 0px 14px 0px;
+	        }
+
+	        .form-unit-name{
+	            text-indent: 1em;
+	        }
+	    </style>
+	</head>
+	<body>
+		<div id="section_container">
+			<section id="responsive_side_section" data-role="section" style="overflow: inherit;" class="active side-layout">
+				<header class="">
+			        <a href="#responsive_side_section" data-toggleclass="menu-toggle" data-toggle="toggleclass" class="side-menu-link menu-link">
+			            <span></span>
+			        </a>
+
+			        <div class="side-menu">
+			            <div class="main_menu">
+			                <div class="main_menu_heading"><img style="height: 100%;" src="../assets/app/img/allogo.png"/></div>
+			                
+			                <ul class="main_menu_list">
+			                    <li class="main_menu_item active" data-role="tab" href="#responsive_side_article" data-toggle="article">
+			                    	<div class="main_menu_link">主页</div>
+			                    </li>
+			                    <li class="main_menu_item" data-role="tab" href="#responsive_side_article" data-toggle="article">
+			                        <div class="main_menu_link">菜单甲</div>
+			                    </li>
+			                    <li class="main_menu_item" data-role="tab" href="#responsive_side_article" data-toggle="article">
+			                    	<div class="main_menu_link">菜单乙</div>
+			                    </li>
+			                    <li class="main_menu_item" data-role="tab" href="#responsive_side_article" data-toggle="article">
+			                    	<div class="main_menu_link">菜单丙</div>
+			                    </li>
+			                </ul>
+			                
+			                <div class="side-account">
+			                    <div class="account_avater" style="background-image: url('../assets/app/img/aside/photo.jpg');"></div>
+			                    <div class="account_name">Admin</div>
+			                </div>
+			            </div>
+			        </div>
+				</header>
+				<article data-role="article" id="responsive_side_article" class="active side-main">
+					<div class="scroller">
+						<div class="header">
+			                <h1>表单样式</h1>
+			                <h2>响应式模版</h2>
+			            </div>
+
+			            <div class="content">
+			                <h2 class="content-subhead">自适应输入</h2>
+			                <div class="material-form">
+			                    <div class="columns-lg-1-2 columns-sm-1-1 form-unit">
+			                        <div class="columns-lg-1-3 columns-sm-1-1 form-unit-name">
+			                            用户名
+			                        </div>
+			                        <div class="columns-lg-2-3 columns-sm-1-1">
+			                            <input type="text" class="full">
+			                        </div>
+			                    </div>
+			                    <div class="columns-lg-1-2 columns-sm-1-1 form-unit">
+			                        <div class="columns-lg-1-3 columns-sm-1-1 form-unit-name">
+			                            密码
+			                        </div>
+			                        <div class="columns-lg-2-3 columns-sm-1-1">
+			                            <input type="password" class="full">
+			                        </div>
+			                    </div>
+			                    <div class="columns-lg-1-2 columns-sm-1-1 form-unit">
+			                        <div class="columns-lg-1-3 columns-sm-1-1 form-unit-name">
+			                            邮箱
+			                        </div>
+			                        <div class="columns-lg-2-3 columns-sm-1-1">
+			                            <input type="email" class="full">
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+				</article>
+			</section>
+		</div>
+		
+		<!-- third -->
+		<!--<script src="../assets/third/jquery/jquery-2.1.3.min.js"></script>-->
+		
+		<script src="../assets/third/zepto/zepto.min.js"></script>
+		
+		<script src="../assets/third/iscroll/iscroll-probe.js"></script>
+		<script src="../assets/third/arttemplate/template-native.js"></script>	
+		<!-- agile -->
+		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>		
+		<!-- bridge -->
+		<script type="text/javascript" src="../assets/bridge/exmobi.js"></script>
+		<script type="text/javascript" src="../assets/bridge/agile.exmobi.js"></script>
+		<!-- responsive -->
+		<script type="text/javascript" src="../assets/third/responsive/js/responsive.js"></script>
+		<!-- app -->
+		<script type="text/javascript" src="../assets/app/js/app.js"></script>
+		<script type="text/javascript">
+
+		</script>
+	</body>
+</html>

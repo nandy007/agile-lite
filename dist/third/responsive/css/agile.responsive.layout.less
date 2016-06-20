@@ -1,0 +1,354 @@
+html {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-size: 10px;
+}
+
+body {
+    display: block;
+    margin: 0px;
+    line-height: 1.6;
+}
+
+body {
+    margin: 0;
+    background: #fff;
+    font-family: "Segoe UI","Lucida Grande",Helvetica,Arial,"Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,sans-serif;
+    font-weight: 400;
+    color: #333;
+    font-size: 1.6rem;
+}
+
+#section_container {
+    position: initial;
+    overflow: auto;
+}
+
+section{
+    position: inherit;
+}
+
+article {
+    position:initial !important;
+}
+
+[data-role="article"] {
+    overflow-y: initial;
+    overflow: initial;
+}
+
+.main-content{
+    max-width: 1000px;
+    margin: 0px auto;
+}
+
+a, ins {
+    text-decoration: none;
+}
+
+.responsive-with-header-fixed-top {
+    padding-top: 51px;
+}
+
+.full-width{
+    width:100%;
+}
+
+.responsive-topbar{
+    position: relative;
+    min-height: 50px;
+    background: #f8f8f8;
+    border-width: 0 0 1px;
+    border-style: solid;
+    border-color: #ddd;
+    top: 0px;
+}
+
+.responsive-topbar-fixed-top{
+	position: fixed!important;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.responsive-topbar-brand{
+	margin: 0;
+    padding: 0 10px;
+    float: left;
+    font-size: 1.8rem;
+    height: 50px;
+    line-height: 50px;
+}
+
+.responsive-topbar-container{
+    max-width: 1000px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+}
+
+.responsive-topbar-nav{
+    margin: 0px;
+}
+
+.responsive-topbar-nav>li {
+    float: left;
+    position: relative;
+}
+
+.responsive-topbar-nav>li>a{
+    color: #666;
+}
+
+.responsive-topbar-toggle {
+    position: relative;
+    float: right;
+    margin-right: 10px;
+}
+
+.responsive-nav{
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.responsive-nav>li{
+
+}
+
+.responsive-nav>li>a{
+    padding: .4em 1em;
+    border-radius: 0;
+    display: block;
+    cursor: pointer;
+}
+
+.responsive-nav>li>a.active{
+    color: #fff;
+    background-color: #0e90d2;
+    cursor: default;
+}
+
+.responsive-nav>li>a:not(.active):hover{
+    text-decoration: none;
+    background-color: #eee;
+}
+
+.responsive-collapse {
+    display: none;
+}
+
+.responsive-collapse.active{
+    display: block;
+}
+
+.responsive-topbar-collapse {
+    /*width: 100%;*/
+    overflow-x: visible;
+    padding: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.responsive-collapse{
+    -webkit-transition: all 0.8s ease-out;
+    -moz-transition: all 0.8s ease-out;
+    -ms-transition: all 0.8s ease-out;
+    -o-transition: all 0.8s ease-out;
+    transition: all 0.8s ease-out;
+}
+
+.responsive-dropdown-content{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1020;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 15px;
+    margin: 9px 0 0;
+    text-align: left;
+    line-height: 1.6;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    -webkit-animation-duration: .15s;
+    animation-duration: .15s;
+    list-style: none;
+}
+
+.responsive-dropdown-content:before,
+.responsive-dropdown-content:after {
+    position: absolute;
+    display: block;
+    content: "";
+    width: 0;
+    height: 0;
+    border: 8px dashed transparent;
+    z-index: 1;
+    border-bottom-style: solid;
+    border-width: 0 8px 8px;
+    left: 10px;
+    top: -8px;
+    pointer-events: none;
+}
+
+.responsive-dropdown-content:before {
+    border-bottom-color: #ddd;
+    bottom: 0;
+}
+
+.responsive-dropdown-content:after {
+    border-bottom-color: #fff;
+    bottom: -1px;
+    top: -7px;
+}
+
+.responsive-dropdown-content>li>a{
+    padding: .4em 1em;
+    border-radius: 0;
+    display: block;
+    cursor: pointer;
+}
+
+.responsive-dropdown-content>li>a.active{
+    color: #fff;
+    background-color: #0e90d2;
+    cursor: default;
+}
+
+.responsive-dropdown-content>li>a:not(.active):hover{
+    text-decoration: none;
+    background-color: #eee;
+}
+
+.float-content:after{
+    content:".";
+    display:block;
+    height:0;
+    visibility:hidden;
+    clear:both; 
+}
+
+.float-content>div{
+    float:left;
+    word-wrap: break-word;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+footer.normal{
+/*
+    position: absolute;
+    bottom: 0px;
+*/
+    position:inherit !important;
+    width: 100%;
+    text-align: center;
+    background-color: #F8F8F8;
+    border-top: 1px solid #DCDBDB;
+}
+
+.land-container{
+    background: #0E90D2;
+    color: #fff;
+    text-align: center;
+    padding: 100px 0;
+}
+
+.side-padding-container{
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.land-title {
+    font-size: 200%;
+    border: 2px solid #fff;
+    padding: 20px;
+    display: inline-block;
+}
+
+.detail-h2{
+    text-align: center;
+}
+
+.inner-img{
+    width:100%;
+}
+
+p.copyright{
+    margin: 0px;
+    padding: 2rem 0rem 2rem 0rem;
+}
+
+.centre-container{
+    text-align: center;
+}
+
+a:link,a:-webkit-any-link{
+    color: #225E8E;
+    text-decoration: inherit;
+    cursor: auto;
+}
+
+@media (max-width: 35.5em) {
+    .responsive-topbar-nav {
+        margin-bottom: 8px;
+    }
+
+    .responsive-topbar-nav>li {
+        float: none;
+    }
+
+    .responsive-topbar-nav{
+        clear: both;
+    }
+
+    .responsive-dropdown-content.active{
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        float: none;
+    }
+}
+
+@media (min-width: 35.5em) {
+	.responsive-hide-lg, .responsive-hide-md,.responsive-show-sm-only{
+	    display: none!important;
+	}
+
+    .responsive-topbar-nav {
+        float: left;
+    }
+
+    .responsive-topbar-collapse.responsive-collapse {
+        display: block!important;
+        height: auto!important;
+        padding: 0;
+        overflow: visible!important;
+    }
+
+    .responsive-topbar-right{
+        float: right;
+        margin-right: 10px;
+    }
+
+    .responsive-topbar-nav>li>a {
+        position: relative;
+        line-height: 50px;
+        padding: 0 10px;
+    }
+}
+
+@media (min-width: 48em) {
+	
+}

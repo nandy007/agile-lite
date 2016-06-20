@@ -1,0 +1,38 @@
+
+.account_avater{
+    background-image: url('../img/avatar.jpg');
+    width: 2.5em;
+    height: 2.5em;
+    background-size: 2.5em;
+    border-radius: 2.5em;
+    border: 1px #DAD7D7 solid;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    margin: 0.1em 0.5em 0em 0.5em;
+}
+
+@media (min-width: 48em) {
+    /*.main_menu_link:hover{
+        color: #EEEEEE;
+    }*/
+
+    .account_name{
+        display: none;
+    }
+
+    .main_menu_list{
+        bottom: 0px;
+    }
+}
+
+@media (max-width: 48em) {
+    .account_avater{
+        float:left;
+        margin: 0.5em 0.5em 0em 0.5em;
+    }
+
+    .account_name{
+        margin-left: 3.8em;
+        padding-top: 1.2em;
+        color: #FFFFFF;
+    }
+}

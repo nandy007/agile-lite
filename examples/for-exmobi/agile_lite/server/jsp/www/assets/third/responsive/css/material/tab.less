@@ -1,0 +1,66 @@
+.material-tabs__bar {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+  background-color: transparent;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.material-tabs__bar > li {
+  display: inline-block;
+}
+
+.material-tabs__bar > li > a {
+  display: block;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: default;
+  height: 48px;
+  line-height: 48px;
+  padding-left: 24px;
+  padding-right: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.material-tabs__bar > li > a:hover {
+  text-decoration: none;
+}
+
+.material-tabs__bar > li.material--is-active {
+  border-bottom: 2px solid #2196F3;
+}
+
+.material-tabs__bar > li.material--is-active > a {
+  color: #2196F3;
+}
+
+.material-tabs__bar.material-tabs__bar--justified {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.material-tabs__bar.material-tabs__bar--justified > li {
+  display: table-cell;
+}
+
+.material-tabs__bar.material-tabs__bar--justified > li > a {
+  text-align: center;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.material-tabs__pane {
+  display: none;
+}
+
+.material-tabs__pane.material--is-active {
+  display: block;
+}

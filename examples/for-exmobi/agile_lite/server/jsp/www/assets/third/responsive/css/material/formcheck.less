@@ -1,0 +1,58 @@
+.material-radio,
+.material-checkbox {
+  position: relative;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.material-radio > label,
+.material-checkbox > label {
+  min-height: 20px;
+  padding-left: 20px;
+  margin-bottom: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.material-radio > label > input[type="radio"],
+.material-radio--inline > label > input[type="radio"],
+.material-checkbox > label > input[type="checkbox"],
+.material-checkbox--inline > label > input[type="checkbox"] {
+  position: absolute;
+  margin-left: -20px;
+  margin-top: 4px;
+}
+
+.material-radio + .material-radio,
+.material-checkbox + .material-checkbox {
+  margin-top: -5px;
+}
+
+.material-radio--inline,
+.material-checkbox--inline {
+  display: inline-block;
+  padding-left: 20px;
+  margin-bottom: 0;
+  vertical-align: middle;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.material-radio--inline > input[type="radio"],
+.material-radio--inline > input[type="checkbox"],
+.material-radio--inline > label > input[type="radio"],
+.material-radio--inline > label > input[type="checkbox"],
+.material-checkbox--inline > input[type="radio"],
+.material-checkbox--inline > input[type="checkbox"],
+.material-checkbox--inline > label > input[type="radio"],
+.material-checkbox--inline > label > input[type="checkbox"] {
+  margin: 4px 0 0;
+  line-height: normal;
+}
+
+.material-radio--inline + .material-radio--inline,
+.material-checkbox--inline + .material-checkbox--inline {
+  margin-top: 0;
+  margin-left: 10px;
+}

@@ -1,0 +1,103 @@
+#responsive UI
+
+##布局
+
+###展示页面
+
+这是一个用来展示内容的页面。
+
+本模版的响应式部分有菜单导航和展示栏。
+
+需要额外引入的css和js有：
+
+`
+	<link rel="stylesheet" href="../assets/third/responsive/css/responsive.css">
+`
+
+`
+	<script type="text/javascript" src="../assets/third/responsive/js/responsive.js"></script>
+`
+
+布局方面，原Agilelite的header标签的class属性加上了responsive-topbar，section标签的class属性也加上了responsive-with-header-fixed-top，主要内容分成land-container和main-content两个部分。
+
+更多内容请见页面源码。
+
+###单侧边栏页面
+
+这是一个响应式的侧边栏页面。
+
+页面的侧边栏在页面大于一定宽度是显示的，而小于这个宽度的时候是折叠的，需要点击按钮来展示出来。
+
+需要额外引入的css和js有：
+
+`
+	<link rel="stylesheet" href="../assets/third/responsive/css/responsive.css">
+	<link rel="stylesheet" href="../assets/third/responsive/css/layout/side/side.css">
+`
+
+`
+	<script type="text/javascript" src="../assets/third/responsive/js/responsive.js"></script>
+`
+
+布局方面，侧边栏是整合进了header的，其他不变。
+
+更多内容请见页面源码。
+
+###双侧边栏页面
+
+双侧边栏布局把页面分成了3个部分，其中两个是侧边栏，一个是内容展示块。
+
+双侧边栏页面有三种形态，从宽度由小到大是：单页头折叠菜单布局、单侧边并上下展示布局和三部分并列布局，具体看示例页面。
+
+需要额外引入的css和js有：
+
+`
+	<link rel="stylesheet" href="../assets/third/responsive/css/responsive.css">
+	<link rel="stylesheet" href="../assets/third/responsive/css/layout/doubleside/doubleside.css">
+`
+
+`
+	<script type="text/javascript" src="../assets/third/responsive/js/responsive.js"></script>
+`
+
+布局方面，两个侧边栏都是整合进了header部分的。
+
+更多内容请见页面源码。
+
+##UI组件
+
+###按钮
+
+已经为button标签附加了相应样式，可选的class属性有：
+
+- flat：扁平式
+
+- is-disabled：失效按钮样式
+
+- raised：升起样式
+
+- primary：主要按钮样式
+
+- danger：警告样式
+
+- accent：账户相关样式
+
+###表单
+
+在form.material-form中的input标签有相应的样式，具体请看单侧边栏页面的模版。
+
+###textfield
+
+.material-textfield元素的样式，其中的布局包含label和textarea。
+
+###通用
+
+material样式有很多的阴影元素来衬托层次，responsive UI也引入了相关的样式，对应的是material--z1一直到material--z5，一共五个层次的阴影。
+
+##栅格化
+
+栅格化布局很常见，响应式布局自然也需要。
+
+responsive UI里有columns-{name}-{count}-{num}样式的class属性可以用，其中{name}可选的有sm，md，lg，xl，分别表示不同的页面宽度尺寸，{count}和{num}表示占总宽度的num分之count。
+
+比如columns-md-2-3表示中等宽度的页面中，该元素的宽度占容器的三分之二。

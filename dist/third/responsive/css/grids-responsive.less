@@ -1,0 +1,98 @@
+.generate-columns(@name,@num,@count:1) when(@count =< @num){
+	.columns-@{name}-@{count}-@{num}{
+		&:extend(.columns-common);
+		width: (@count * 100% / @num - 2.031%);
+		*width: (@count * 100% / @num - 0.031%);
+	}
+
+	.generate-columns(@name,@num,(@count+1));
+}
+
+
+@media screen and (max-width: 35.5em) {
+	.columns-common{
+	    display: inline-block;
+	    *display: inline;
+	    zoom: 1;
+	    letter-spacing: normal;
+	    word-spacing: normal;
+	    vertical-align: top;
+	    text-rendering: auto;
+	}
+	
+	.generate-columns(sm,1);
+	.generate-columns(sm,2);
+	.generate-columns(sm,3);
+	.generate-columns(sm,4);
+	.generate-columns(sm,5);
+	.generate-columns(sm,6);
+	.generate-columns(sm,8);
+	.generate-columns(sm,12);
+	.generate-columns(sm,24);
+}
+
+@media screen and (min-width: 35.5em) {
+	.columns-common{
+	    display: inline-block;
+	    *display: inline;
+	    zoom: 1;
+	    letter-spacing: normal;
+	    word-spacing: normal;
+	    vertical-align: top;
+	    text-rendering: auto;
+	}
+	
+	.generate-columns(md,1);
+	.generate-columns(md,2);
+	.generate-columns(md,3);
+	.generate-columns(md,4);
+	.generate-columns(md,5);
+	.generate-columns(md,6);
+	.generate-columns(md,8);
+	.generate-columns(md,12);
+	.generate-columns(md,24);
+}
+
+@media screen and (min-width: 47em) {
+	.columns-common{
+	    display: inline-block;
+	    *display: inline;
+	    zoom: 1;
+	    letter-spacing: normal;
+	    word-spacing: normal;
+	    vertical-align: top;
+	    text-rendering: auto;
+	}
+	
+	.generate-columns(lg,1);
+	.generate-columns(lg,2);
+	.generate-columns(lg,3);
+	.generate-columns(lg,4);
+	.generate-columns(lg,5);
+	.generate-columns(lg,6);
+	.generate-columns(lg,8);
+	.generate-columns(lg,12);
+	.generate-columns(lg,24);	
+}
+
+@media screen and (min-width: 64em) {
+	.columns-common{
+	    display: inline-block;
+	    *display: inline;
+	    zoom: 1;
+	    letter-spacing: normal;
+	    word-spacing: normal;
+	    vertical-align: top;
+	    text-rendering: auto;
+	}
+	
+	.generate-columns(xl,1);
+	.generate-columns(xl,2);
+	.generate-columns(xl,3);
+	.generate-columns(xl,4);
+	.generate-columns(xl,5);
+	.generate-columns(xl,6);
+	.generate-columns(xl,8);
+	.generate-columns(xl,12);
+	.generate-columns(xl,24);	
+}

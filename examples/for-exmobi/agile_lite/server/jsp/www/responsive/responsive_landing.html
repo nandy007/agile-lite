@@ -1,0 +1,170 @@
+<!-- HTML5文件 -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>响应式展示页</title>
+		<link rel="stylesheet" href="../assets/agile/css/agile.layout.css">
+		<link rel="stylesheet" href="../assets/third/responsive/css/responsive.css">
+		<link rel="stylesheet" href="../assets/third/responsive/css/awesome/css/font-awesome.css">
+		<style type="text/css">
+			.land-image{
+				height: 170px;
+   				max-width: 218px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="section_container">
+			<section id="responsive_landing_section" data-role="section" class="active responsive-with-header-fixed-top">
+				<header class="responsive-topbar responsive-topbar-fixed-top">
+					<div class="responsive-topbar-container">
+				  		<h1 class="responsive-topbar-brand">响应式展示页</h1>
+					  	<button class="responsive-show-sm-only primary responsive-topbar-toggle" data-toggle="collapse" href="#menucollapse"><i class="icon-reorder"></i></button>
+					  	<div id="menucollapse" data-role="collapse" class="responsive-topbar-collapse responsive-collapse">
+					  		<ul class="responsive-topbar-nav responsive-nav">
+					  			<li class=""><a class="active">菜单甲</a></li>
+					  			<li class="">
+					  				<a data-toggle="collapse" href="#menucollapseb">菜单乙<i class="icon-caret-down"></i></a>
+					  				<ul id='menucollapseb' class="responsive-dropdown-content responsive-collapse">
+							  			<li class="">
+							  				<a>菜单乙A</a>
+							  			</li>
+							  			<li class="">
+							  				<a>菜单乙B</a>
+							  			</li>
+							  			<li class="">
+							  				<a>菜单乙C</a>
+							  			</li>
+					  				</ul>
+					  			</li>
+					  			<li class=""><a class="">菜单丙</a></li>
+					  		</ul>
+					  		<div class="responsive-topbar-right">
+					  			<button class="accent  columns-sm-1-1">注册</button>
+					  			<button class="primary  columns-sm-1-1">登录</button>
+					  		</div>
+					  	</div>
+					</div>
+				</header>
+				<article data-role="article" id="responsive_landing_article" class="active">
+					<div class="scroller">
+						<!--
+							<div id="slide" data-role="slider" data-options="{autoplay:true}" class="full-width" style="overflow: hidden;max-height:300px;">
+								<div class="slide-container">
+									<div class="slide">
+										<img src="../assets/app/img/slide1.jpg" class="full-width"/>
+										<div class="slider_label">slide1</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide2.jpg" class="full-width"/>
+										<div class="slider_label">slide2</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide3.jpg" class="full-width"/>
+										<div class="slider_label">slide3</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide1.jpg" class="full-width"/>
+										<div class="slider_label">new4</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide2.jpg" class="full-width"/>
+										<div class="slider_label">new5</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide3.jpg" class="full-width"/>
+										<div class="slider_label">new6</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide1.jpg" class="full-width"/>
+										<div class="slider_label">new7</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide2.jpg" class="full-width"/>
+										<div class="slider_label">new8</div>
+									</div>
+									<div class="slide">
+										<img src="../assets/app/img/slide3.jpg" class="full-width"/>
+										<div class="slider_label">new9</div>
+									</div>
+								</div>
+							</div>
+						-->
+						<div class="full-width land-container">
+							<div class="side-padding-container">
+								<h1 class="land-title">
+									欢迎使用Agile Lite响应式UI
+								</h1>
+								<p>Agile Lite 是一个HTML5移动应用开发框架，提供基于事件驱动和数据注入的MVP模式以及无关UI的可扩展框架结构</p>
+							</div>
+						</div>
+						<div class="main-content">
+							<h2 class="detail-h2">一个页面，多种模式，全部平台，灵活展现。</h2>
+							<div class='float-content centre-container'>
+								<div class="columns-sm-1-1 columns-md-1-2 columns-xl-1-4">
+									<img class="inner-img land-image" src="http://www.agilelite.net/resources/agile/img/img_h5.png"/>
+									<p>
+									纯HTML5框架包括接近原生效果的UI组件和丰富的逻辑处理
+									</p>
+								</div>
+								<div class="columns-sm-1-1 columns-md-1-2 columns-xl-1-4">
+									<img class="inner-img land-image" src="http://www.agilelite.net/resources/agile/img/img_2.png"/>
+									<p>
+									支持单页和多页模式完善的组件生命周期事件和参数传递机制
+									</p>
+								</div>
+								<div class="columns-sm-1-1 columns-md-1-2 columns-xl-1-4">
+									<img class="inner-img land-image" src="http://www.agilelite.net/resources/agile/img/img_3.png"/>
+									<p>
+									灵活的扩展性ExMobi、微信本地能力桥接类自动识别在最佳H5壳容器ExMobi中体验Agile Lite
+									</p>
+								</div>
+								<div class="columns-sm-1-1 columns-md-1-2 columns-xl-1-4">
+									<img class="inner-img land-image" src="http://www.agilelite.net/resources/agile/img/img_4.png"/>
+									<p>
+									定制化的UI风格可根据需要在线生成框架UI样式  
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
+				<footer class="normal">
+					<div>
+						<p class="copyright">
+							<a href="http://www.fhss.com.cn/" class="copyright">
+								南京烽火星空通信发展有限公司版权所有
+							</a>
+							<br/>
+							<a class="copyright" href="http://www.miitbeian.gov.cn/">
+								苏ICP备11014881号-4
+							</a>
+						</p>
+					</div>
+				</footer>
+			</section>
+		</div>
+		
+		<!-- third -->
+		<!--<script src="../assets/third/jquery/jquery-2.1.3.min.js"></script>-->
+		
+		<script src="../assets/third/zepto/zepto.min.js"></script>
+		
+		<script src="../assets/third/iscroll/iscroll-probe.js"></script>
+		<script src="../assets/third/arttemplate/template-native.js"></script>	
+		<!-- agile -->
+		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>		
+		<!-- bridge -->
+		<script type="text/javascript" src="../assets/bridge/exmobi.js"></script>
+		<script type="text/javascript" src="../assets/bridge/agile.exmobi.js"></script>
+		<!-- responsive -->
+		<script type="text/javascript" src="../assets/third/responsive/js/responsive.js"></script>
+		<!-- app -->
+		<script type="text/javascript" src="../assets/app/js/app.js"></script>
+		<script type="text/javascript">
+
+		</script>
+	</body>
+</html>

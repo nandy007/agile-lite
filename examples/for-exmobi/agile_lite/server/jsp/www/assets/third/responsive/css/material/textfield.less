@@ -1,0 +1,222 @@
+
+.material-textfield {
+  display: block;
+  padding-top: 15px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.material-textfield > label {
+  position: absolute;
+  top: 0;
+  display: block;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.material-textfield > textarea {
+  padding-top: 5px;
+}
+
+.material-textfield > input,
+.material-textfield > textarea {
+  display: block;
+}
+
+.material-textfield > input:focus ~ label,
+.material-textfield > textarea:focus ~ label {
+  color: #2196F3;
+}
+
+.material-textfield--float-label > label {
+  position: absolute;
+  -webkit-transform: translate(0px, 15px);
+  transform: translate(0px, 15px);
+  font-size: 16px;
+  line-height: 32px;
+  color: rgba(0, 0, 0, 0.26);
+  text-overflow: clip;
+  cursor: text;
+  pointer-events: none;
+}
+
+.material-textfield--float-label > input:focus ~ label,
+.material-textfield--float-label > textarea:focus ~ label {
+  -webkit-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+  font-size: 12px;
+  line-height: 15px;
+  text-overflow: ellipsis;
+}
+
+.material-textfield--float-label > input:not(:focus).material--is-not-empty ~ label, .material-textfield--float-label > input:not(:focus)[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label, .material-textfield--float-label > input:not(:focus):not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield--float-label > textarea:not(:focus).material--is-not-empty ~ label,
+.material-textfield--float-label > textarea:not(:focus)[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield--float-label > textarea:not(:focus):not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+  line-height: 15px;
+  -webkit-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+  text-overflow: ellipsis;
+}
+
+.material-textfield--wrap-label {
+  display: table;
+  width: 100%;
+  padding-top: 0px;
+}
+
+.material-textfield--wrap-label:not(.material-textfield--float-label) > label {
+  display: table-header-group;
+  position: static;
+  white-space: normal;
+  overflow-x: visible;
+}
+
+.material-textfield > input,
+.material-textfield > textarea {
+  -webkit-animation-duration: 0.0001s;
+  animation-duration: 0.0001s;
+  -webkit-animation-name: material-node-inserted;
+  animation-name: material-node-inserted;
+  display: block;
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.87);
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.26);
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0px;
+  background-image: none;
+}
+
+.material-textfield > input:focus,
+.material-textfield > textarea:focus {
+  border-color: #2196F3;
+  border-width: 2px;
+}
+
+.material-textfield > input:disabled, .material-textfield > input:-moz-read-only,
+.material-textfield > textarea:disabled,
+.material-textfield > textarea:-moz-read-only {
+  cursor: not-allowed;
+  background-color: transparent;
+  opacity: 1;
+}
+
+.material-textfield > input:disabled, .material-textfield > input:read-only,
+.material-textfield > textarea:disabled,
+.material-textfield > textarea:read-only {
+  cursor: not-allowed;
+  background-color: transparent;
+  opacity: 1;
+}
+
+.material-textfield > input::-webkit-input-placeholder,
+.material-textfield > textarea::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0.26);
+  opacity: 1;
+}
+
+.material-textfield > input::-moz-placeholder,
+.material-textfield > textarea::-moz-placeholder {
+  color: rgba(0, 0, 0, 0.26);
+  opacity: 1;
+}
+
+.material-textfield > input:-ms-input-placeholder,
+.material-textfield > textarea:-ms-input-placeholder {
+  color: rgba(0, 0, 0, 0.26);
+  opacity: 1;
+}
+
+.material-textfield > input::placeholder,
+.material-textfield > textarea::placeholder {
+  color: rgba(0, 0, 0, 0.26);
+  opacity: 1;
+}
+
+.material-textfield > input {
+  height: 32px;
+}
+
+.material-textfield > input:focus {
+  height: 33px;
+  margin-bottom: -1px;
+}
+
+.material-textfield > textarea {
+  min-height: 64px;
+}
+
+.material-textfield > textarea[rows]:not([rows="2"]):focus {
+  margin-bottom: -1px;
+}
+
+.material-textfield > input:focus {
+  height: 33px;
+  margin-bottom: -1px;
+}
+
+.material-textfield > input:invalid:not(:focus):not(:required), .material-textfield > input:invalid:not(:focus):required.material--is-not-empty, .material-textfield > input:invalid:not(:focus):required.material--is-empty.material--is-dirty, .material-textfield > input:invalid:not(:focus):required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty), .material-textfield > input:invalid:not(:focus):required:not(:empty):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > textarea:invalid:not(:focus):not(:required),
+.material-textfield > textarea:invalid:not(:focus):required.material--is-not-empty,
+.material-textfield > textarea:invalid:not(:focus):required.material--is-empty.material--is-dirty,
+.material-textfield > textarea:invalid:not(:focus):required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > textarea:invalid:not(:focus):required:not(:empty):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > input:not(:focus).material--is-invalid:not(:required),
+.material-textfield > input:not(:focus).material--is-invalid:required.material--is-not-empty,
+.material-textfield > input:not(:focus).material--is-invalid:required.material--is-empty.material--is-dirty,
+.material-textfield > input:not(:focus).material--is-invalid:required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > input:not(:focus).material--is-invalid:required:not(:empty):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > textarea:not(:focus).material--is-invalid:not(:required),
+.material-textfield > textarea:not(:focus).material--is-invalid:required.material--is-not-empty,
+.material-textfield > textarea:not(:focus).material--is-invalid:required.material--is-empty.material--is-dirty,
+.material-textfield > textarea:not(:focus).material--is-invalid:required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > textarea:not(:focus).material--is-invalid:required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) {
+  border-color: #F44336;
+  border-width: 2px;
+}
+
+.material-textfield > input:invalid:not(:focus):not(:required), .material-textfield > input:invalid:not(:focus):required.material--is-not-empty, .material-textfield > input:invalid:not(:focus):required.material--is-empty.material--is-dirty, .material-textfield > input:invalid:not(:focus):required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty), .material-textfield > input:invalid:not(:focus):required:not(:empty):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > input:not(:focus).material--is-invalid:not(:required),
+.material-textfield > input:not(:focus).material--is-invalid:required.material--is-not-empty,
+.material-textfield > input:not(:focus).material--is-invalid:required.material--is-empty.material--is-dirty,
+.material-textfield > input:not(:focus).material--is-invalid:required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty),
+.material-textfield > input:not(:focus).material--is-invalid:required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) {
+  height: 33px;
+  margin-bottom: -1px;
+}
+
+.material-textfield > input:invalid:not(:focus):not(:required) ~ label, .material-textfield > input:invalid:not(:focus):required.material--is-not-empty ~ label, .material-textfield > input:invalid:not(:focus):required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label, .material-textfield > input:invalid:not(:focus):required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > textarea:invalid:not(:focus):not(:required) ~ label,
+.material-textfield > textarea:invalid:not(:focus):required.material--is-not-empty ~ label,
+.material-textfield > textarea:invalid:not(:focus):required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > textarea:invalid:not(:focus):required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > input:not(:focus).material--is-invalid:not(:required) ~ label,
+.material-textfield > input:not(:focus).material--is-invalid:required.material--is-not-empty ~ label,
+.material-textfield > input:not(:focus).material--is-invalid:required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > input:not(:focus).material--is-invalid:required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > textarea:not(:focus).material--is-invalid:not(:required) ~ label,
+.material-textfield > textarea:not(:focus).material--is-invalid:required.material--is-not-empty ~ label,
+.material-textfield > textarea:not(:focus).material--is-invalid:required[value]:not([value=""]):not(.material--is-empty):not(.material--is-not-empty) ~ label,
+.material-textfield > textarea:not(:focus).material--is-invalid:required:not(:empty):not(.material--is-empty):not(.material--is-not-empty) ~ label {
+  color: #F44336;
+}
+
+.material-textfield:not(.material-textfield--float-label) > input:invalid:not(:focus):required.material--is-empty.material--is-dirty ~ label,
+.material-textfield:not(.material-textfield--float-label) > textarea:invalid:not(:focus):required.material--is-empty.material--is-dirty ~ label,
+.material-textfield:not(.material-textfield--float-label) > input:not(:focus).material--is-invalid:required.material--is-empty.material--is-dirty ~ label,
+.material-textfield:not(.material-textfield--float-label) > textarea:not(:focus).material--is-invalid:required.material--is-empty.material--is-dirty ~ label {
+  color: #F44336;
+}

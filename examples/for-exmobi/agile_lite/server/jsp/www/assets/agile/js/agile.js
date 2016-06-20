@@ -1,10 +1,10 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.2 beta
+*	Version	:	2.5.3 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
-var A = (function($){
+var agilelite = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
@@ -46,8 +46,8 @@ var A = (function($){
 	};
 	var _doLaunch = function(){
 		for(var k in _launchMap){ try{ _launchMap[k](); }catch(e){ console.log(e);} }
-		A.options.complete = true;
-		$(document).trigger(A.options.agileReadyEvent);
+		agilelite.options.complete = true;
+		$(document).trigger(agilelite.options.agileReadyEvent);
 	};
 	
 	/**
@@ -55,7 +55,7 @@ var A = (function($){
      * @param {Object} 要初始化的一些参数
      */
 	Agile.prototype.launch = function(opts){
-		if(A.options.complete==true) return;
+		if(agilelite.options.complete==true) return;
 		_initPageInfo.apply(this);
 		$.extend(this.options, opts);
 		var _this = this;
@@ -69,13 +69,15 @@ var A = (function($){
 	};
 	
 	var _initPageInfo = function(){
-		var urlObj = A.util.parseURL(location.href);
-		var params = A.JSON.stringify(urlObj.getQueryobject());
+		var urlObj = agilelite.util.parseURL(location.href);
+		var params = agilelite.JSON.stringify(urlObj.getQueryobject());
 		var hash = location.hash.replace('#','');
-		this.pageInfo = A.util.decodeHash(hash);
+		this.pageInfo = agilelite.util.decodeHash(hash);
 	};
 	
-	return new Agile();
+	Agile.prototype.noConflict = function(){ return this; };
+	
+	return window.A ? new Agile() : window.A = new Agile();
 })(window.Zepto||jQuery);
 
 //控制器
@@ -91,7 +93,7 @@ var A = (function($){
 			handler : function(hash, el){			
 				$el = $(el);				
 				var toggleType = $el.data('toggle');
-				var urlObj = A.util.parseURL(hash);
+				var urlObj = agilelite.util.parseURL(hash);
 				var hashObj = urlObj.getHashobject();				
 				var controllerObj = _controllers[toggleType]||{};				
 				var $target = $(hashObj.tag);
@@ -134,14 +136,14 @@ var A = (function($){
 					var targetRole = $target.data('role');
 					var toggleSelector = targetRole?'[data-role="'+targetRole+'"].active':'.active';
 					$target.data('url', urlObj.getURL());
-					if(urlObj.getQueryobject()) $target.data('params', A.JSON.stringify(urlObj.getQueryobject()));
+					if(urlObj.getQueryobject()) $target.data('params', agilelite.JSON.stringify(urlObj.getQueryobject()));
 					if($target.hasClass('active')){
 						_event($target);
 						controllerObj.complete&&controllerObj.complete($target, {result:'thesame'});
 					}else{
 						var $current = $target.siblings(toggleSelector);
 						_setDefaultTransition($current);_setDefaultTransition($target);
-						A.anim.change($current, $target, false, function(){				
+						agilelite.anim.change($current, $target, false, function(){				
 							_event($target, $current);
 						});	
 						controllerObj.complete&&controllerObj.complete($target, {result:'success'});
@@ -159,9 +161,9 @@ var A = (function($){
 						_next();
 						return;
 					}
-					if(A.options.showPageLoading) A.showMask();				
-					A.util.getHTML(urlObj.getURL(), function(html){
-						if(A.options.showPageLoading) A.hideMask();
+					if(agilelite.options.showPageLoading) agilelite.showMask();				
+					agilelite.util.getHTML(urlObj.getURL(), function(html){
+						if(agilelite.options.showPageLoading) agilelite.hideMask();
 						if(!html){
 							controllerObj.complete&&controllerObj.complete($target, {result:'requesterror'});
 							return;
@@ -180,7 +182,7 @@ var A = (function($){
 		html : {//多页模式请复写此控制器
 			selector : '[data-toggle="html"]',
 			handler : function(hash){
-				var urlObj = A.util.parseURL(hash);
+				var urlObj = agilelite.util.parseURL(hash);
 				location.href = urlObj.getURL();
 			}
 		},
@@ -192,19 +194,19 @@ var A = (function($){
 			history : [],
 			complete : function($target, msg){
 				var _add2History = function(hash,noState){
-			    	var hashObj = A.util.parseURL(hash).getHashobject();
+			    	var hashObj = agilelite.util.parseURL(hash).getHashobject();
 			    	var _history = _controllers.section.history;
 			    	if(_history.length==0||(_history.length>1&&$(_history[0].tag).data('cache')==false||$(_history[0].tag).data('cache')=='false')){
 			    		noState = true;
 			    	}
 			    	var encodeHash = hash;
-			    	if(A.options.usePageParam){
+			    	if(agilelite.options.usePageParam){
 			    		var encodeHashObj = {
-				    		params : A.Component.params(hash),
+				    		params : agilelite.Component.params(hash),
 				    		hash : hash.replace('#', ''),
 				    		url : $(hash).data('url')
 				    	};
-				    	encodeHash = '#'+A.util.encodeHash(A.JSON.stringify(encodeHashObj));
+				    	encodeHash = '#'+agilelite.util.encodeHash(agilelite.JSON.stringify(encodeHashObj));
 			    	}
 
 			        if(noState){//不添加浏览器历史记录
@@ -240,9 +242,9 @@ var A = (function($){
 			container : '#aside_container',
 			handler : function(hash){
 				if(hash){
-					A.Aside.show(hash);
+					agilelite.Aside.show(hash);
 				}else{
-					A.Aside.hide();
+					agilelite.Aside.hide();
 				}
 				
 			}
@@ -251,11 +253,11 @@ var A = (function($){
 			selector : '[data-toggle="back"]',
 			handler : function(hash){
 				if(arguments.length==0||typeof hash=='string'||typeof hash=='undefined'){
-					$(document).trigger(A.options.backEvent);
+					$(document).trigger(agilelite.options.backEvent);
 					return;
 				}
 				var _history = _controllers.section.history;				
-				var codeHashObject = A.options.usePageParam?A.JSON.parse(A.util.decodeHash(location.hash.replace('#', ''))):{hash:location.hash};
+				var codeHashObject = agilelite.options.usePageParam?agilelite.JSON.parse(agilelite.util.decodeHash(location.hash.replace('#', ''))):{hash:location.hash};
 				if(!codeHashObject||('#'+codeHashObject.hash==_history[0].tag)){
 					return;
 				}
@@ -273,7 +275,7 @@ var A = (function($){
 				var $scroll = $el.parent();
 				var $parent = $scroll.parent();
 				var _index = $scroll.children('[data-role]').index($el);
-				var slider = A.Slider($parent);
+				var slider = agilelite.Slider($parent);
 				slider.index(_index);
 			}
 		},
@@ -282,7 +284,7 @@ var A = (function($){
 			handler : function(el){
 				var $el = $(el);
 				if($el.data('scroll')){
-					var scroll = A.Scroll(el);
+					var scroll = agilelite.Scroll(el);
 					scroll.scrollTo(0, 0, 1000, IScroll.utils.ease.circular);
 				}else{
 					$el.animate({ scrollTop: 0 }, 200);
@@ -324,7 +326,7 @@ var A = (function($){
 					_controllers[curr].handler(hash, $el);
 				};
 				//定义点击触发事件
-				$(document).on(A.options.clickEvent, _controllers[k]['selector'], function(){
+				$(document).on(agilelite.options.clickEvent, _controllers[k]['selector'], function(){
 					$('input:focus,textarea:focus').blur();
 					var k = $(this).data('toggle');
 					var hash = $(this).attr('href')||'#';
@@ -342,8 +344,8 @@ var A = (function($){
 		_makeHandler();
 	};
 
-	A.register('Controller', controller);
-})(A.$);
+	agilelite.register('Controller', controller);
+})(agilelite.$);
 
 //组件
 (function($){
@@ -412,11 +414,11 @@ var A = (function($){
 
 				var _doScroll = function($scroll){
 					var opts = options[$scroll.data('scroll')];					
-					A.Scroll('#'+$scroll.attr('id'), opts).refresh();
+					agilelite.Scroll('#'+$scroll.attr('id'), opts).refresh();
 				};
 				
 				var _doRefresh = function($el){
-					A.Refresh('#'+$el.attr('id'), options[$el.data('scroll')]).refresh();
+					agilelite.Refresh('#'+$el.attr('id'), options[$el.data('scroll')]).refresh();
 				};
 				
 				var $el = $(el||this);
@@ -454,7 +456,7 @@ var A = (function($){
 				var $el = $(el);	
 				var _doInit = function($el){	
 					$el.removeAttr('href');					
-					$el.on(A.options.clickEvent, function(e){
+					$el.on(agilelite.options.clickEvent, function(e){
 						var isInScroll = $el.data('__isinscroll__');
 						if(typeof isInScroll=='undefined'){
 							isInScroll = $el.closest('[data-scroll]').length==0?false:true;
@@ -504,7 +506,7 @@ var A = (function($){
 			        //添加隐藏域，方便获取值
 			        $el.append('<input type="hidden" data-com-refer="toggle" '+(name?'name="'+name+'" ':'')+' value="'+_getVal(isActive, $el)+'"/>');
 			        $el.append('<div class="toggle-handle"></div>');
-			        $el.on(A.options.clickEvent, function(){
+			        $el.on(agilelite.options.clickEvent, function(){
 			            var $t = $(this),v = _getVal($el.hasClass('active')?false:true, $el);
 			            $t.toggleClass('active').trigger('datachange', [v]);//定义toggle事件
 			            $t.find('input').val(v);
@@ -528,9 +530,9 @@ var A = (function($){
 			handler : function(el, roleType){
 				var $el = $(el);
 		    	var _doLazyload = function($el){
-		    		var placeholder = $el.attr('placeholder')||A.options.lazyloadPlaceholder;
+		    		var placeholder = $el.attr('placeholder')||agilelite.options.lazyloadPlaceholder;
 			    	if(!$el.attr('src')&&placeholder) $el.attr('src', placeholder);
-					var source = A.util.script($el.data('source'));
+					var source = agilelite.util.script($el.data('source'));
 			    	var eTop = $el.offset().top;//元素的位置
 			    	var validateDistance = 100;
 			    	var winHeight = $(window).height()+validateDistance;
@@ -538,7 +540,7 @@ var A = (function($){
 			    	
 			    	var type = $el.data('type');
 			    	if(type=='base64'){
-			    		A.ajax({
+			    		agilelite.ajax({
 			    			url : source,
 			    			success : function(data){
 			    				_injectImg($el, data);
@@ -566,14 +568,14 @@ var A = (function($){
 		    	
 		    	var _injectImg = function($el, data){
 		    		if(!$el.data('source')) return;
-		    		A.anim.run($el,'fadeOut', function(){
+		    		agilelite.anim.run($el,'fadeOut', function(){
 		    			$el.css('opacity', '0');		    				    			
 		    			$el[0].onload = function(){			
-		    				A.anim.run($el,'fadeIn', function(){
+		    				agilelite.anim.run($el,'fadeIn', function(){
 		    					$el.css('opacity', '1');
 		    					var $sd = $el.closest('[data-role="slider"]');
-		    					if($sd.hasClass('active')) A.Slider($sd).refresh();
-		    					A.Component.scroll($el.closest('[data-scroll]'));
+		    					if($sd.hasClass('active')) agilelite.Slider($sd).refresh();
+		    					agilelite.Component.scroll($el.closest('[data-scroll]'));
 		    				});
 		        		};
 		        		$el.attr('src', data);	
@@ -596,10 +598,10 @@ var A = (function($){
 			event : 'articleload',
 			handler : function(el, roleType){				
 				var _work = function($el){
-					$el.on(A.options.clickEvent, function(){ $el.removeClass('active');});
+					$el.on(agilelite.options.clickEvent, function(){ $el.removeClass('active');});
 					$target = $($el.attr('href'));
 					if($target.data('scroll')){
-						var scroll = A.Scroll($el.attr('href'));
+						var scroll = agilelite.Scroll($el.attr('href'));
 						scroll.on('scrollEnd', function(){
 							$el[this.y<-120?'addClass':'removeClass']('active');
 						});
@@ -608,7 +610,7 @@ var A = (function($){
 						scroll.on('scrollEnd', function(){
 							$el[scroll.scrollTop()>120?'addClass':'removeClass']('active');
 						});
-						A.util.jquery.scrollEnd(scroll);
+						agilelite.util.jquery.scrollEnd(scroll);
 					}
 				};
 				var $el = $(el);
@@ -651,12 +653,12 @@ var A = (function($){
 
 				htmlArr.push('</section>');
 				$('#section_container').append(htmlArr.join(''));
-				A.Controller.section('#'+id);
+				agilelite.Controller.section('#'+id);
 				var $num = $('#'+id+' .picture_show_num');
 				var $content = $('#'+id+' .picture_show_content');
 				var $header = $('#'+id+' .picture_show_header');
 				var $footer = $('#'+id+' .picture_show_footer');
-				var $slider = A.Slider('#'+id+'_slide', {
+				var $slider = agilelite.Slider('#'+id+'_slide', {
 					dots : 'hide',
 					change : function(i){
 						$num.html('<span style="font-size:18px;">'+(i+1)+'</span>/'+list.length);
@@ -664,7 +666,7 @@ var A = (function($){
 					}
 				});
 				$slider.index(index);
-				$('#'+id+'_article').on(A.options.clickEvent, function(){
+				$('#'+id+'_article').on(agilelite.options.clickEvent, function(){
 					$header.toggle();
 					$footer.toggle();
 					return false;
@@ -697,7 +699,7 @@ var A = (function($){
 		var $el = $(selector);
 		for(var k in _components){
 			if(_components[k].type=='function'||k=='default') continue;
-			A.Component[k]($el);
+			agilelite.Component[k]($el);
 		}
 	};
 	
@@ -721,7 +723,7 @@ var A = (function($){
 				};
 				//定义触发事件	
 				if(!_components[k]['selector']) return;
-				$(document).on(_components[k].event||A.options.clickEvent, _components[k]['selector'], function(){					
+				$(document).on(_components[k].event||agilelite.options.clickEvent, _components[k]['selector'], function(){					
 					var curr = _components[k].handler?k:'default';				
 					_components[curr].handler(this, k);
 					return false;
@@ -735,7 +737,7 @@ var A = (function($){
      * 获取控制器传给组件的参数,hash为被控制的组件的#id
      */
 	component.params = function(hash){
-		return A.JSON.parse($(hash).data('params'))||{};
+		return agilelite.JSON.parse($(hash).data('params'))||{};
 	};
 	
 	/**
@@ -774,8 +776,8 @@ var A = (function($){
 		_makeHandler();
 	};
 	
-	A.register('Component', component);
-})(A.$);
+	agilelite.register('Component', component);
+})(agilelite.$);
 
 //动画封装
 (function($){
@@ -862,9 +864,9 @@ var A = (function($){
 		});
 	};
 	
-	A.register('anim', anim);
+	agilelite.register('anim', anim);
 
-})(A.$);
+})(agilelite.$);
 
 //ajax封装
 (function($){
@@ -891,8 +893,8 @@ var A = (function($){
 		$.ajax(opts);
 	};
 	
-	A.register('ajax', ajax);
-})(A.$);
+	agilelite.register('ajax', ajax);
+})(agilelite.$);
 
 (function($){
 	var util = {};
@@ -1047,7 +1049,7 @@ var A = (function($){
 	util.parseURL = function(url){
 		url = util.script(url||'');
 		if(url.indexOf('#')==0){
-			url = url.replace('#','')+(A.options.viewSuffix?A.options.viewSuffix:'');
+			url = url.replace('#','')+(agilelite.options.viewSuffix?agilelite.options.viewSuffix:'');
 		}	
 
 		return new URLParser(url);
@@ -1073,7 +1075,7 @@ var A = (function($){
 	var _isCrossDomain = function(url){
     	if(!url||url.indexOf(':')<0) return false;
 
-    	var urlOpts = A.util.parseURL(url);
+    	var urlOpts = agilelite.util.parseURL(url);
 
     	if(!urlOpts.getProtocol()) return false;
 
@@ -1087,7 +1089,7 @@ var A = (function($){
     util.ajax = function(opts){
     	if(!opts||!opts.url) return;
     	opts.url = util.script(opts.url);
-    	//var _isBlock = util.checkBoolean(opts.isBlock,A.options.showPageLoading);
+    	//var _isBlock = util.checkBoolean(opts.isBlock,agilelite.options.showPageLoading);
 		var _isBlock = opts.isBlock;
     	opts.dataType = (opts.dataType||'text').toLowerCase();
     	var ajaxData = {
@@ -1096,11 +1098,11 @@ var A = (function($){
             type : opts.type||'get',
             dataType : opts.dataType,
             success : function(html){
-            	if(_isBlock) A.hideMask();
+            	if(_isBlock) agilelite.hideMask();
                 opts.success && opts.success(opts.dataType=='text'?util.script(html):html);
             },
             error : function(html){
-            	if(_isBlock) A.hideMask();
+            	if(_isBlock) agilelite.hideMask();
                	opts.error && opts.error(null);
             },
             reqCharset : opts.reqCharset||'utf-8'
@@ -1108,15 +1110,15 @@ var A = (function($){
         if(opts.data) ajaxData.data = opts.data;
         if(opts.headers) ajaxData.headers = opts.headers;
     	var isCross = _isCrossDomain(opts.url);
-    	var handler = A.ajax;		
+    	var handler = agilelite.ajax;		
     	if(isCross){
-    		ajaxData.dataType = A.options.crossDomainHandler?ajaxData.dataType:'jsonp';
-    		handler = A.options.crossDomainHandler||handler;
+    		ajaxData.dataType = agilelite.options.crossDomainHandler?ajaxData.dataType:'jsonp';
+    		handler = agilelite.options.crossDomainHandler||handler;
     	}
     	if(ajaxData.dataType.toLowerCase()=='jsonp'){
     		ajaxData.jsonp = opts.jsonp||'agilecallback';
     	}
-    	if(_isBlock) A.showMask();
+    	if(_isBlock) agilelite.showMask();
     	handler(ajaxData);
     };
     
@@ -1127,12 +1129,12 @@ var A = (function($){
      * 
      * */
     util.getHTML = function(url, callback){
-    	A.ajax({
+    	agilelite.ajax({
     		url : url,
     		type : 'get',
     		dataType : 'text',
     		success : function(html){
-    			callback&&callback(A.util.script(html||''));
+    			callback&&callback(agilelite.util.script(html||''));
     		},
     		error : callback
     	});
@@ -1150,7 +1152,7 @@ var A = (function($){
 							try{
 								return $inner[k].apply(this, arguments);
 							}catch(e){
-								console.log('提示', '请在'+(eventName||A.options.readyEvent)+'之后调用'+targetName+'.'+k+'桥接函数');
+								console.log('提示', '请在'+(eventName||agilelite.options.readyEvent)+'之后调用'+targetName+'.'+k+'桥接函数');
 							}						
 						};
 			})(k);
@@ -1159,16 +1161,16 @@ var A = (function($){
 	};
 	
 	util.encodeHash = function(hash){
-		return encodeURIComponent(A.Base64.encode(hash));
+		return encodeURIComponent(agilelite.Base64.encode(hash));
 	};
 	
 	util.decodeHash = function(enHash){
-		return A.Base64.decode(decodeURIComponent(enHash));
+		return agilelite.Base64.decode(decodeURIComponent(enHash));
 	};
 	
-    A.register('util', util);
+    agilelite.register('util', util);
 
-})(A.$);
+})(agilelite.$);
 
 (function($){	
 	var _index_key_ = {};	
@@ -1196,18 +1198,18 @@ var A = (function($){
 			//click : true,
 			preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|IMG)$/ }
 		};
-		options = $.extend(options, A.options.iScrollOptions||{});
+		options = $.extend(options, agilelite.options.iScrollOptions||{});
 		$.extend(options, opts||{});
 		var _attr_options = $el.attr('data-scroll-options');
-		_attr_options = typeof _attr_options!='object'?A.JSON.parse(_attr_options):_attr_options;
+		_attr_options = typeof _attr_options!='object'?agilelite.JSON.parse(_attr_options):_attr_options;
 		$.extend(options, _attr_options||{});
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
 		$el.attr('__com_iscroll__', true);
-		$el.on('touchmove', 'textarea[data-scroll-diabled="true"]', function(){
+		$el.on('touchmove.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setdiabled');
 		});
-		$el.on('touchend blur', 'textarea[data-scroll-diabled="true"]', function(){
+		$el.on('touchend.iscroll blur.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setenabled');
 		});
 		$scroll.on('__setdiabled', function(){
@@ -1236,21 +1238,23 @@ var A = (function($){
 				_focusProcess = null;
 			}			
 		});*/
+		//事件结束一律终止
+		$el.on('touchend.iscroll', function(e){ $scroll._end(e); });
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
             }else if(this.y==this.maxScrollY){
             	this._execEvent(costomOpts.scrollBottom);//自定义事件滑动到底部
             }
-			A.Component.lazyload($el);//初始化懒人加载
+			agilelite.Component.lazyload($el);//初始化懒人加载
 		});		
 		_index_key_[eId] = $scroll;
-		$scroll.on('destroy', function(){ delete _index_key_[eId]; });
+		$scroll.on('destroy', function(){ delete _index_key_[eId]; $el.off('touchmove.iscroll'); $el.off('touchend.iscroll blur.iscroll'); $el.off('touchend.iscroll');});
 		$el.trigger('scrollInit');//自定义scroll初始化事件
 		return _index_key_[eId];
 	};
-    A.register('Scroll', scroll);
-})(A.$);
+    agilelite.register('Scroll', scroll);
+})(agilelite.$);
 
 (function($){	
 	var _index_key_ = {};	
@@ -1315,7 +1319,7 @@ var A = (function($){
 	        pullUpOpts.callback = opts.onPullUp;
     	}
 
-        myScroll = A.Scroll('#'+eId, {  
+        myScroll = agilelite.Scroll('#'+eId, {  
 			probeType: 2,//probeType：1对性能没有影响。在滚动事件被触发时，滚动轴是不是忙着做它的东西。probeType：2总执行滚动，除了势头，反弹过程中的事件。这类似于原生的onscroll事件。probeType：3发出的滚动事件与到的像素精度。注意，滚动被迫requestAnimationFrame（即：useTransition：假）。  
         });
 
@@ -1393,9 +1397,9 @@ var A = (function($){
         return _index_key_[eId];
     }
     
-    A.register('Refresh', refresh);
+    agilelite.register('Refresh', refresh);
     
-})(A.$);
+})(agilelite.$);
 
 (function($){
 	
@@ -1467,12 +1471,12 @@ var A = (function($){
 			keyBindings: true,
 			bounceEasing : 'circular'
 		};		
-		var myScroll = A.Scroll('#'+eId, options);		
+		var myScroll = agilelite.Scroll('#'+eId, options);		
 		var index = 0,outerSlider;
 		myScroll.on('beforeScrollStart', function(){
 			var $outerSlider = $el.parent().closest('[data-role="slider"]');
 			if($outerSlider.length==0) return;
-			outerSlider = A.Slider($outerSlider[0]);
+			outerSlider = agilelite.Slider($outerSlider[0]);
 			outerSlider._execEvent('__setdiabled');
 		});
 		myScroll.on('scrollEnd', function(){
@@ -1511,8 +1515,8 @@ var A = (function($){
 		return _index_key_[eId];
 	};
 	
-	A.register('Slider', slider);
-})(A.$);
+	agilelite.register('Slider', slider);
+})(agilelite.$);
 
 //侧边栏
 (function($){
@@ -1526,7 +1530,7 @@ var A = (function($){
 		if($asideContainer.length==0) $asideContainer = $('<div id="aside_container"></div>').appendTo('body');
         if($sectionContainer.length==0) $sectionContainer = $('<div id="section_container"></div>').appendTo('body');
         if($sectionMask.length==0) $sectionMask = $('<div id="section_container_mask"></div>').appendTo('#section_container');
-  		$sectionMask.on(A.options.clickEvent, function(){
+  		$sectionMask.on(agilelite.options.clickEvent, function(){
         	_this.hide();
         	return false;
         });
@@ -1578,15 +1582,15 @@ var A = (function($){
         }
         
         if(transition == 'overlay'){
-            A.anim[funcName]($aside, cssName.aside, _finish);
+            agilelite.anim[funcName]($aside, cssName.aside, _finish);
         }else if(transition == 'reveal'){
-        	A.anim[funcName]($sectionContainer, cssName.section, _finish);
+        	agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }else{//默认为push
-        	A.anim[funcName]($aside, cssName.aside);
-        	A.anim[funcName]($sectionContainer, cssName.section, _finish);
+        	agilelite.anim[funcName]($aside, cssName.aside);
+        	agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }
         $('#section_container_mask').show();
-        A.pop.hasAside = true;
+        agilelite.pop.hasAside = true;
 	};
 	/**
      * 关闭侧边菜单
@@ -1600,7 +1604,7 @@ var A = (function($){
 
         var _finish = function(){
             $aside.removeClass('active');
-            A.pop.hasAside = false;
+            agilelite.pop.hasAside = false;
             callback&&callback.call(this);$aside.trigger('asidehide');
         };
         
@@ -1619,17 +1623,17 @@ var A = (function($){
         }
         
         if(transition == 'overlay'){
-            A.anim[funcName]($aside, cssName.aside, _finish);
+            agilelite.anim[funcName]($aside, cssName.aside, _finish);
         }else if(transition == 'reveal'){
-            A.anim[funcName]($sectionContainer, cssName.section, _finish);
+            agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }else{//默认为push
-            A.anim[funcName]($aside, cssName.aside);
-            A.anim[funcName]($sectionContainer, cssName.section, _finish);
+            agilelite.anim[funcName]($aside, cssName.aside);
+            agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }
         $('#section_container_mask').hide();
     };
-    A.register('Aside', new Aside());
-})(A.$);
+    agilelite.register('Aside', new Aside());
+})(agilelite.$);
 
 /**
  * 弹出框组件
@@ -1657,18 +1661,18 @@ var A = (function($){
     	$.extend(options,opts);
     	if(_popMap[options.id]) return _popMap[options.id];
     	var _this = _popMap[options.id] = this;
-    	$('<div data-refer="'+options.id+'" class="'+A.options.classPre+'popup-mask"></div><div id="'+options.id+'" class="'+A.options.classPre+'popup"></div>').appendTo('body');
+    	$('<div data-refer="'+options.id+'" class="'+agilelite.options.classPre+'popup-mask"></div><div id="'+options.id+'" class="'+agilelite.options.classPre+'popup"></div>').appendTo('body');
     	var $popup = $('#'+options.id), $mask = $('[data-refer="'+options.id+'"]');
     	$popup.data('block', options.isBlock);
     	$popup.css(options.css);
-    	$popup.addClass(A.options.classPre+options.pos);
+    	$popup.addClass(agilelite.options.classPre+options.pos);
 		$popup.html(options.html);
-		$mask.on(A.options.clickEvent, function(){
+		$mask.on(agilelite.options.clickEvent, function(){
         	if(options.isBlock) return false;
         	_this.close();
         	return false;
         });
-        $popup.on(A.options.clickEvent,'[data-toggle="popup"]',function(){
+        $popup.on(agilelite.options.clickEvent,'[data-toggle="popup"]',function(){
         	_this.close();
 			return false;
 		});
@@ -1697,7 +1701,7 @@ var A = (function($){
     Popup.prototype.open = function(callback){
     	var _this=this, $popup=this.popup, $mask=this.mask, options=this.options;
     	if($mask.hasClass('active')) return _popMap[options.id];
-    	$('body').children('.'+A.options.classPre+'popup-mask.active').removeClass('active');
+    	$('body').children('.'+agilelite.options.classPre+'popup-mask.active').removeClass('active');
     	$mask.addClass('active').show();
         $popup.show();
         var popHeight = $popup.height();
@@ -1705,23 +1709,23 @@ var A = (function($){
         var transition = transitionMap[options.pos];
         if(transition) {
         	_this._status = 'opening';
-        	A.anim.run($popup,transition[0], function(){
+        	agilelite.anim.run($popup,transition[0], function(){
         		_this._status = 'opened';
         	});
         }else{
         	_this._status = 'opened';
         }
 		this.trigger('popupopen');callback&&callback.call(this);
-		A.pop.hasPop = $popup;
-		if(A.options.autoInitCom) A.Component.initComponents($popup);
+		agilelite.pop.hasPop = $popup;
+		if(agilelite.options.autoInitCom) agilelite.Component.initComponents($popup);
 		return this;
     };
     
     var _finish = function(callback){   	
     	var $popup=this.popup, $mask=this.mask;
     	$popup.remove();$mask.remove();this.trigger('popupclose');setTimeout(function(){ callback&&callback(); }, 200);
-    	$last = $('body').children('.'+A.options.classPre+'popup-mask').last().addClass('active');
-    	A.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
+    	$last = $('body').children('.'+agilelite.options.classPre+'popup-mask').last().addClass('active');
+    	agilelite.pop.hasPop = $last.length==0?false:$('body').children('.agile-popup').last();
     };
     
     Popup.prototype.close = function(callback){
@@ -1734,7 +1738,7 @@ var A = (function($){
     	var _this=this,$popup=this.popup, $mask=this.mask, options=this.options;
         var transition = transitionMap[options.pos];
         if(transition){
-            A.anim.run($popup,transition[1],function(){ _finish.call(_this, callback); });
+            agilelite.anim.run($popup,transition[1],function(){ _finish.call(_this, callback); });
         }else{
             _finish.call(_this, callback);
         }
@@ -1742,7 +1746,7 @@ var A = (function($){
         //return this;
     };
     
-    A.register('Popup' , Popup);
+    agilelite.register('Popup' , Popup);
     
     var _ext = {};
     
@@ -1752,7 +1756,7 @@ var A = (function($){
     };
     
     _ext.closePopup = function(callback){
-    	var _id = A.pop.hasPop.attr('id');
+    	var _id = agilelite.pop.hasPop.attr('id');
     	if(_popMap[_id]) _popMap[_id].close(callback);
     };
     
@@ -1772,7 +1776,7 @@ var A = (function($){
     		title = '提示';
     	}
         return new Popup({
-            html : A.util.provider('<div class="'+A.options.classPre+'popup-title">${title}</div><div class="'+A.options.classPre+'popup-content">${content}</div><div class="'+A.options.classPre+'popup-handler"><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
+            html : agilelite.util.provider('<div class="'+agilelite.options.classPre+'popup-title">${title}</div><div class="'+agilelite.options.classPre+'popup-content">${content}</div><div class="'+agilelite.options.classPre+'popup-handler"><a data-toggle="popup" class="'+agilelite.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, ok:'确定'}),
             pos : 'center',
             isBlock : true
         }).on('popupclose', function(){
@@ -1796,17 +1800,17 @@ var A = (function($){
     	}
     	var clickBtn = okCallback;
         return new Popup({
-            html : A.util.provider('<div class="'+A.options.classPre+'popup-title">${title}</div><div class="'+A.options.classPre+'popup-content">${content}</div><div class="'+A.options.classPre+'popup-handler"><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="'+A.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
+            html : agilelite.util.provider('<div class="'+agilelite.options.classPre+'popup-title">${title}</div><div class="'+agilelite.options.classPre+'popup-content">${content}</div><div class="'+agilelite.options.classPre+'popup-handler"><a data-toggle="popup" class="'+agilelite.options.classPre+'popup-handler-cancel">${cancel}</a><a data-toggle="popup" class="'+agilelite.options.classPre+'popup-handler-ok">${ok}</a></div>', {title : title, content:content, cancel:'取消', ok:'确定'}),
             pos : 'center',
             isBlock : true
         }).on('popupclose', function(){       	
         	clickBtn&&clickBtn.call(this);
         }).open(function(){    	
         	var $popup = $(this.popup), _this=this;
-        	$popup.find('.'+A.options.classPre+'popup-handler-ok').on(A.options.clickEvent, function(){
+        	$popup.find('.'+agilelite.options.classPre+'popup-handler-ok').on(agilelite.options.clickEvent, function(){
 	            clickBtn = okCallback;
 	        });
-	        $popup.find('.'+A.options.classPre+'popup-handler-cancel').on(A.options.clickEvent, function(){
+	        $popup.find('.'+agilelite.options.classPre+'popup-handler-cancel').on(agilelite.options.clickEvent, function(){
 	            clickBtn = cancelCallback;
 	        });
         });        
@@ -1824,7 +1828,7 @@ var A = (function($){
     	}
         return new Popup({
         	id : 'popup_loading',
-            html : A.util.provider('<div><i class="'+A.options.classPre+'popup-spinner"></i><p>${title}</p></div>', {title : text||'加载中'}),
+            html : agilelite.util.provider('<div><i class="'+agilelite.options.classPre+'popup-spinner"></i><p>${title}</p></div>', {title : text||'加载中'}),
             pos : 'loading',
             isBlock : true
         }).on('popupclose', function(){
@@ -1842,9 +1846,9 @@ var A = (function($){
      * [{css:'red',text:'btn',handler:function(){}},{css:'red',text:'btn',handler:function(){}}]
      */
     _ext.actionsheet = function(buttons,showCancel){
-        var markMap = ['<div class="'+A.options.classPre+'actionsheet"><div class="'+A.options.classPre+'actionsheet-group">'];
-        var defaultCalssName = A.options.classPre+"popup-actionsheet-normal";
-        var defaultCancelCalssName = A.options.classPre+"popup-actionsheet-cancel";
+        var markMap = ['<div class="'+agilelite.options.classPre+'actionsheet"><div class="'+agilelite.options.classPre+'actionsheet-group">'];
+        var defaultCalssName = agilelite.options.classPre+"popup-actionsheet-normal";
+        var defaultCancelCalssName = agilelite.options.classPre+"popup-actionsheet-cancel";
         var showCancel = showCancel==false?false:(showCancel||true);
         $.each(buttons,function(i,n){
             markMap.push('<button data-toggle="popup" class="'+(n.css||defaultCalssName)+'">'+ n.text +'</button>');
@@ -1858,7 +1862,7 @@ var A = (function($){
             css : {'background':'transparent'},
        	}).open(function(){           	
  			$(this.popup).find('button').each(function(i,button){              	
-            	$(button).on(A.options.clickEvent,function(){
+            	$(button).on(agilelite.options.clickEvent,function(){
                 	if(buttons[i] && buttons[i].handler){
                     	buttons[i].handler.call(button);
                     }
@@ -1874,9 +1878,9 @@ var A = (function($){
      */
     _ext.popover = function(html,el){
     	var markMap = [];
-    	markMap.push('<div class="'+A.options.classPre+'popover-angle"></div>');
+    	markMap.push('<div class="'+agilelite.options.classPre+'popover-angle"></div>');
     	if(typeof html=='object'){
-    		markMap.push('<ul class="'+A.options.classPre+'popover-items">');
+    		markMap.push('<ul class="'+agilelite.options.classPre+'popover-items">');
     		for(var i=0;i<html.length;i++){
     			markMap.push('<li data-toggle="popup" class="'+(html[i].css||'')+'">'+html[i].text+'</li>');
     		}
@@ -1899,8 +1903,8 @@ var A = (function($){
 			var rLeft = $rel.offset().left;
 			var rCenter = rLeft+(rWidth/2);
 			
-			var $el = $(this.popup).addClass(A.options.classPre+'popover');
-			var $angle = $($el.find('.'+A.options.classPre+'popover-angle').get(0));
+			var $el = $(this.popup).addClass(agilelite.options.classPre+'popover');
+			var $angle = $($el.find('.'+agilelite.options.classPre+'popover-angle').get(0));
 			var gapH = $angle.height()/2;
 			var gapW = Math.ceil(($angle.width()-2)*Math.sqrt(2));			
 			var height = $el.height();
@@ -1924,8 +1928,8 @@ var A = (function($){
 			anCss.left = rCenter - elCss.left - gapW/2;
     		$el.css(elCss);
     		$angle.css(anCss);
-            $el.find('.'+A.options.classPre+'popover-items li').each(function(i,button){             	
-                $(button).on(A.options.clickEvent,function(){
+            $el.find('.'+agilelite.options.classPre+'popover-items li').each(function(i,button){             	
+                $(button).on(agilelite.options.clickEvent,function(){
                     if(html[i] && html[i].handler){
                         html[i].handler.call(button);
                     }
@@ -1935,10 +1939,10 @@ var A = (function($){
     };
 	
 	for(var k in _ext){
-		A.register(k, _ext[k]);
+		agilelite.register(k, _ext[k]);
 	}
     
-})(A.$);
+})(agilelite.$);
 
 /*
  * Toast提示框
@@ -1958,7 +1962,7 @@ var A = (function($){
     	if(_toastMap[options.id]) return this;
     	var _this = _toastMap.map[options.id] = this;
     	var $toast = this.toast = $('<div id="'+options.id+'" class="agile-toast"><a>'+options.text+'</a></div>').appendTo('body');
-    	$toast.addClass('class', options.css);
+    	$toast.addClass(options.css);
     	this.options = options;
     	_toastMap.process.push(this);
     };
@@ -1969,14 +1973,14 @@ var A = (function($){
         var $toast = this.toast, options = this.options;        
         var _this = this;
         $toast.show();
-        A.anim.run($toast,'scaleIn', function(){
+        agilelite.anim.run($toast,'scaleIn', function(){
         	if(options.isBlock==false) setTimeout(function(){ _this.hide();}, options.duration);
         });
         return this;
     };
     Toast.prototype.hide = function(){
     	var $toast = this.toast, options = this.options;
-    	A.anim.run($toast,'scaleOut',function(){
+    	agilelite.anim.run($toast,'scaleOut',function(){
         	$toast.remove();
         	delete _toastMap.map[options.id];
         	_toastMap.process.shift();
@@ -1985,7 +1989,7 @@ var A = (function($){
         return this;
     };
     
-    A.register('Toast', Toast);
+    agilelite.register('Toast', Toast);
 
     var _ext = {};
     /**
@@ -2016,10 +2020,10 @@ var A = (function($){
     };
     
     for(var k in _ext){
-    	A.register(k, _ext[k]);
+    	agilelite.register(k, _ext[k]);
     }
     
-})(A.$);
+})(agilelite.$);
 
 /*
  * 事件处理
@@ -2047,7 +2051,7 @@ var A = (function($){
 		$(document).on('modalback', function(){
 			var k;
 			for(k in _modalCollection){}
-			A.Controller.modal('#'+k);
+			agilelite.Controller.modal('#'+k);
 		});
 	};
 	
@@ -2056,10 +2060,10 @@ var A = (function($){
 	 * @private
 	 */
 	_events.clickHandler = function(){
-		$(document).on(A.options.clickEvent, '[data-click]', function(){
+		$(document).on(agilelite.options.clickEvent, '[data-click]', function(){
 			var clickFunc = $(this).data('click');
-			if(clickFunc) eval(clickFunc);
-			return false;
+			var _this = this;
+			return clickFunc?eval(clickFunc.replace('.(', '.call(_this')):true;
 		});
 	};
 	
@@ -2069,7 +2073,7 @@ var A = (function($){
      */
 	_events.back = function(){
 		$(window).on('popstate', function(e){  
-			A.Controller.back(false);
+			agilelite.Controller.back(false);
 			return;
     	});
 	};
@@ -2081,11 +2085,11 @@ var A = (function($){
 	_events.removeCache = function(){
 		var handler = function(){
 			var $el = $(this);
-			if($el.data('scroll')) A.Scroll($el).destroy();
-			$el.find('[data-scroll],[data-role="slider"]').each(function(){ A.Scroll(this).destroy(); });
+			if($el.data('scroll')) agilelite.Scroll($el).destroy();
+			$el.find('[data-scroll],[data-role="slider"]').each(function(){ agilelite.Scroll(this).destroy(); });
 			$el.remove();
 		};
-		var controller = A.Controller.get();
+		var controller = agilelite.Controller.get();
 		var eName = [];
 		var $doc = $(document);
 		for(var k in controller){
@@ -2099,16 +2103,16 @@ var A = (function($){
      * @private
      */
 	_events.backEvent = function(){
-		$(document).on(A.options.backEvent, function(event, func){
-			if(A.pop.hasPop){
-				if(A.pop.hasPop.data('block')==false){
-					A.closePopup();
+		$(document).on(agilelite.options.backEvent, function(event, func){
+			if(agilelite.pop.hasPop){
+				if(Boolean(agilelite.pop.hasPop.data('block'))==false){
+					agilelite.closePopup();
 				}
 			}else if($('[data-role="modal"].active').length>0){
 				$(document).trigger('modalback');
-			}else if(A.pop.hasAside){
-				A.Controller.aside();
-			}else if(A.Controller.get('section').history.length<2){	
+			}else if(agilelite.pop.hasAside){
+				agilelite.Controller.aside();
+			}else if(agilelite.Controller.get('section').history.length<2){	
 	    		$(document).trigger('beforeunload');//触发关闭页面事件
 	    	}else{
 	    		window.history.go(-1);
@@ -2118,7 +2122,7 @@ var A = (function($){
 			if(_sectionMap.length!=1) return;
 			var $current = _sectionMap[0][0];
 			var $target = _sectionMap[0][1];
-			A.anim.change($current, $target, true, function(){	  
+			agilelite.anim.change($current, $target, true, function(){	  
 				_sectionMap.shift();     			       	       	
 		       	var targetRole = $target.data('role');
 		        $target.addClass('active').trigger(targetRole+'show');
@@ -2128,16 +2132,16 @@ var A = (function($){
 		    });
 		};
 		$(document).on('sectiontransition', function(e, $current, $target){
-			$('.agile-popup').each(function(){ (new A.Popup({ id : this.id})).close(); });
-			if(A.pop.hasAside){ A.Controller.aside(); }
-			$('[data-role="modal"].active').each(function(){ A.Controller.modal('#'+this.id); });
+			$('.agile-popup').each(function(){ (new agilelite.Popup({ id : this.id})).close(); });
+			if(agilelite.pop.hasAside){ agilelite.Controller.aside(); }
+			$('[data-role="modal"].active').each(function(){ agilelite.Controller.modal('#'+this.id); });
 			_sectionMap.push([$current, $target]);
 			_doTransition();
 		});
 	};
 	
 	_events.zepto = function(){
-		if(A.options.clickEvent!='click') $(document).on('click', 'a[data-toggle]', function(){return false; });
+		if(agilelite.options.clickEvent!='click') $(document).on('click', 'a[data-toggle]', function(){return false; });
 		if($==window.Zepto){
 			$(document).on('swipeLeft','[data-aside-right],[data-role="calendar"],.swipe_block', function(){$(this).trigger('swipeleft');});
 			$(document).on('swipeRight','[data-aside-left],[data-role="calendar"],.swipe_block',function(){$(this).trigger('swiperight');});
@@ -2156,38 +2160,38 @@ var A = (function($){
 			//处理aside事件
 			if($el.data('aside-left')){
 				$el.on('swiperight', function(){
-					A.Controller.aside($el.data('aside-left'));
+					agilelite.Controller.aside($el.data('aside-left'));
 				});
 			}
 			if($el.data('aside-right')){
 				$el.on('swipeleft', function(){
-					A.Controller.aside($el.data('aside-right'));
+					agilelite.Controller.aside($el.data('aside-right'));
 				});
 			}
 		});
 		//初始化section
-		var sectionSelecor = A.Controller.get()['section']['container']+' [data-role="section"]';
+		var sectionSelecor = agilelite.Controller.get()['section']['container']+' [data-role="section"]';
 		var $section = $(sectionSelecor+'.active').first();
 		if($section.length==0) $section = $(sectionSelecor).first();
-		if(A.options.usePageParam){
+		if(agilelite.options.usePageParam){
 			$section.children('article.active').on('articleload', function(){
-				var pageInfo = A.JSON.parse(A.pageInfo);
+				var pageInfo = agilelite.JSON.parse(agilelite.pageInfo);
 				if(!pageInfo||$section.attr('id')==pageInfo.hash) return;
-				var url = pageInfo.url||(pageInfo.hash+'.html?'+A.JSON.toParams(pageInfo.params));
+				var url = pageInfo.url||(pageInfo.hash+'.html?'+agilelite.JSON.toParams(pageInfo.params));
 				setTimeout(function(){
-					A.Controller.section(url);
+					agilelite.Controller.section(url);
 				},1000);
 				
 			});
 		}
-		A.Controller.section('#'+$section.attr('id'));
+		agilelite.Controller.section('#'+$section.attr('id'));
 	};
 	_events.agileStart = function(){
 		var flag = true;
-		$(document).on(A.options.agileReadyEvent, function(){
+		$(document).on(agilelite.options.agileReadyEvent, function(){
 			_initSection();
 		});
-		$(document).on(A.options.agileStartEvent, function(){
+		$(document).on(agilelite.options.agileStartEvent, function(){
 			if(flag) {
 				flag = false;
 				return;	
@@ -2202,26 +2206,26 @@ var A = (function($){
 	_events.initComponents = function(){
 		$(document).on('sectionshow', 'section', function(){
 			//初始化article
-			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
+			agilelite.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});		
 		$(document).on('modalshow', '.modal', function(){
 			//初始化article
-			A.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
+			agilelite.Controller.article('#'+$(this).children('[data-role="article"].active').first().attr('id'));		
 		});
 		$(document).on('slidershow', '[data-role="page"].active', function(e, el){		
 			var id = $(this).attr('id');			
-			A.Component.default($('[href="#'+id+'"]'));//初始化slider page
+			agilelite.Component.default($('[href="#'+id+'"]'));//初始化slider page
 		});
 		$(document).on('renderEnd', 'script', function(e,h){
-			if(A.options.autoInitCom) A.Component.initComponents(h);
+			if(agilelite.options.autoInitCom) agilelite.Component.initComponents(h);
 			var $scroller = $(h).closest('[data-scroll]');
-			if($scroller.length==1) A.Scroll('#'+$scroller.attr('id')).refresh();
+			if($scroller.length==1) agilelite.Scroll('#'+$scroller.attr('id')).refresh();
 		});
 		$(document).on('modalhide', 'div.modal', function(e,h){
 			_initSection();
 		});
 		$(document).on('scrollInit', '[data-scroll], [data-role="slider"]', function(){
-			A.Component.lazyload(this);
+			agilelite.Component.lazyload(this);
 		});
 		$(document).on('touchstart', '[data-readonly="true"]', function(){
 			return false;
@@ -2232,14 +2236,14 @@ var A = (function($){
 			if($el.data('scroll')){
 				$el.on('click', 'summary', function(){			
 					setTimeout(function(){
-						A.Scroll($el).refresh();
+						agilelite.Scroll($el).refresh();
 					}, 200);
 				});
 			}else{
 				$el.on('scrollEnd', function(){
-					A.Component.lazyload($el);
+					agilelite.Component.lazyload($el);
 				});
-				A.util.jquery.scrollEnd($el);
+				agilelite.util.jquery.scrollEnd($el);
 			}
 		});
 	};	
@@ -2258,8 +2262,8 @@ var A = (function($){
 			_events[k]();
 		}
 	};
-	A.register('event', event);
-})(A.$);
+	agilelite.register('event', event);
+})(agilelite.$);
 
 (function($){
 	var Template = function(selecotr){
@@ -2273,7 +2277,7 @@ var A = (function($){
 		if(tmpl){
 			cb&&cb(tmpl);
 		}else if(source){
-			A.util.getHTML(A.util.script(source), function(html){
+			agilelite.util.getHTML(agilelite.util.script(source), function(html){
 				$el.text(html);
 				cb&&cb(html);
 			});
@@ -2304,7 +2308,7 @@ var A = (function($){
 		
 		this.getTemplate(function(tmpl){
 			if(url){
-				A.util.ajax({
+				agilelite.util.ajax({
 					url : url,
 					dataType : 'json',
 					success : function(data){
@@ -2358,22 +2362,22 @@ var A = (function($){
 		_render.call(this, 'before', url, cb);
 	};
 	
-	A.register('template', function(selecotr){
+	agilelite.register('template', function(selecotr){
 		return new Template(selecotr);
 	});
-})(A.$);
+})(agilelite.$);
 
 /*
- * 扩展JSON:A.JSON.stringify和A.JSON.parse，用法你懂
+ * 扩展JSON:agilelite.JSON.stringify和agilelite.JSON.parse，用法你懂
  * */
 (function(){
 	var JSON={};JSON.parse=function(str){try{return eval("("+str+")")}catch(e){return null}};JSON.stringify=function(o){var r=[];if(typeof o=="string"){return'"'+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+'"'}if(typeof o=="undefined"){return""}if(typeof o!="object"){return o.toString()}if(o===null){return null}if(o instanceof Array){for(var i=0;i<o.length;i++){r.push(this.stringify(o[i]))}r="["+r.join()+"]"}else{for(var i in o){r.push('"'+i+'":'+this.stringify(o[i]))}r="{"+r.join()+"}"}return r};JSON.toParams=function(json){var str=[];for(var k in json){var v=json[k];v=json[k] instanceof Array?json[k]:[json[k]];for(var i=0;i<v.length;i++){str.push(v[i])}}return str.join("&")};
-	A.register('JSON', JSON);
+	agilelite.register('JSON', JSON);
 })();
 
 (function(){
 	var Base64={table:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/"],UTF16ToUTF8:function(str){var res=[],len=str.length;for(var i=0;i<len;i++){var code=str.charCodeAt(i);if(code>0&&code<=127){res.push(str.charAt(i))}else{if(code>=128&&code<=2047){var byte1=192|((code>>6)&31);var byte2=128|(code&63);res.push(String.fromCharCode(byte1),String.fromCharCode(byte2))}else{if(code>=2048&&code<=65535){var byte1=224|((code>>12)&15);var byte2=128|((code>>6)&63);var byte3=128|(code&63);res.push(String.fromCharCode(byte1),String.fromCharCode(byte2),String.fromCharCode(byte3))}else{if(code>=65536&&code<=2097151){}else{if(code>=2097152&&code<=67108863){}else{}}}}}}return res.join("")},UTF8ToUTF16:function(str){var res=[],len=str.length;var i=0;for(var i=0;i<len;i++){var code=str.charCodeAt(i);if(((code>>7)&255)==0){res.push(str.charAt(i))}else{if(((code>>5)&255)==6){var code2=str.charCodeAt(++i);var byte1=(code&31)<<6;var byte2=code2&63;var utf16=byte1|byte2;res.push(Sting.fromCharCode(utf16))}else{if(((code>>4)&255)==14){var code2=str.charCodeAt(++i);var code3=str.charCodeAt(++i);var byte1=(code<<4)|((code2>>2)&15);var byte2=((code2&3)<<6)|(code3&63);utf16=((byte1&255)<<8)|byte2;res.push(String.fromCharCode(utf16))}else{if(((code>>3)&255)==30){}else{if(((code>>2)&255)==62){}else{}}}}}}return res.join("")},encode:function(str){if(!str){return""}var utf8=this.UTF16ToUTF8(str);var i=0;var len=utf8.length;var res=[];while(i<len){var c1=utf8.charCodeAt(i++)&255;res.push(this.table[c1>>2]);if(i==len){res.push(this.table[(c1&3)<<4]);res.push("==");break}var c2=utf8.charCodeAt(i++);if(i==len){res.push(this.table[((c1&3)<<4)|((c2>>4)&15)]);res.push(this.table[(c2&15)<<2]);res.push("=");break}var c3=utf8.charCodeAt(i++);res.push(this.table[((c1&3)<<4)|((c2>>4)&15)]);res.push(this.table[((c2&15)<<2)|((c3&192)>>6)]);res.push(this.table[c3&63])}return res.join("")},decode:function(str){if(!str){return""}var len=str.length;var i=0;var res=[];while(i<len){code1=this.table.indexOf(str.charAt(i++));code2=this.table.indexOf(str.charAt(i++));code3=this.table.indexOf(str.charAt(i++));code4=this.table.indexOf(str.charAt(i++));c1=(code1<<2)|(code2>>4);c2=((code2&15)<<4)|(code3>>2);c3=((code3&3)<<6)|code4;res.push(String.fromCharCode(c1));if(code3!=64){res.push(String.fromCharCode(c2))}if(code4!=64){res.push(String.fromCharCode(c3))}}return this.UTF8ToUTF16(res.join(""))}};
-	A.register('Base64', {
+	agilelite.register('Base64', {
 		encode : function(str){
 			try{ return Base64.encode(str); }catch(e){ return ''; }
 		},

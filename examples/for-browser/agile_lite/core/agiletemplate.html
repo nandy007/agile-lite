@@ -77,7 +77,7 @@
 		<script>
 			$('#agiletemplate_article').on('refreshInit', function(){
 				
-				A.template('#template').renderReplace('json/template.json');
+				A.template('#template').renderReplace('../json/template.json');
 				
 				var refresh = A.Refresh(this);
 				refresh.on('pulldown', function(){
