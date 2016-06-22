@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 2.5.2 beta
+ * for Agile Lite 2.5.4 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -178,7 +178,7 @@
 }
 
 section{
-	display: none !important;
+	/*display: none !important;*/
 	visibility: hidden;
 	position:absolute;
 	width: 100%;
@@ -187,7 +187,7 @@ section{
 	overflow: hidden;
 }
 section.active{
-	display: block !important;
+	/*display: block !important;*/
 	visibility: visible;
 }
 section > *{
