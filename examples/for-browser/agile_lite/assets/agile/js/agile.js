@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.4 beta
+*	Version	:	2.5.5 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var agilelite = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.5.4',
+			version : '2.5.5',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -913,6 +913,13 @@ var agilelite = (function($){
 		}
 	};
 	
+	util.getCSSTransform = function($el){
+		var transform = $el.css('transform');
+		if(!transform||transform=='none') return [];
+		var matrix = new Function('return ['+transform.replace(/matrix.([^\\)]+)./, '$1')+'];');
+		return matrix();
+	};
+	
 	util.script = function(str){	
 		str = (str||'').trim();
 		var tag = false;
@@ -1175,6 +1182,8 @@ var agilelite = (function($){
 (function($){	
 	var _index_key_ = {};	
 	
+	var scrollObj = {};
+	
 	var scroll = function(selector, opts){		
 		var $el = $(selector);
 		var eId = $el.attr('id');
@@ -1206,12 +1215,13 @@ var agilelite = (function($){
 		IScroll.utils.isBadAndroid = false;//处理页面抖动
 		$scroll = new IScroll(selector, options);
 		$el.attr('__com_iscroll__', true);
-		$el.on('touchmove.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
+		$el.off('touchmove.iscroll').on('touchmove.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setdiabled');
 		});
-		$el.on('touchend.iscroll blur.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
+		$el.off('touchend.iscroll blur.iscroll').on('touchend.iscroll blur.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setenabled');
 		});
+
 		$scroll.on('__setdiabled', function(){
 			this.enabled = false;
 		});
@@ -1239,7 +1249,7 @@ var agilelite = (function($){
 			}			
 		});*/
 		//事件结束一律终止
-		$el.on('touchend.iscroll', function(e){ $scroll._end(e); });
+		$el.off('touchend.iscroll').on('touchend.iscroll', function(e){ $scroll._execEvent('__setenabled');$scroll._end(e);});
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
@@ -1249,7 +1259,7 @@ var agilelite = (function($){
 			agilelite.Component.lazyload($el);//初始化懒人加载
 		});		
 		_index_key_[eId] = $scroll;
-		$scroll.on('destroy', function(){ delete _index_key_[eId]; $el.off('touchmove.iscroll'); $el.off('touchend.iscroll blur.iscroll'); $el.off('touchend.iscroll');});
+		$scroll.on('destroy', function(){ delete _index_key_[eId];});
 		$el.trigger('scrollInit');//自定义scroll初始化事件
 		return _index_key_[eId];
 	};
@@ -1469,18 +1479,41 @@ var agilelite = (function($){
 			momentum: false,
 			snap: true,
 			keyBindings: true,
-			bounceEasing : 'circular'
+			bounceEasing : 'circular',
+			probeType: 2
 		};		
 		var myScroll = agilelite.Scroll('#'+eId, options);		
 		var index = 0,outerSlider;
-		myScroll.on('beforeScrollStart', function(){
-			var $outerSlider = $el.parent().closest('[data-role="slider"]');
+		$el.off('touchstart.slider').on('touchstart.slider', function(e){
+			var $outerSlider = $(this).parent().closest('[data-role="slider"]');
 			if($outerSlider.length==0) return;
 			outerSlider = agilelite.Slider($outerSlider[0]);
 			outerSlider._execEvent('__setdiabled');
 		});
+		$el.off('touchmove.slider').on('touchmove.slider', function(e){
+			var $outerSlider = $(this).parent().closest('[data-role="slider"]');
+			if($outerSlider.length==0) return;
+			outerSlider = agilelite.Slider($outerSlider[0]);
+			outerSlider._execEvent('__setdiabled');
+		});
+		$el.off('touchend.slider').on('touchend.slider', function(e){
+			outerSlider&&outerSlider._execEvent('__setenabled');
+		});
+		var transformX = 'ready';
+		myScroll.on('scrollStart', function(){
+			transformX = agilelite.util.getCSSTransform($scroller)[4];
+		});
+		myScroll.on('scroll', function(){
+			if(transformX=='ready') return;
+			if(Math.abs(agilelite.util.getCSSTransform($scroller)[4]-transformX)>=40){
+				$el.closest('[data-scroll]').add($el.find('[data-scroll]:first')).each(function(){
+					A.Scroll('#'+this.id)._execEvent('__setdiabled');
+				});
+				transformX = 'ready';
+			}
+		});
+
 		myScroll.on('scrollEnd', function(){
-			if(outerSlider) outerSlider._execEvent('__setenabled');
 			index = this.currentPage.pageX;
 			var curSlide = $($slide.get(index));
 			var curDots = $($dots.get(index));
@@ -1490,7 +1523,10 @@ var agilelite = (function($){
 				curDots.addClass('active').siblings('.active').removeClass('active');
 			}
 		});		
-		myScroll.on('refresh', function(){
+		$el.off(agilelite.options.clickEvent+'.slider').on(agilelite.options.clickEvent+'.slider', function(){
+			myScroll.goToPage(index, 0, options.snapSpeed);
+		});
+		myScroll.on('refresh', function(type){
 			init();
 			createDots();
 		});
@@ -1500,6 +1536,7 @@ var agilelite = (function($){
 			myScroll._execEvent('scrollEnd');
 		};
 		myScroll.goToPage(index, 0, options.snapSpeed);
+		myScroll._execEvent('refresh', 'normal');
 		var _auto;
 		if(sliderOpts.auto){
 			_auto = setInterval(function(){
