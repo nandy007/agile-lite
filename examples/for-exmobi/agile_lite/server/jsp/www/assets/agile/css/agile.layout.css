@@ -1,5 +1,5 @@
 ﻿/*
- * for Agile Lite 2.5.5 beta
+ * for Agile Lite 2.5.6 beta
  * */
 /*******************alige框架样式-start*******************/
 
@@ -164,7 +164,7 @@
 .inherit-height{
 	height:inherit;
 }
-
+body{ -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 #section_container {
 	position: absolute;
 	top:0;
@@ -633,6 +633,7 @@ aside[data-position][data-transition="reveal"]{
 [data-scroll]{
 	overflow:hidden;
 	overflow-y:hidden;
+	position:absolute;
 }
 [data-scroll] > .scroller {
 	position:relative;
@@ -800,12 +801,13 @@ aside[data-position][data-transition="reveal"]{
 	width: 8px;
 	height: 8px;
 	border-radius: 4px;
-	background: #777;
+	background: #ececec;
 	margin:0px 2px;
-	opacity: .5;
+	opacity:.9;
+	
 }
 [data-role="slider"] .dots .dotty.active {
-	opacity: .9;
+	background: #777;
 }
 /* slider end*/
 /* scrollTop start */

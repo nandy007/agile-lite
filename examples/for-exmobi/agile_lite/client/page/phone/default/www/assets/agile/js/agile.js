@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.5 beta
+*	Version	:	2.5.6 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -8,7 +8,7 @@ var agilelite = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.5.5',
+			version : '2.5.6',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -391,8 +391,6 @@ var agilelite = (function($){
 			selector : '[data-role="article"].active',
 			event : 'articleload',
 			handler : function(el, roleType){
-				var onPullDown = function(){};
-				var onPullUp = function(){};
 				var options = {
 					verticle : { },
 					horizontal : {
@@ -401,15 +399,9 @@ var agilelite = (function($){
 					scroll : {
 						scrollX : true, scrollY : true
 					},
-					pulldown : {
-						onPullDown : onPullDown
-					},
-					pullup : {
-						onPullUp : onPullUp
-					},
-					pull : {
-						onPullDown : onPullDown, onPullUp : onPullUp
-					}
+					pulldown : {},
+					pullup : {},
+					pull : {}
 				};
 
 				var _doScroll = function($scroll){
@@ -1217,8 +1209,7 @@ var agilelite = (function($){
 		$el.attr('__com_iscroll__', true);
 		$el.off('touchmove.iscroll').on('touchmove.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setdiabled');
-		});
-		$el.off('touchend.iscroll blur.iscroll').on('touchend.iscroll blur.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
+		}).off('touchend.iscroll blur.iscroll').on('touchend.iscroll blur.iscroll', 'textarea[data-scroll-diabled="true"]', function(){
 			$scroll._execEvent('__setenabled');
 		});
 
@@ -1228,6 +1219,23 @@ var agilelite = (function($){
 		$scroll.on('__setenabled', function(){
 			this.enabled = true;
 		});
+		//解决iscroll在苹果设备超出边界不反弹的问题
+		if(/AppleWebkit/.test(window.navigator.appVersion)){
+			var scrollTimer,$container = $el.closest('[data-role="section"], [data-role="modal"]');
+			$el.off('touchmove.bounce').on('touchmove.bounce', function(e){
+				if(scrollTimer) clearInterval(scrollTimer);
+				scrollTimer = setInterval(function(){
+					var screenHeight = $container.height(),screenWidth = $container.width(),_touch = e.originalEvent.targetTouches[0];
+					var point = {x : _touch.pageX, y : _touch.pageY};
+					if(point.y<=0||point.y>=screenHeight||point.x<=0||point.x>=screenWidth) $scroll._end(e);$scroll.refresh();
+					clearInterval(scrollTimer);
+					scrollTimer = null;
+				},200);
+			}).off('touchend.bounce').on('touchend.bounce', function(e){
+				if(scrollTimer) clearInterval(scrollTimer);scrollTimer=null;
+			});
+		}
+		
 		/*//处理软键盘被盖住
 		var _focusProcess;
 		$el.on('focus', 'input[type="url"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="text"], textarea', function(){		
@@ -1249,7 +1257,7 @@ var agilelite = (function($){
 			}			
 		});*/
 		//事件结束一律终止
-		$el.off('touchend.iscroll').on('touchend.iscroll', function(e){ $scroll._execEvent('__setenabled');$scroll._end(e);});
+		$el.off('touchend.reset').on('touchend.reset', function(e){ $scroll._execEvent('__setenabled');$scroll._end(e);});
 		$scroll.on('scrollEnd' , function(){
 			if(this.y==0){
             	this._execEvent(costomOpts.scrollTop);//自定义事件滑动到顶部
@@ -1280,7 +1288,7 @@ var agilelite = (function($){
     	if(_index_key_[eId]) return _index_key_[eId];
     	
 		var $scroller = $el.children().first();
-		var myScroll; 
+		var myScroll, opts=opts||{}, scrollType = $el.data('scroll'); 
     	var $pullDownEl, $pullDownL;  
     	var $pullUpEl, $pullUpL; 
     	var pullDownHeight, pullUpHeight; 
@@ -1313,20 +1321,20 @@ var agilelite = (function($){
     		callbackEvent : 'pullup'
     	};
     	
-    	if(opts.onPullDown){
+    	if(opts.onPullDown||scrollType=='pull'||scrollType=='pulldown'){
     		$pullDownEl = $('<div id="'+pullDownOpts.id+'"><div class="'+pullDownOpts.iconStyle+'"></div><div class="'+pullDownOpts.labelStyle+'">'+pullDownOpts.normalLabel+'</div></div>').prependTo($scroller);
 	        $pullDownL = $pullDownEl.find('.'+pullDownOpts.labelStyle);   
 	        pullDownHeight = $pullDownEl.height();
 	        $pullDownEl.attr('class','').hide();
-	        pullDownOpts.callback = opts.onPullDown;
+	        pullDownOpts.callback = opts.onPullDown||function(){};
     	}
     	
-    	if(opts.onPullUp){
+    	if(opts.onPullUp||scrollType=='pull'||scrollType=='pullup'){
     		$pullUpEl = $('<div id="'+pullUpOpts.id+'"><div class="'+pullUpOpts.iconStyle+'"></div><div class="'+pullUpOpts.labelStyle+'">'+pullUpOpts.normalLabel+'</div></div>').appendTo($scroller);
 	        $pullUpL = $pullUpEl.find('.'+pullUpOpts.labelStyle);   
 	        pullUpHeight = $pullUpEl.height();
 	        $pullUpEl.attr('class','').hide();
-	        pullUpOpts.callback = opts.onPullUp;
+	        pullUpOpts.callback = opts.onPullUp||function(){};
     	}
 
         myScroll = agilelite.Scroll('#'+eId, {  
@@ -1397,6 +1405,16 @@ var agilelite = (function($){
         	}
         	
         });
+
+        myScroll.setConfig = function(opts){
+        	opts = opts||{};
+        	if(opts.pullDownOpts){
+        		pullDownOpts = $.extend(pullDownOpts, opts.pullDownOpts);
+        	}
+        	if(opts.pullUpOpts){
+        		pullUpOpts = $.extend(pullUpOpts, opts.pullUpOpts);
+        	}
+        };
 
         _index_key_[eId] = myScroll;
         
@@ -1515,8 +1533,10 @@ var agilelite = (function($){
 
 		myScroll.on('scrollEnd', function(){
 			index = this.currentPage.pageX;
+			
 			var curSlide = $($slide.get(index));
 			var curDots = $($dots.get(index));
+			
 			if(!curSlide.hasClass('active')){
 				sliderOpts.change&&sliderOpts.change.call(this, index);
 				curSlide.addClass('active').trigger('slidershow').siblings('.active').removeClass('active').trigger('sliderhide');
@@ -1626,7 +1646,7 @@ var agilelite = (function($){
         	agilelite.anim[funcName]($aside, cssName.aside);
         	agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }
-        $('#section_container_mask').show();
+        $sectionMask.show();
         agilelite.pop.hasAside = true;
 	};
 	/**
@@ -1667,7 +1687,7 @@ var agilelite = (function($){
             agilelite.anim[funcName]($aside, cssName.aside);
             agilelite.anim[funcName]($sectionContainer, cssName.section, _finish);
         }
-        $('#section_container_mask').hide();
+        $sectionMask.hide();
     };
     agilelite.register('Aside', new Aside());
 })(agilelite.$);

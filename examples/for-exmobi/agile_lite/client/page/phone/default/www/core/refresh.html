@@ -120,6 +120,18 @@
 			//当refresh初始化会进入此监听
 			$('#refresh_article').on('refreshInit', function(){
 				var refresh = A.Refresh(this);
+				refresh.setConfig({
+					pullDownOpts : {
+						normalLabel : '继续下拉',
+			    		releaseLabel : '可以啦可以啦',
+			    		refreshLabel : '终于松开啦'
+					},
+					pullUpOpts : {
+						normalLabel : '上拉试试',
+			    		releaseLabel : '有完没完',
+			    		refreshLabel : '哎呦我去'
+					}
+				});
 				//监听下拉刷新事件，可以做一些逻辑操作，当data-scroll="pullup"时无效
 				refresh.on('pulldown', function(){
 					//setTimeout是模拟异步效果，实际场景请勿使用
