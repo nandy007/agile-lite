@@ -1220,7 +1220,7 @@ var agilelite = (function($){
 			this.enabled = true;
 		});
 		//解决iscroll在苹果设备超出边界不反弹的问题
-		if(/AppleWebkit/.test(window.navigator.appVersion)){
+		if(/AppleWebKit/i.test(window.navigator.appVersion)){
 			var scrollTimer,$container = $el.closest('[data-role="section"], [data-role="modal"]');
 			$el.off('touchmove.bounce').on('touchmove.bounce', function(e){
 				if(scrollTimer) clearInterval(scrollTimer);
