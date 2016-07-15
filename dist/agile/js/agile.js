@@ -1223,18 +1223,17 @@ var agilelite = (function($){
 		if(/AppleWebKit/i.test(window.navigator.appVersion)){
 			var scrollTimer,$container = $el.closest('[data-role="section"], [data-role="modal"]');
 			$el.off('touchmove.bounce').on('touchmove.bounce', function(e){
-				if(scrollTimer) clearInterval(scrollTimer);scrollTimer=null;
+				if(scrollTimer){clearTimeout(scrollTimer);scrollTimer=null;}
 				if($scroll.y>0||$scroll.y<$scroll.maxScrollY||$scroll.x>0||$scroll.x<$scroll.maxScrollX){
-					scrollTimer = setInterval(function(){
+					scrollTimer = setTimeout(function(){
 						var screenHeight = $container.height(),screenWidth = $container.width(),_touch = e.originalEvent.targetTouches[0];
 						var point = {x : _touch.pageX, y : _touch.pageY};
-						if(point.y<=0||point.y>=screenHeight||point.x<=0||point.x>=screenWidth) $scroll._end(e);$scroll.refresh();
-						clearInterval(scrollTimer);
-						scrollTimer = null;;
+						if(point.y<=0||point.y>=screenHeight||point.x<=0||point.x>=screenWidth){ $scroll._end(e);$scroll.refresh(); }
+						clearTimeout(scrollTimer);scrollTimer = null;
 					},200);
 				}
 			}).off('touchend.bounce').on('touchend.bounce', function(e){
-				if(scrollTimer) clearInterval(scrollTimer);scrollTimer=null;
+				if(scrollTimer){ clearTimeout(scrollTimer);scrollTimer=null;}
 			});
 		}
 		

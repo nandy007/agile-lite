@@ -634,6 +634,7 @@ aside[data-position][data-transition="reveal"]{
 	overflow:hidden;
 	overflow-y:hidden;
 	position:absolute;
+	width:100%;
 }
 [data-scroll] > .scroller {
 	position:relative;
