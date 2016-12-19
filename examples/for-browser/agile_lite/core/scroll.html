@@ -7,6 +7,8 @@
 		<title>Agile Lite</title>
 		<link rel="stylesheet" href="../assets/agile/css/agile.layout.css">
 		<link rel="stylesheet" href="../assets/third/seedsui/plugin/seedsui/seedsui.min.css">
+		<script src="../assets/third/amd/require.js"></script>
+		<script src="../assets/app/js/app.require.js"></script>
 	</head>
 	<body>
 		<div id="section_container">
@@ -122,18 +124,8 @@
 			</section>
 		</div>
 
-		
-		<!--- third -->
-		<script src="../assets/third/jquery/jquery-2.1.3.min.js"></script>
-		<script src="../assets/third/jquery/jquery.mobile.custom.min.js"></script>
-		<script src="../assets/third/iscroll/iscroll-probe.js"></script>
-		<!---  agile -->
-		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>
-<script type="text/javascript" src="../assets/bridge/exmobi.js"></script>
-<script type="text/javascript" src="../assets/bridge/agile.exmobi.js"></script>			
-		<!-- app -->
-		<script type="text/javascript" src="../assets/app/js/app.seedsui.js"></script>
 		<script>
+		require(['jquery'], function($){
 			//当scroll初始化会进入此监听
 			$('#scroll_article').on('scrollInit', function(){
 				var scroll = A.Scroll(this);//已经初始化后不会重新初始化，但是可以得到滚动对象
@@ -152,6 +144,8 @@
 			$('#scroll_section').on('sectionshow', function(){
 				A.Component.scroll('#tabbarOuter');
 			});
+		});
+			
 		</script>
 	</body>
 </html>

@@ -139,10 +139,10 @@
 							    </div>
 							</div>
 							<div id="page4" class="slide" data-role="page" data-scroll="verticle">
-								<div class="scroller">
+							<div class="scroller">
 								这是第4个page
-						    	</div>
-							</div>
+						    </div>
+						</div>
 						</div>
 					</div>
 				</article>
@@ -175,9 +175,7 @@
 		<script src="../assets/third/jquery/jquery.mobile.custom.min.js"></script>
 		<script src="../assets/third/iscroll/iscroll-probe.js"></script>
 		<!---  agile -->
-		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>
-<script type="text/javascript" src="../assets/bridge/exmobi.js"></script>
-<script type="text/javascript" src="../assets/bridge/agile.exmobi.js"></script>			
+		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>			
 		<!-- app -->
 		<script type="text/javascript" src="../assets/app/js/app.seedsui.js"></script>
 		<script>
@@ -187,8 +185,13 @@
 		});
 		$('#slider_article').on('articleload', function(){
 			A.Slider('#slide', {
-				dots : 'right'
-			});			
+				dots : 'right',
+				loop : true,
+				change : function(i){
+					//console.log(i);
+				}
+			});	
+			
 			A.Slider('#sliderPage', {
 				dots : 'hide'
 			});

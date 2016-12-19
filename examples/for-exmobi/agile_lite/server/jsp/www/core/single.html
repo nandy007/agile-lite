@@ -7,6 +7,8 @@
 		<title>Agile Lite</title>
 		<link rel="stylesheet" href="../assets/agile/css/agile.layout.css">
 		<link rel="stylesheet" href="../assets/third/seedsui/plugin/seedsui/seedsui.min.css">
+		<script src="../assets/third/amd/require.js"></script>
+		<script src="../assets/app/js/app.require.js"></script>
 	</head>
 	<body>
 		<div id="aside_container">
@@ -182,19 +184,13 @@
 				</article>
 			</section>
 		</div>
-		
-		<!--- third -->
-		<script src="../assets/third/jquery/jquery-2.1.3.min.js"></script>
-		<script src="../assets/third/jquery/jquery.mobile.custom.min.js"></script>
-		<!---  agile -->
-		<script type="text/javascript" src="../assets/agile/js/agile.js"></script>			
-		<!-- app -->
-		<script type="text/javascript" src="../assets/app/js/app.seedsui.js"></script>
 		<script>
+		require(['jquery'], function($){
 			$('#second_article').on('articleload', function(){
 				var params = A.Component.params(this);//获取所有参数
 				A.showToast('参数id的值为：'+params.id);
 			});
+		});
 		</script>
 	</body>
 </html>

@@ -1,14 +1,15 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.5.7 beta
+*	Version	:	2.6.0 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
+window.PointerEvent = undefined;//解决iscroll在chrome55.X版本的bug
 var agilelite = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.5.7',
+			version : '2.6.0',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -78,7 +79,7 @@ var agilelite = (function($){
 	Agile.prototype.noConflict = function(){ return this; };
 	
 	return window.A ? new Agile() : window.A = new Agile();
-})(window.Zepto||jQuery);
+})(window.Zepto||window.jQuery||window.$);
 
 //控制器
 (function($){
