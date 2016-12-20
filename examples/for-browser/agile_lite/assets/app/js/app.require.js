@@ -19,7 +19,7 @@ require.config({
         jquery: 'third/jquery/jquery-2.1.3.min',
         jqm: 'third/jquery/jquery.mobile.custom.min',
         iscroll: 'third/iscroll/iscroll-probe',
-        template: 'third/arttemplate/template',
+        template: 'third/arttemplate/template-native',
         agile: 'agile/js/agile'
     }
 });
@@ -27,7 +27,7 @@ require.config({
 //首先引入基础库
 require(['jquery', 'jqm', 'template'], function($, jqm, template){
 	if(!window.$) window.$ = $;
-	if(!window.template) window.template = template;
+	window.template = template;
 	
 	window.PointerEvent = undefined;//解决iscroll在chrome55.X版本的bug，需在iscroll加载前设置
 	//由于iscroll有bug，需要先hack之后在引入
