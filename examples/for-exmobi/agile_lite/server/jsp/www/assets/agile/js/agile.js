@@ -1,6 +1,6 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.6.0 beta
+*	Version	:	2.6.2 beta
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
@@ -9,7 +9,7 @@ var agilelite = (function($){
 	var Agile = function(){
 		this.$ = $;
 		this.options = {
-			version : '2.6.0',
+			version : '2.6.2',
 			clickEvent : ('ontouchstart' in window)?'tap':'click',
 			agileReadyEvent : 'agileready',
 			agileStartEvent : 'agilestart', //agile生命周期事件之start，需要宿主容器触发
@@ -1174,12 +1174,37 @@ var agilelite = (function($){
 
 })(agilelite.$);
 
-(function($){	
-	var _index_key_ = {};	
+(function($){
+	var _index_key_ = {};
 	
 	var scrollObj = {};
 	
-	var scroll = function(selector, opts){		
+	//重写IScroll的click方法
+	var iscrollRewrite = {};
+	iscrollRewrite.click = function (e) {
+		var target = e.target,
+			ev;
+		var isSpecialInputType = (/INPUT/i).test(target.tagName)&&(/DATE|COLOR/i).test(target.getAttribute('type'));
+		if (isSpecialInputType || !(/(SELECT|INPUT|TEXTAREA)/i).test(target.tagName) ) {
+			ev = document.createEvent('MouseEvents');
+			ev.initMouseEvent('click', true, true, e.view, 1,
+				target.screenX, target.screenY, target.clientX, target.clientY,
+				e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+				0, null);
+
+			ev._constructed = true;
+			target.dispatchEvent(ev);
+		}
+		e.stopPropagation();//强制阻止事件冒泡
+	};
+	
+	var scroll = function(selector, opts){	
+		if(iscrollRewrite){
+			for(var k in iscrollRewrite){
+				IScroll.utils[k] = iscrollRewrite[k];
+			}
+			iscrollRewrite = null;
+		}	
 		var $el = $(selector);
 		var eId = $el.attr('id');
 		if($el.length==0||!eId){
