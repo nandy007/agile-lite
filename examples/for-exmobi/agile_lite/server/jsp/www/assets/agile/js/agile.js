@@ -4,6 +4,7 @@
 *	Author	:	nandy007
 *   License MIT @ https://git.oschina.net/nandy007/agile-lite
 */
+
 window.PointerEvent = undefined;//解决iscroll在chrome55.X版本的bug
 var agilelite = (function($){
 	var Agile = function(){
