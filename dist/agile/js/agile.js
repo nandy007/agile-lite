@@ -1,8 +1,8 @@
 /*
 *	Agile Lite 移动前端框架
-*	Version	:	2.6.2 beta
+*	Version	:	3.0.0 beta
 *	Author	:	nandy007
-*   License MIT @ https://git.oschina.net/nandy007/agile-lite
+*   License MIT @ https://github.com/nandy007/agile-lite
 */
 
 window.PointerEvent = undefined;//解决iscroll在chrome55.X版本的bug
