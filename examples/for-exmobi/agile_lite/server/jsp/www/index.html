@@ -299,26 +299,28 @@
 		</div>
 
 		<script>
-		require(['jquery', 'agile'], function($){
-			$('a[data-href]').on(A.options.clickEvent, function(){
-				var href = $(this).data('href');
-				try{
-					NativeUtil.browser(href);
-				}catch(e){
-					location.href = href;
-				}
-			});
-			
-			$('#require').on(A.options.clickEvent, function(){
-			    var $popup = A.popup({
-			   		html: '<div style="padding:10px 10px;"><div style="text-align:center;font-size:20px;color:#3498DB;font-weight:600;margin:5px 0;">说明</div><div style="margin:8px 0px;">请直接查看本页源码或者scroll.html、refresh.html和single.html，主要说明请看app.require.js文件注释</div><button style="width:100%;">确认</button></div>',
-			        css : {width:'auto'},
-			        pos : 'center'
-			    });
-			    $popup.popup.find('button').on(A.options.clickEvent, function(){
-			    	$popup.close();
-			    });
-			    return false;
+		require(['jquery'], function($){
+			$(document).on('agileready', function(){
+				$('a[data-href]').on(A.options.clickEvent, function(){
+					var href = $(this).data('href');
+					try{
+						NativeUtil.browser(href);
+					}catch(e){
+						location.href = href;
+					}
+				});
+				
+				$('#require').on(A.options.clickEvent, function(){
+				    var $popup = A.popup({
+				   		html: '<div style="padding:10px 10px;"><div style="text-align:center;font-size:20px;color:#3498DB;font-weight:600;margin:5px 0;">说明</div><div style="margin:8px 0px;">请直接查看本页源码或者scroll.html、refresh.html和single.html，主要说明请看app.require.js文件注释</div><button style="width:100%;">确认</button></div>',
+				        css : {width:'auto'},
+				        pos : 'center'
+				    });
+				    $popup.popup.find('button').on(A.options.clickEvent, function(){
+				    	$popup.close();
+				    });
+				    return false;
+				});
 			});
 		});
 		</script>
