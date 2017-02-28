@@ -64,22 +64,24 @@
 		</div>
 		
 		<script>
-		require(['jquery', 'agile'], function(){
-			$('#agiletemplate_article').on('refreshInit', function(){
-				
-				A.template('#template').renderReplace('../json/template.json');
-				
-				var refresh = A.Refresh(this);
-				refresh.on('pulldown', function(){
-					//下拉刷新加载到前面用before
-					A.template('#template').renderBefore({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']},function(h){
-						//refresh.refresh();
+		require(['jquery'], function($){
+			$(document).on('agileready', function(){
+				$('#agiletemplate_article').on('refreshInit', function(){
+					
+					A.template('#template').renderReplace('../json/template.json');
+					
+					var refresh = A.Refresh(this);
+					refresh.on('pulldown', function(){
+						//下拉刷新加载到前面用before
+						A.template('#template').renderBefore({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']},function(h){
+							//refresh.refresh();
+						});
 					});
-				});
-				refresh.on('pullup', function(){
-					//上拉刷新加载到后面用after
-					A.template('#template').renderAfter({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']}, function(){
-						//refresh.refresh();
+					refresh.on('pullup', function(){
+						//上拉刷新加载到后面用after
+						A.template('#template').renderAfter({list:['Agile Lite移动前端框架', 'ExMobi三大引擎完美融合']}, function(){
+							//refresh.refresh();
+						});
 					});
 				});
 			});
